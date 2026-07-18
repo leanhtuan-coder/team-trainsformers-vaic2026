@@ -1,7 +1,10 @@
+"use client";
+
 import { SectionHead } from "@/components/ui/SectionHead";
 import { IconChevronDown } from "@/components/ui/icons";
 import { META } from "@/lib/demoData";
 import { fmtInt } from "@/lib/format";
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/motion";
 
 const FAQS = [
   {
@@ -25,20 +28,24 @@ const FAQS = [
 export function Faq() {
   return (
     <section aria-labelledby="faq-heading" className="px-6 py-20">
-      <SectionHead kicker="Câu hỏi thường gặp" title="Bạn có thể thắc mắc" />
-      <div className="mx-auto mt-10 max-w-3xl space-y-3">
+      <Reveal>
+        <SectionHead kicker="Câu hỏi thường gặp" title="Bạn có thể thắc mắc" />
+      </Reveal>
+      <StaggerGroup className="mx-auto mt-10 max-w-3xl space-y-3" stagger={0.1}>
         {FAQS.map((f) => (
-          <details key={f.q} className="faq group rounded-2xl border border-gray-200 bg-white px-6 py-5">
-            <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-ink">
-              {f.q}
-              <span className="shrink-0 text-ink-soft transition-transform duration-200 group-open:rotate-180">
-                <IconChevronDown />
-              </span>
-            </summary>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">{f.a}</p>
-          </details>
+          <StaggerItem key={f.q}>
+            <details className="faq group rounded-2xl border border-gray-200 bg-white px-6 py-5">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-ink">
+                {f.q}
+                <span className="shrink-0 text-ink-soft transition-transform duration-200 group-open:rotate-180">
+                  <IconChevronDown />
+                </span>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-ink-soft">{f.a}</p>
+            </details>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }
