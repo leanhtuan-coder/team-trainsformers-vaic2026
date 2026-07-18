@@ -733,6 +733,7 @@ const MOCK_JUDGE_RIASEC: any = {
   confidence: { score: 0.85, reason: "Kết quả từ 1 bài test Holland chính thức (T&C Việt Nam) và dữ liệu tự khai nhất quán." },
   scores: { R: 2, I: 4, A: 1, S: 3, E: 2, C: 6 }
 };
+const JUDGE_DEMO_ID = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
 // ──────────────────────────────────────────────────────────────
 
 function StudentPortalPageContent() {
@@ -796,11 +797,11 @@ function StudentPortalPageContent() {
       });
   }, []);
 
-  const DEMO_ID = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
+  // JUDGE_DEMO_ID defined at module level
 
   const loadAll = useCallback(async () => {
     // ── Tài khoản giám khảo: dùng mock ngay, KHÔNG gọi backend ──
-    if (profileId === DEMO_ID) {
+    if (profileId === JUDGE_DEMO_ID) {
       setData(MOCK_JUDGE_PROFILE);
       setPortfolio(MOCK_JUDGE_PORTFOLIO);
       setRiasec(MOCK_JUDGE_RIASEC);
@@ -841,7 +842,7 @@ function StudentPortalPageContent() {
     if (ref && ref.profile_id === profileId) {
       setStudentName(ref.name);
       setStudentRegion(ref.region);
-    } else if (profileId === DEMO_ID) {
+    } else if (profileId === JUDGE_DEMO_ID) {
       setStudentName("Giám khảo VAIC 2026");
       setStudentRegion("Hà Nội");
     }
