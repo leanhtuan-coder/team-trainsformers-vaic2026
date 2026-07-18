@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LogoMark } from "@/components/ui/Compass";
 import { Loader2, ArrowLeft, ArrowRight, Check, User, ListTodo, FileText, AlertTriangle } from "lucide-react";
@@ -140,7 +140,7 @@ const HOLLAND_QUESTIONS = [
   }
 ];
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [profileId, setProfileId] = useState<string>("");
@@ -574,5 +574,20 @@ export default function OnboardingPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfa]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#005c6d]" />
+          <p className="text-sm text-[#6b6a64] font-medium">Đang tải...</p>
+        </div>
+      </div>
+    }>
+      <OnboardingContent />
+    </Suspense>
   );
 }
