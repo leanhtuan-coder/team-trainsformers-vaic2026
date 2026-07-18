@@ -957,6 +957,15 @@ function StudentPortalPageContent() {
     );
   }
 
+  // Guard: nếu demo profile mà data chưa load, set mock ngay (tránh hiện màn hình lỗi)
+  if (profileId === JUDGE_DEMO_ID && !data) {
+    setData(MOCK_JUDGE_PROFILE);
+    setPortfolio(MOCK_JUDGE_PORTFOLIO);
+    setRiasec(MOCK_JUDGE_RIASEC);
+    setLoading(false);
+    return null;
+  }
+
   if (notFound || loadError || !data) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F8FAFC] px-6 text-center">
