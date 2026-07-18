@@ -710,7 +710,9 @@ function StudentPortalPageContent() {
     try {
       const resProfile = await fetch(`${API_BASE}/profile/${profileId}`);
       if (resProfile.status === 404) {
-        setNotFound(true);
+        // Profile không tồn tại trên server (có thể localStorage cũ) → xóa ref, về onboarding
+        clearPortalRef();
+        router.replace("/");
         return;
       }
       if (!resProfile.ok) throw new Error("profile_load_failed");
