@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LogoMark } from "@/components/ui/Compass";
+import { BRAND } from "@/lib/demoData";
 import { loadPortalRef, type PortalRef } from "@/lib/profile";
 
 const LINKS = [
@@ -24,7 +25,7 @@ export function Navbar({ onStart }: { onStart: () => void }) {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
         <a href="#tong-quan" className="flex items-center gap-2.5">
           <LogoMark />
-          <span className="text-[15px] font-bold text-ink">CareerRadar</span>
+          <span className="text-[15px] font-bold text-ink">{BRAND.name}</span>
         </a>
         <nav aria-label="Điều hướng chính" className="hidden items-center gap-8 md:flex">
           {LINKS.map((l) => (

@@ -1,6 +1,17 @@
 // Dữ liệu demo NHẤT QUÁN toàn site (landing + app).
 // Khi backend/pipeline thật sẵn sàng, thay bằng labor_signal.json từ data pipeline.
 
+export const BRAND = {
+  name: "CareerRadar",
+  productName: "La Bàn Nghề",
+  slogan: "La Bàn Nghề — trợ lý AI hướng nghiệp bằng dữ liệu thật cho học sinh, sinh viên Việt Nam.",
+  team: "TrainSformers",
+  partner: "VEX Technology Solutions",
+  event: "VAIC 2026",
+  location: "Hà Nội, Việt Nam",
+  year: "2026"
+};
+
 export const META = {
   totalJobs: 3365,
   careerGroups: 30,

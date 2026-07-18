@@ -1,4 +1,5 @@
 import { LogoMark } from "@/components/ui/Compass";
+import { BRAND } from "@/lib/demoData";
 
 const COLUMNS = [
   {
@@ -36,10 +37,10 @@ export function Footer() {
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="font-bold text-white">CareerRadar</span>
+            <span className="font-bold text-white">{BRAND.name}</span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed">
-            La Bàn Nghề — trợ lý AI hướng nghiệp bằng dữ liệu thật cho học sinh, sinh viên Việt Nam.
+            {BRAND.slogan}
           </p>
         </div>
         {COLUMNS.map((col) => (
@@ -58,8 +59,8 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-12 flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-sm text-white/60">
-        <p>© 2026 · TrainSformers × VEX Technology Solutions</p>
-        <p>Được xây dựng tại VAIC 2026 · Hà Nội, Việt Nam</p>
+        <p>© {BRAND.year} · {BRAND.team} × {BRAND.partner}</p>
+        <p>Được xây dựng tại {BRAND.event} · {BRAND.location}</p>
       </div>
     </footer>
   );
