@@ -642,114 +642,8 @@ const BRANCH_TIMELINE: Record<string, string[]> = {
   ]
 };
 
-// ── Dữ liệu mẫu dự phòng cho tài khoản Giám khảo VAIC 2026 ──
-const MOCK_JUDGE_PROFILE: any = {
-  profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
-  created_at: "2026-07-18T10:17:47.076Z",
-  evidence: [
-    {
-      evidence_id: "8abbc847-5f75-4c15-bb69-26db3dbaad55",
-      source_type: "assessment",
-      source_ref: "T&C Việt Nam — Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ",
-      claims: [
-        { group: "activity_interest", dimension: "Holland R", value: "1" },
-        { group: "activity_interest", dimension: "Holland I", value: "1" },
-        { group: "activity_interest", dimension: "Holland A", value: "1" },
-        { group: "activity_interest", dimension: "Holland S", value: "1" },
-        { group: "activity_interest", dimension: "Holland E", value: "1" },
-        { group: "activity_interest", dimension: "Holland C", value: "2" }
-      ],
-      user_confirmed: true
-    },
-    {
-      evidence_id: "3bb37af7-8906-4812-b7b4-c8f5e3f8a177",
-      source_type: "self_report",
-      source_ref: "qs-01-object",
-      claims: [{ group: "activity_interest", dimension: "đối tượng làm việc cuốn hút", value: "Máy móc, thiết bị, xây dựng thứ gì đó bằng tay" }],
-      user_confirmed: true
-    },
-    {
-      evidence_id: "7976931e-5be6-4b7d-bbf7-806798a23a07",
-      source_type: "self_report",
-      source_ref: "qs-02-teamrole",
-      claims: [{ group: "ability_skill", dimension: "vai trò trong dự án nhóm", value: "Kết nối, hòa giải, chăm lo cảm xúc nhóm" }],
-      user_confirmed: true
-    },
-    {
-      evidence_id: "8b3518e0-55bb-4308-8457-26a5b18b5e21",
-      source_type: "assessment",
-      source_ref: "IDP — IELTS",
-      claims: [],
-      assessment_detail: { name: "IELTS", provider: "IDP", score: 7.5, scale_max: 9, percentile_top: 5, taken_at: "2026-07-18T15:23:06.178Z" },
-      confidence: "high",
-      collected_at: "2026-07-18T15:23:06.197Z",
-      user_confirmed: true
-    }
-  ],
-  snapshot: {
-    profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
-    generated_at: "2026-07-18T10:17:47.076Z",
-    evidence_coverage: {
-      total_evidence: 4, confirmed_evidence: 4,
-      by_source_type: { self_report: 2, document: 0, assessment: 2, interaction: 0, ai_inference: 0 },
-      groups_with_evidence: 4, groups_total: 8
-    }
-  }
-};
 
-const MOCK_JUDGE_PORTFOLIO: any = {
-  profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
-  candidates: [
-    {
-      industry: "CNTT / Lập trình",
-      job_title: "Kỹ sư phần mềm (Software Engineer)",
-      details: {
-        market_demand_pct: 94, min_salary_million: 18.5, max_salary_million: 35.0,
-        stages: [
-          { stage_title: "Chặng 1: Xây dựng nền tảng (6 - 12 tháng)", action_plan: ["Học vững cấu trúc dữ liệu, thuật toán cơ bản bằng Python hoặc JavaScript", "Xây dựng 2 dự án web cá nhân đầy đủ (Frontend & Backend) và tải lên GitHub", "Duy trì GPA môn Tin học và Tiếng Anh trên lớp ở mức xuất sắc (trên 8.5)"] },
-          { stage_title: "Chặng 2: Học việc & Trải nghiệm thực tế (12 - 18 tháng)", action_plan: ["Tìm kiếm cơ hội thực tập tại các doanh nghiệp công nghệ", "Tham gia ít nhất một cuộc thi Hackathon hoặc lập trình cấp trường/thành phố", "Luyện thi chứng chỉ cloud cơ bản (AWS Practitioner / Azure Fundamentals)"] },
-          { stage_title: "Chặng 3: Ứng tuyển & Tăng tốc sự nghiệp (18 - 24 tháng)", action_plan: ["Hệ thống hóa kỹ năng chuyên sâu (React, Node.js, Database) cho phỏng vấn chuyên môn", "Chuẩn bị Portfolio cá nhân chuyên nghiệp và CV song ngữ (Anh - Việt)", "Tham gia phỏng vấn thử (Mock Interview) trên các nền tảng tuyển dụng"] }
-        ]
-      }
-    },
-    {
-      industry: "Dữ liệu / AI",
-      job_title: "Data Analyst",
-      details: {
-        market_demand_pct: 88, min_salary_million: 15.0, max_salary_million: 28.0,
-        stages: [
-          { stage_title: "Chặng 1: Nền tảng phân tích (6 tháng)", action_plan: ["Làm chủ phân tích số liệu trên Excel nâng cao (Pivot Table, VLOOKUP)", "Học SQL cơ bản để truy xuất dữ liệu từ các hệ quản trị CSDL", "Luyện tập vẽ biểu đồ phân tích dữ liệu trực quan bằng Tableau hoặc Power BI"] },
-          { stage_title: "Chặng 2: Nâng cao & Thực hành (6 - 12 tháng)", action_plan: ["Học các thư viện phân tích dữ liệu Python (Pandas, NumPy, Matplotlib)", "Thực hiện phân tích một tập dữ liệu tuyển dụng thô trên Kaggle", "Luyện kỹ năng Data Storytelling để thuyết trình báo cáo trước đám đông"] },
-          { stage_title: "Chặng 3: Định hình nghề nghiệp (12 - 18 tháng)", action_plan: ["Ứng tuyển vị trí thực tập sinh phân tích dữ liệu tại các Agency lớn", "Tự xây dựng Dashboard giám sát thị trường thực tế để làm phong phú portfolio", "Học kiến thức cơ bản về Big Data và Data Warehouse"] }
-        ]
-      }
-    }
-  ]
-};
 
-const MOCK_JUDGE_RIASEC: any = {
-  status: "ok",
-  holland_code: "CSI",
-  confidence: {
-    score: 0.85,
-    completeness: 1.0,
-    evidence_ratio: 0.5,
-    consistency: 1.0,
-    reason: "Kết quả từ 1 bài test Holland chính thức (T&C Việt Nam) và dữ liệu tự khai nhất quán."
-  },
-  scores: [
-    { letter: "R", score: 2, reasons: ["Khảo sát Holland"] },
-    { letter: "I", score: 4, reasons: ["Khảo sát Holland"] },
-    { letter: "A", score: 1, reasons: ["Khảo sát Holland"] },
-    { letter: "S", score: 3, reasons: ["Khảo sát Holland"] },
-    { letter: "E", score: 2, reasons: ["Khảo sát Holland"] },
-    { letter: "C", score: 6, reasons: ["Khảo sát Holland"] }
-  ],
-  missing_axes: [],
-  conflicts: []
-};
-const JUDGE_DEMO_ID = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
-// ──────────────────────────────────────────────────────────────
 
 function StudentPortalPageContent() {
   const params = useParams<{ id: string }>();
@@ -812,19 +706,7 @@ function StudentPortalPageContent() {
       });
   }, []);
 
-  // JUDGE_DEMO_ID defined at module level
-
   const loadAll = useCallback(async () => {
-    // ── Tài khoản giám khảo: dùng mock ngay, KHÔNG gọi backend ──
-    if (profileId === JUDGE_DEMO_ID) {
-      setData(MOCK_JUDGE_PROFILE);
-      setPortfolio(MOCK_JUDGE_PORTFOLIO);
-      setRiasec(MOCK_JUDGE_RIASEC);
-      setPathwayError(null);
-      return;
-    }
-    // ────────────────────────────────────────────────────────────
-
     try {
       const resProfile = await fetch(`${API_BASE}/profile/${profileId}`);
       if (resProfile.status === 404) {
@@ -857,9 +739,8 @@ function StudentPortalPageContent() {
     if (ref && ref.profile_id === profileId) {
       setStudentName(ref.name);
       setStudentRegion(ref.region);
-    } else if (profileId === JUDGE_DEMO_ID) {
-      setStudentName("Giám khảo VAIC 2026");
-      setStudentRegion("Hà Nội");
+    } else {
+      setStudentName("Học sinh");
     }
     loadAll()
       .catch(() => setLoadError(true))
@@ -972,7 +853,7 @@ function StudentPortalPageContent() {
     );
   }
 
-  if ((notFound || loadError || !data) && profileId !== JUDGE_DEMO_ID) {
+  if (notFound || loadError || !data) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F8FAFC] px-6 text-center">
         <LogoMark className="h-14 w-14" />
@@ -982,7 +863,7 @@ function StudentPortalPageContent() {
         <p className="max-w-md text-sm text-[#464555]">
           {notFound
             ? "Hồ sơ có thể đã bị xoá hoặc đường dẫn không đúng. Hãy làm khảo sát nhanh 10 câu để tạo hồ sơ mới nhé."
-            : "Kiểm tra Express backend đang chạy ở cổng 4000 rồi tải lại trang."}
+            : "Backend đang khởi động hoặc chưa kết nối. Vui lòng thử lại sau 30 giây."}
         </p>
         <Link href="/" className="inline-flex h-[42px] items-center justify-center rounded-lg bg-[#3525CD] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1E00A9]">
           ← Về trang chủ làm khảo sát
@@ -991,41 +872,34 @@ function StudentPortalPageContent() {
     );
   }
 
-  // Nếu là demo profile mà data vẫn chưa có (race condition), dùng mock
-  const resolvedData = data ?? (profileId === JUDGE_DEMO_ID ? MOCK_JUDGE_PROFILE : null);
-  const resolvedPortfolio = portfolio ?? (profileId === JUDGE_DEMO_ID ? MOCK_JUDGE_PORTFOLIO : null);
-  const resolvedRiasec = riasec ?? (profileId === JUDGE_DEMO_ID ? MOCK_JUDGE_RIASEC : null);
-
-  if (!resolvedData) return null;
-
   /* ----- Dữ liệu dẫn xuất ----- */
-  const { sorted } = calculateStrengths(resolvedData.evidence);
+  const { sorted } = calculateStrengths(data.evidence);
   const top3 = sorted.slice(0, 3);
 
   // Hiện chân dung (dù sơ bộ) khi có Holland Code — chỉ ẩn khi insufficient_data.
-  const riasecReady = resolvedRiasec && resolvedRiasec.status !== "insufficient_data" && !!resolvedRiasec.holland_code;
-  const confCls = !resolvedRiasec
+  const riasecReady = riasec && riasec.status !== "insufficient_data" && !!riasec.holland_code;
+  const confCls = !riasec
     ? ""
-    : resolvedRiasec.confidence.score >= 0.7
+    : riasec.confidence.score >= 0.7
       ? "bg-emerald-100 text-emerald-700"
-      : resolvedRiasec.confidence.score >= 0.4
+      : riasec.confidence.score >= 0.4
         ? "bg-amber-100 text-amber-700"
         : "bg-red-100 text-red-700";
-  const coverage = resolvedData.snapshot.evidence_coverage;
-  const assessments = resolvedData.evidence.filter((e: any) => e.source_type === "assessment");
+  const coverage = data.snapshot.evidence_coverage;
+  const assessments = data.evidence.filter((e: any) => e.source_type === "assessment");
 
-  const owned = getOwnedSkills(resolvedData.evidence, topSkills);
-  const toLearn = getSkillsToLearn(resolvedPortfolio, topSkills);
+  const owned = getOwnedSkills(data.evidence, topSkills);
+  const toLearn = getSkillsToLearn(portfolio, topSkills);
   const maxSkillPct = Math.max(...topSkills.map((s) => s.pct), 1);
 
   // Ứng viên nghề (loại ngành đã "Không phải tôi") — top 3 hiển thị, phần dư làm "Chân trời mới".
-  const visibleCandidates = resolvedPortfolio ? resolvedPortfolio.candidates.filter((c: any) => !rejected.includes(c.industry)) : [];
+  const visibleCandidates = portfolio ? portfolio.candidates.filter((c: any) => !rejected.includes(c.industry)) : [];
   const topCandidates = visibleCandidates.slice(0, 3);
   const horizonCandidates = visibleCandidates.slice(3, 5);
 
   // Tìm câu trả lời Q9 "độ mở định hướng nghề"
   let horizonVal = "đại học";
-  resolvedData.evidence.forEach((ev: any) => {
+  data.evidence.forEach((ev: any) => {
     if (ev.source_type === "self_report") {
       ev.claims?.forEach((claim: any) => {
         if (claim.dimension === "độ mở định hướng nghề") {
@@ -1899,11 +1773,11 @@ function StudentPortalPageContent() {
               </Card>
 
               <Card title="Evidence Ledger của bạn" sub="Mọi bằng chứng đã ghi nhận — nguồn gốc rõ ràng, truy vết được.">
-                {resolvedData.evidence.length === 0 ? (
+                {data.evidence.length === 0 ? (
                   <p className="text-sm text-[#464555]">Chưa có bằng chứng nào trong hồ sơ.</p>
                 ) : (
                   <ul className="thin-scroll max-h-[420px] space-y-2.5 overflow-y-auto pr-1">
-                    {[...resolvedData.evidence].reverse().map((ev) => {
+                    {[...data.evidence].reverse().map((ev) => {
                       const src = SOURCE_LABELS[ev.source_type] ?? { label: ev.source_type, icon: <IconBranch className="w-4 h-4 text-gray-400 shrink-0" /> };
                       return (
                         <li key={ev.evidence_id} className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white hover:border-[#C7C4D8] transition-all">
@@ -1936,7 +1810,7 @@ function StudentPortalPageContent() {
                     })}
                   </ul>
                 )}
-                {assessments.length === 0 && resolvedData.evidence.length > 0 && (
+                {assessments.length === 0 && data.evidence.length > 0 && (
                   <p className="mt-3 rounded-xl bg-brand-light/50 px-3.5 py-2.5 text-xs text-brand font-medium flex items-start gap-2">
                     <IconBulb className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                     <span>Hồ sơ mới chỉ có dữ liệu tự khai — thêm chứng chỉ/học bạ (độ tin cậy cao) để lộ trình chính xác hơn.</span>

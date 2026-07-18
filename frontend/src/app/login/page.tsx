@@ -22,26 +22,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    // ── Tài khoản demo phục vụ Ban Giám Khảo VAIC 2026 ──
-    if (email.trim().toLowerCase() === "giamkhao@careerradar.vn" && password === "vaic2026") {
-      setLoading(true);
-      try {
-        const demoProfileId = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
-        savePortalRef({
-          profile_id: demoProfileId,
-          name: "Giám khảo VAIC 2026",
-          region: "Hà Nội",
-          completedAt: new Date().toISOString()
-        });
-        router.push(`/profile/${demoProfileId}`);
-      } catch (err: any) {
-        setError("Lỗi tài khoản demo: " + err.message);
-        setLoading(false);
-      }
-      return;
-    }
-    // ─────────────────────────────────────────────────────
-
     if (!isSupabaseConfigured) {
       setError("Chưa cấu hình Supabase — điền NEXT_PUBLIC_SUPABASE_URL/ANON_KEY trong .env.local.");
       return;
