@@ -22,31 +22,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    // Tài khoản test demo phục vụ Ban Tổ Chức (BTC) chấm thi
-    if (email.trim().toLowerCase() === "giamkhao@careerradar.vn" && password === "vaic2026") {
-      setLoading(true);
-      try {
-        const demoProfileId = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
-        
-        // Lưu Portal Ref giả lập vào localStorage để Portal load được tên & vùng
-        const { savePortalRef } = await import("@/lib/profile");
-        savePortalRef({
-          profile_id: demoProfileId,
-          name: "Giám khảo VAIC 2026",
-          region: "Hà Nội",
-          completedAt: new Date().toISOString()
-        });
-
-        // Chuyển hướng trực tiếp vào Portal cá nhân hóa
-        router.push(`/profile/${demoProfileId}`);
-      } catch (err: any) {
-        setError("Lỗi đăng nhập tài khoản giám khảo: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
     if (!isSupabaseConfigured) {
       setError("Chưa cấu hình Supabase — điền NEXT_PUBLIC_SUPABASE_URL/ANON_KEY trong .env.local.");
       return;

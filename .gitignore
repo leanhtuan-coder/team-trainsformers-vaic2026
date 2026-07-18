@@ -37,7 +37,6 @@ data/data_market_processing/
 
 # Hồ sơ học sinh — dữ liệu cá nhân, TUYỆT ĐỐI không commit
 data/profiles/
-!data/profiles/de3a0a26-b7c0-4222-9999-de3a0a26b7c0.json
 
 # API keys — NEVER commit
 **/secrets/
