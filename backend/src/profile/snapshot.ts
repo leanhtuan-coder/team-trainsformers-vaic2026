@@ -24,10 +24,9 @@ export function buildSnapshot(profile: Profile): DerivedProfileSnapshot {
   );
   const active = profile.evidence.filter((e) => isActive(e) && !superseded.has(e.evidence_id));
 
-  const groups = Object.fromEntries(ALL_GROUPS.map((g) => [g, []])) as Record<
-    DimensionGroup,
-    DimensionEstimate[]
-  >;
+  const groups = Object.fromEntries(
+    ALL_GROUPS.map((g) => [g, [] as DimensionEstimate[]])
+  ) as Record<DimensionGroup, DimensionEstimate[]>;
 
   for (const group of ALL_GROUPS) {
     const byDimension = new Map<string, Map<string, string[]>>();

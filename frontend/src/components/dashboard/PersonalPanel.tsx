@@ -70,7 +70,8 @@ export function PersonalPanel({ profile, onEdit, onRetake }: Props) {
   const [topSkills, setTopSkills] = useState<typeof TOP_SKILLS>(TOP_SKILLS);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/market/snapshot")
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+    fetch(`${API_BASE}/market/snapshot`)
       .then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();

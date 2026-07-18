@@ -57,6 +57,7 @@ export interface MatchedProfileEvidence {
 
 export interface PathwayCandidate {
   industry: string;
+  /** Fit Score 0..100, chuẩn hoá từ số tín hiệu hồ sơ khớp với kỹ năng/ngành trên thị trường. */
   relevance_score: number;
   matched_profile_evidence: MatchedProfileEvidence[];
   market_evidence: MarketSignalSnapshot["industry_insights"][number];
@@ -109,7 +110,13 @@ export function matchPathways(
     };
   });
 
-  const matched = allCandidates
+  const maxRawScore = Math.max(...allCandidates.map((c) => c.relevance_score), 1);
+  const normalizedCandidates = allCandidates.map((c) => ({
+    ...c,
+    relevance_score: c.relevance_score > 0 ? Math.round((c.relevance_score / maxRawScore) * 100) : 0,
+  }));
+
+  const matched = normalizedCandidates
     .filter((c) => c.relevance_score > 0)
     .sort((a, b) => b.relevance_score - a.relevance_score);
 
@@ -117,7 +124,7 @@ export function matchPathways(
 
   // Cold-start / hồ sơ ít bằng chứng: KHÔNG suy "không match" thành "không có cơ hội" (ETH-04) —
   // trả về top ngành theo posting_count như gợi ý khám phá chung, gắn cờ is_personalized=false.
-  const fallback = allCandidates
+  const fallback = normalizedCandidates
     .filter((c) => c.relevance_score === 0)
     .sort((a, b) => b.market_evidence.posting_count - a.market_evidence.posting_count);
 

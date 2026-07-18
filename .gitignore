@@ -25,10 +25,15 @@ npm-debug.log*
 *.pem
 *.lnk
 *.docx
+*.pdf
+*.xlsx
+~$*.xlsx
+logo1.png
 
 # Data (dữ liệu crawl có thể nặng, không cần lên git)
 data/raw/*.json
 !data/raw/.gitkeep
+data/data_market_processing/
 
 # Hồ sơ học sinh — dữ liệu cá nhân, TUYỆT ĐỐI không commit
 data/profiles/

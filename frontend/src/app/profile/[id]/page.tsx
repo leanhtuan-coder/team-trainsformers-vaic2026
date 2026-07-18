@@ -438,6 +438,49 @@ function AssessmentForm({ profileId, onSaved }: { profileId: string; onSaved: ()
 
 /* ------------------------------------ Trang Portal ------------------------------------ */
 
+/* ---- Holland Code (RIASEC) từ GET /api/profile/:id/riasec ---- */
+interface RiasecReason { source_ref: string; value: string; weight: number; sign: 1 | -1; }
+interface RiasecScore { letter: string; label: string; raw: number; score: number; reasons: RiasecReason[]; }
+interface RiasecResult {
+  status: "ok" | "insufficient_data" | "need_more_info" | "need_tiebreaker";
+  answered_count: number;
+  scores: RiasecScore[];
+  holland_code: string | null;
+  alt_holland_code: string | null;
+  missing_axes: string[];
+  needs_tiebreaker: boolean;
+  tiebreaker: { a: string; b: string } | null;
+  confidence: { score: number; completeness: number; evidence_ratio: number; consistency: number };
+  conflicts: string[];
+  note: string;
+}
+
+const RIASEC_GRAD: Record<string, string> = {
+  R: "from-orange-400 to-orange-600",
+  I: "from-teal-400 to-teal-600",
+  A: "from-purple-400 to-purple-600",
+  S: "from-pink-400 to-pink-600",
+  E: "from-amber-400 to-amber-600",
+  C: "from-blue-400 to-blue-600",
+};
+
+/** "Mặt trái" của nghề — đặc thù ngành mang tính tham khảo chung (KHÔNG phải số liệu bịa từ hồ sơ).
+ *  Ghép thêm 1 lưu ý từ tín hiệu THẬT (entry_level_ratio) khi ngành cạnh tranh cao. */
+function careerTradeoffs(industry: string, entryRatio: number): string[] {
+  const t: string[] = [];
+  const s = industry.toLowerCase();
+  if (/bán hàng|kinh doanh|sales/.test(s)) t.push("Áp lực chỉ tiêu doanh số; thu nhập dao động theo kết quả.");
+  else if (/cntt|phần mềm|lập trình|dữ liệu|data|công nghệ thông tin/.test(s)) t.push("Công nghệ đổi nhanh, phải học liên tục; nhiều giờ ngồi máy tính.");
+  else if (/marketing/.test(s)) t.push("Deadline dồn theo chiến dịch; liên tục đo lường và tối ưu.");
+  else if (/kế toán|tài chính|kiểm toán|ngân hàng/.test(s)) t.push("Công việc tỉ mỉ, lặp lại; cao điểm mùa quyết toán.");
+  else if (/giáo dục|giảng dạy|sư phạm|đào tạo/.test(s)) t.push("Giao tiếp nhiều, cần kiên nhẫn; áp lực cảm xúc.");
+  else if (/sản xuất|kỹ thuật|vận hành|cnc|cơ khí|logistics|kho|xây dựng/.test(s)) t.push("Môi trường hiện trường/ca kíp; chú trọng an toàn lao động.");
+  else if (/thiết kế|mỹ thuật|sáng tạo|nghệ thuật/.test(s)) t.push("Chỉnh sửa nhiều vòng; gu thẩm mỹ mang tính chủ quan.");
+  else t.push("Nghề nào cũng có giai đoạn áp lực — tìm hiểu kỹ trước khi cam kết.");
+  if (entryRatio < 0.2) t.push("Cạnh tranh cao, thường cần bằng cấp/kinh nghiệm — ít cửa cho người mới.");
+  return t;
+}
+
 function StudentPortalPageContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -455,6 +498,8 @@ function StudentPortalPageContent() {
   const [studentName, setStudentName] = useState("Học sinh");
   const [studentRegion, setStudentRegion] = useState<string | null>(null);
   const [topSkills, setTopSkills] = useState<any[]>([]);
+  const [riasec, setRiasec] = useState<RiasecResult | null>(null);
+  const [rejected, setRejected] = useState<string[]>([]); // ngành đã bấm "Không phải tôi"
 
   // State chatbot AI La Bàn
   const [messages, setMessages] = useState<any[]>([
@@ -513,6 +558,9 @@ function StudentPortalPageContent() {
       const err = await resPath.json().catch(() => null);
       setPathwayError(err?.message || "Chưa tải được gợi ý lộ trình từ backend.");
     }
+
+    const resRia = await fetch(`${API_BASE}/profile/${profileId}/riasec`);
+    if (resRia.ok) setRiasec((await resRia.json()) as RiasecResult);
   }, [profileId]);
 
   useEffect(() => {
@@ -528,8 +576,17 @@ function StudentPortalPageContent() {
   }, [profileId, loadAll]);
 
   const handleRetake = () => {
-    clearPortalRef();
-    router.push("/");
+    router.push(`/onboarding?profileId=${profileId}`);
+  };
+
+  // Câu phá hoà (E1.3): user chọn 1 nhóm → ghi evidence, cập nhật RIASEC ngay.
+  const handleTiebreak = async (letter: string) => {
+    const res = await fetch(`${API_BASE}/profile/${profileId}/riasec/tiebreak`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ letter }),
+    });
+    if (res.ok) setRiasec((await res.json()) as RiasecResult);
   };
 
   const handleLogout = async () => {
@@ -648,15 +705,29 @@ function StudentPortalPageContent() {
   }
 
   /* ----- Dữ liệu dẫn xuất ----- */
-  const { sorted, hasConflict, conflictText, hasAnswers } = calculateStrengths(data.evidence);
+  const { sorted } = calculateStrengths(data.evidence);
   const top3 = sorted.slice(0, 3);
-  const maxScore = Math.max(sorted[0]?.score ?? 0, 1);
+
+  // Hiện chân dung (dù sơ bộ) khi có Holland Code — chỉ ẩn khi insufficient_data.
+  const riasecReady = riasec && riasec.status !== "insufficient_data" && !!riasec.holland_code;
+  const confCls = !riasec
+    ? ""
+    : riasec.confidence.score >= 0.7
+    ? "bg-emerald-100 text-emerald-700"
+    : riasec.confidence.score >= 0.4
+    ? "bg-amber-100 text-amber-700"
+    : "bg-red-100 text-red-700";
   const coverage = data.snapshot.evidence_coverage;
   const assessments = data.evidence.filter((e) => e.source_type === "assessment");
 
   const owned = getOwnedSkills(data.evidence, topSkills);
   const toLearn = getSkillsToLearn(portfolio, topSkills);
   const maxSkillPct = Math.max(...topSkills.map((s) => s.pct), 1);
+
+  // Ứng viên nghề (loại ngành đã "Không phải tôi") — top 3 hiển thị, phần dư làm "Chân trời mới".
+  const visibleCandidates = portfolio ? portfolio.candidates.filter((c) => !rejected.includes(c.industry)) : [];
+  const topCandidates = visibleCandidates.slice(0, 3);
+  const horizonCandidates = visibleCandidates.slice(3, 5);
 
   // Tìm câu trả lời Q9 "độ mở định hướng nghề"
   let horizonVal = "đại học";
@@ -786,7 +857,7 @@ function StudentPortalPageContent() {
           </div>
           <div className="flex flex-col flex-1 min-w-0">
             <span className="font-semibold text-xs truncate">{studentName}</span>
-            <span className="text-[10px] text-white/60 truncate">Học sinh · Lớp 12</span>
+            <span className="text-[10px] text-white/60 truncate">{studentRegion ? `Học sinh · ${studentRegion}` : "Học sinh"}</span>
           </div>
           <button
             type="button"
@@ -842,15 +913,19 @@ function StudentPortalPageContent() {
                   <div>
                     <h2 className="text-lg font-bold text-[#111827]">{studentName}</h2>
                     <p className="text-xs text-[#9CA3AF] mt-0.5">
-                      Học sinh lớp 12 · Trường THPT Chu Văn An, Hà Nội
+                      Học sinh{studentRegion ? ` · Khu vực ${studentRegion}` : ""}
                     </p>
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
-                      <span className="rounded-full bg-teal-50 border border-teal-100 text-teal-700 px-2.5 py-0.5 text-[10px] font-bold">Tư duy logic</span>
-                      <span className="rounded-full bg-blue-50 border border-blue-100 text-blue-700 px-2.5 py-0.5 text-[10px] font-bold">Kiên nhẫn</span>
-                      <span className="rounded-full bg-amber-50 border border-amber-100 text-amber-700 px-2.5 py-0.5 text-[10px] font-bold">Học nhanh</span>
-                      {studentRegion && (
-                        <span className="rounded-full bg-purple-50 border border-purple-100 text-purple-700 px-2.5 py-0.5 text-[10px] font-bold">
-                          Khu vực: {studentRegion}
+                      {/* Thế mạnh THẬT từ RIASEC — không còn tag bịa cố định */}
+                      {riasecReady && riasec!.holland_code ? (
+                        riasec!.scores.filter((s) => s.score > 0).slice(0, 3).map((s) => (
+                          <span key={s.letter} className="rounded-full bg-teal-50 border border-teal-100 text-teal-700 px-2.5 py-0.5 text-[10px] font-bold">
+                            {s.label.split(" — ")[1] || s.label}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="rounded-full bg-gray-50 border border-gray-200 text-gray-500 px-2.5 py-0.5 text-[10px] font-medium">
+                          Chưa đủ khảo sát để hiện thế mạnh
                         </span>
                       )}
                     </div>
@@ -868,59 +943,145 @@ function StudentPortalPageContent() {
                 </button>
               </div>
 
-              {/* RIASEC / Holland Code */}
+              {/* Holland Code (RIASEC) — dữ liệu thật từ backend, deterministic, truy vết được */}
               <Card
-                title="Sơ đồ thế mạnh nhóm ngành (Holland Code)"
-                sub="Tính động từ 10 câu quickstart — câu 10 là câu phản chứng trừ điểm."
+                title="Sơ đồ Holland Code (RIASEC)"
+                sub="Tính deterministic từ khảo sát — mỗi điểm truy được về bằng chứng; giới tính/địa phương không tham gia chấm điểm."
               >
-                {!hasAnswers ? (
+                {!riasecReady ? (
                   <p className="rounded-xl bg-brand-light/50 px-4 py-3 text-sm text-[#464555]">
-                    Chưa có câu trả lời khảo sát trong hồ sơ này — hãy <Link href="/" className="font-semibold text-brand underline">làm khảo sát 10 câu</Link> để xem sơ đồ thế mạnh.
+                    {riasec?.note || "Chưa đủ dữ liệu khảo sát để tính Holland Code."} Hãy{" "}
+                    <Link href="/" className="font-semibold text-brand underline">làm khảo sát</Link> để xem sơ đồ.
                   </p>
                 ) : (
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <div>
-                      <p className="mb-3 text-xs font-bold uppercase tracking-wide text-[#3525CD]">Top 3 nhóm ngành thế mạnh</p>
-                      <div className="space-y-4">
-                        {top3.map((g, i) => (
-                          <div key={g.id}>
-                            <div className="flex items-baseline justify-between gap-3 text-sm">
-                              <span className="font-bold text-ink">
-                                <span className="mr-1.5 text-ink-soft">#{i + 1}</span>{g.name}
-                              </span>
-                              <span className="tabular-nums font-semibold text-ink-soft">{g.score} điểm</span>
-                            </div>
-                            <div className="mt-1.5 h-3.5 overflow-hidden rounded-full bg-gray-100">
-                              <div
-                                className={`grow-bar h-full rounded-full bg-gradient-to-r ${g.gradient}`}
-                                style={{ width: `${Math.max((g.score / maxScore) * 100, 4)}%` }}
-                              />
-                            </div>
-                            <p className="mt-1 text-xs text-ink-soft">{g.desc}</p>
-                          </div>
-                        ))}
+                  <div className="space-y-5">
+                    {/* E1.2 — chân dung sơ bộ khi mới 3–5 câu */}
+                    {riasec!.status === "need_more_info" && (
+                      <div className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-xs text-amber-800">
+                        Đây mới là <b>chân dung sơ bộ</b> (độ tin cậy thấp).
+                        {riasec!.missing_axes.length > 0 && (
+                          <> Còn thiếu tín hiệu ở nhóm: <b>{riasec!.missing_axes.join(", ")}</b>.</>
+                        )}{" "}
+                        <Link href="/" className="font-semibold underline">Làm thêm khảo sát</Link> để chốt Holland Code.
+                      </div>
+                    )}
+
+                    {/* Mã Holland + độ tin cậy */}
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-baseline gap-2.5">
+                        <span className="text-3xl font-extrabold tracking-tight text-[#005c6d]">{riasec!.holland_code}</span>
+                        {riasec!.alt_holland_code && (
+                          <span className="text-sm text-ink-soft">hoặc <b className="text-ink">{riasec!.alt_holland_code}</b></span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-ink-soft">Độ tin cậy</span>
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${confCls}`}>
+                          {Math.round(riasec!.confidence.score * 100)}%
+                        </span>
                       </div>
                     </div>
-                    <div>
-                      <p className="mb-3 text-xs font-bold uppercase tracking-wide text-ink-soft">Toàn bộ 8 nhóm ngành</p>
-                      <div className="space-y-2.5">
-                        {sorted.map((g) => (
-                          <div key={g.id} className="flex items-center gap-3 text-sm">
-                            <span className="w-44 shrink-0 truncate text-ink">{g.name}</span>
-                            <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                              <div
-                                className={`h-full rounded-full bg-gradient-to-r ${g.gradient} ${g.score <= 0 ? "opacity-25" : ""}`}
-                                style={{ width: `${Math.max((Math.max(g.score, 0) / maxScore) * 100, 3)}%` }}
-                              />
-                            </div>
-                            <span className="w-8 shrink-0 text-right tabular-nums text-ink-soft">{g.score}</span>
+
+                    {/* 6 nhóm RIASEC (thang 0–10) */}
+                    <div className="grid gap-2.5">
+                      {riasec!.scores.map((s) => (
+                        <div key={s.letter} className="flex items-center gap-3 text-sm">
+                          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[#005c6d]/10 text-xs font-extrabold text-[#005c6d]">
+                            {s.letter}
+                          </span>
+                          <span className="w-40 shrink-0 truncate text-ink" title={s.label}>
+                            {s.label.split(" — ")[1] || s.label}
+                          </span>
+                          <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-100">
+                            <div
+                              className={`grow-bar h-full rounded-full bg-gradient-to-r ${RIASEC_GRAD[s.letter] || "from-teal-400 to-teal-600"} ${s.score <= 0 ? "opacity-20" : ""}`}
+                              style={{ width: `${Math.max(s.score * 10, 2)}%` }}
+                            />
                           </div>
+                          <span className="w-8 shrink-0 text-right tabular-nums text-ink-soft">{s.score}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Chi tiết độ tin cậy */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-ink-soft">
+                      <span>Hoàn thành khảo sát: <b className="text-ink">{Math.round(riasec!.confidence.completeness * 100)}%</b></span>
+                      <span>Có bằng chứng thật: <b className="text-ink">{Math.round(riasec!.confidence.evidence_ratio * 100)}%</b></span>
+                      <span>Nhất quán: <b className="text-ink">{Math.round(riasec!.confidence.consistency * 100)}%</b></span>
+                    </div>
+
+                    {/* E1.3 — câu phá hoà khi 2 nhóm sát điểm */}
+                    {riasec!.needs_tiebreaker && riasec!.tiebreaker && (
+                      <div className="rounded-xl border border-brand/30 bg-brand-light/40 p-3.5">
+                        <p className="text-xs font-semibold text-brand">Hai nhóm đang sát điểm — chọn giúp mình 1 câu để chốt chữ thứ 3:</p>
+                        <div className="mt-2.5 grid grid-cols-2 gap-2">
+                          {[riasec!.tiebreaker.a, riasec!.tiebreaker.b].map((L) => {
+                            const sc = riasec!.scores.find((s) => s.letter === L);
+                            return (
+                              <button
+                                key={L}
+                                type="button"
+                                onClick={() => handleTiebreak(L)}
+                                className="rounded-lg border border-brand/30 bg-white px-3 py-2.5 text-xs font-semibold text-brand transition hover:bg-brand hover:text-white active:scale-[0.98]"
+                              >
+                                {sc?.label.split(" — ")[1] || L}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Mâu thuẫn — giữ lại, không tự xóa (ETH-06) */}
+                    {riasec!.conflicts.length > 0 && (
+                      <div className="rounded-xl bg-[#FBF1DD] px-3.5 py-2.5 text-xs text-[#8A5B06]">
+                        <p className="font-bold">Điểm đáng khám phá (mâu thuẫn — giữ lại để bạn tự quyết):</p>
+                        <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                          {riasec!.conflicts.map((c, i) => <li key={i}>{c}</li>)}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Vì sao — truy vết bằng chứng (ETH-06) */}
+                    <details className="group">
+                      <summary className="cursor-pointer text-xs font-semibold text-brand hover:underline">
+                        Vì sao có kết quả này? (bằng chứng từng nhóm)
+                      </summary>
+                      <div className="mt-2 space-y-1.5">
+                        {riasec!.scores.filter((s) => s.reasons.length > 0).map((s) => (
+                          <p key={s.letter} className="text-xs leading-relaxed">
+                            <span className="mr-1 font-bold text-[#005c6d]">{s.letter}</span>
+                            <span className="text-ink-soft">
+                              {s.reasons.map((r) => `${r.sign < 0 ? "− " : ""}${r.value}`).join(" · ")}
+                            </span>
+                          </p>
                         ))}
                       </div>
-                    </div>
+                    </details>
+
+                    <p className="text-[11px] text-ink-soft">{riasec!.note}</p>
                   </div>
                 )}
               </Card>
+
+              {/* E1.5 — mời làm bài đánh giá chuẩn để nâng độ tin cậy (đã xác minh > tự khai) */}
+              {riasecReady && riasec!.confidence.evidence_ratio < 1 && (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand/20 bg-gradient-to-r from-brand-light/60 to-white p-4">
+                  <div>
+                    <p className="text-sm font-bold text-ink">Muốn kết quả chắc chắn hơn?</p>
+                    <p className="text-xs text-ink-soft">
+                      Làm bài đánh giá chuẩn / khai chứng chỉ — bằng chứng đã xác minh sẽ nâng độ tin cậy (nguyên tắc: đã xác minh {">"} tự khai).
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTab("ledger")}
+                    className="shrink-0 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-dark"
+                  >
+                    Làm bài đánh giá chuẩn →
+                  </button>
+                </div>
+              )}
 
               {/* 3 CARD GỢI Ý NGHỀ NGHIỆP DÀN NGANG (MD:GRID-COLS-3) */}
               <div className="space-y-4">
@@ -936,23 +1097,25 @@ function StudentPortalPageContent() {
                   <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{pathwayError}</p>
                 ) : !portfolio ? (
                   <p className="text-sm text-gray-500">Đang tải gợi ý lộ trình…</p>
+                ) : topCandidates.length === 0 ? (
+                  <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    Bạn đã bỏ qua tất cả gợi ý.{" "}
+                    <button type="button" onClick={() => setRejected([])} className="font-semibold underline">Khôi phục danh sách</button>{" "}
+                    hoặc làm lại khảo sát để có hướng mới.
+                  </p>
                 ) : (
                   <div className="grid gap-5 md:grid-cols-3">
-                    {portfolio.candidates.slice(0, 3).map((c) => {
+                    {topCandidates.map((c) => {
                       const entryPct = Math.round(c.market_evidence.entry_level_ratio * 100);
                       const vocationalFriendly = c.market_evidence.entry_level_ratio >= 0.25;
+                      const gapSkill = c.market_evidence.top_skills.find((s) => !owned.has(s.name));
                       return (
-                        <article key={c.industry} className="rounded-2xl border border-gray-200/80 bg-white p-5 flex flex-col justify-between shadow-sm relative">
-                          
-                          {/* Top Header Card */}
-                          <div className="flex items-start justify-between gap-4">
+                        <article key={c.industry} className="rounded-2xl border border-gray-200/80 bg-white p-5 flex flex-col shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-brand/40">
+                          {/* Header */}
+                          <div className="flex items-start justify-between gap-3">
                             <div>
-                              <span className="inline-flex rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase tracking-wide">
-                                Gợi ý tham khảo
-                              </span>
-                              <h4 className="mt-2 text-base font-extrabold text-[#111827] leading-tight">
-                                {c.industry}
-                              </h4>
+                              <span className="inline-flex rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase tracking-wide">Gợi ý tham khảo</span>
+                              <h4 className="mt-2 text-base font-extrabold text-[#111827] leading-tight">{c.industry}</h4>
                             </div>
                             <div className="relative flex items-center justify-center w-11 h-11 rounded-full border-[3px] border-[#16a34a] text-[#16a34a] font-bold text-xs shrink-0">
                               {c.relevance_score}%
@@ -960,51 +1123,104 @@ function StudentPortalPageContent() {
                             </div>
                           </div>
 
-                          {/* Matching Quote Box */}
-                          {c.matched_profile_evidence.length > 0 && (
-                            <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/50 p-3.5 text-xs text-[#005c6d]">
-                              <p className="font-bold uppercase tracking-wider text-[10px] text-teal-800">
-                                Lợi thế của bạn:
-                              </p>
-                              <p className="mt-1 leading-relaxed">
-                                &ldquo;{highlightTokens(c.matched_profile_evidence[0].value, c.matched_profile_evidence[0].matched_tokens)}&rdquo;
+                          <div className="mt-4 space-y-2.5 text-xs flex-1">
+                            {/* 1 · Vì em */}
+                            <div className="rounded-xl border border-teal-100 bg-teal-50/50 p-3">
+                              <p className="font-bold uppercase tracking-wider text-[10px] text-teal-800">1 · Vì em</p>
+                              <p className="mt-1 leading-relaxed text-[#005c6d]">
+                                {c.matched_profile_evidence.length > 0 ? (
+                                  <>&ldquo;{highlightTokens(c.matched_profile_evidence[0].value, c.matched_profile_evidence[0].matched_tokens)}&rdquo;</>
+                                ) : (
+                                  "Chưa đủ bằng chứng khớp trực tiếp — làm thêm khảo sát/bổ sung hồ sơ để rõ hơn."
+                                )}
+                                {riasecReady && riasec!.holland_code && (
+                                  <span className="mt-1 block text-ink-soft">Nhóm sở thích của em: <b>{riasec!.holland_code}</b>.</span>
+                                )}
                               </p>
                             </div>
-                          )}
 
-                          {/* Skills List */}
-                          <div className="mt-4">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF]">Kỹ năng cần có</p>
-                            <div className="mt-1.5 flex flex-wrap gap-1.5">
-                              {c.market_evidence.top_skills.slice(0, 5).map((s) => (
-                                <span key={s.name} className="rounded bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-600">
-                                  {s.name}
-                                </span>
-                              ))}
+                            {/* 2 · Vì thị trường */}
+                            <div className="rounded-xl bg-gray-50 p-3">
+                              <p className="font-bold uppercase tracking-wider text-[10px] text-gray-500">2 · Vì thị trường</p>
+                              <ul className="mt-1 space-y-0.5 text-[#111827]">
+                                <li>· <b>{fmtInt(c.market_evidence.posting_count)}</b> tin tuyển (trong snapshot)</li>
+                                <li>· Lương trung vị: <b className="text-brand">{c.market_evidence.salary ? `${fmtSalaryFromMillions(c.market_evidence.salary.median_trieu)}/tháng` : "Thỏa thuận"}</b></li>
+                                <li>· <b>{entryPct}%</b> tin nhận người mới</li>
+                              </ul>
+                            </div>
+
+                            {/* 3 · Nhiều đường đến */}
+                            <div className="rounded-xl bg-gray-50 p-3">
+                              <p className="font-bold uppercase tracking-wider text-[10px] text-gray-500">3 · Nhiều đường đến</p>
+                              <ul className="mt-1 space-y-0.5 text-[#111827]">
+                                <li className="flex items-center gap-1.5"><IconGradCap className="w-3 h-3 text-[#9CA3AF] shrink-0" /> Đại học chính quy (4–5 năm)</li>
+                                <li className="flex items-center gap-1.5"><IconBriefcase className="w-3 h-3 text-[#9CA3AF] shrink-0" /> Cao đẳng / Trung cấp nghề (2–3 năm){vocationalFriendly ? " · khá rộng cửa" : ""}</li>
+                              </ul>
+                            </div>
+
+                            {/* 4 · Mặt trái */}
+                            <div className="rounded-xl bg-[#FBF1DD]/60 p-3">
+                              <p className="font-bold uppercase tracking-wider text-[10px] text-[#8A5B06]">4 · Mặt trái (đặc thù ngành)</p>
+                              <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[#8A5B06]">
+                                {careerTradeoffs(c.industry, c.market_evidence.entry_level_ratio).map((tr, i) => <li key={i}>{tr}</li>)}
+                              </ul>
+                            </div>
+
+                            {/* 5 · Nếu — thì */}
+                            <div className="rounded-xl border border-brand/20 bg-brand-light/40 p-3">
+                              <p className="font-bold uppercase tracking-wider text-[10px] text-brand">5 · Nếu — thì</p>
+                              <p className="mt-1 leading-relaxed text-ink">
+                                {gapSkill ? (
+                                  <>Nếu em học thêm <b>{gapSkill.name}</b> → hồ sơ khớp ngành này rõ hơn.</>
+                                ) : (
+                                  <>Em đã có nhiều kỹ năng cốt lõi — làm 1 dự án nhỏ để minh chứng là đủ mạnh.</>
+                                )}
+                              </p>
                             </div>
                           </div>
 
-                           {/* Footer Info */}
-                          <div className="mt-5 pt-4 border-t border-gray-100 space-y-1.5 text-xs font-semibold">
-                            <p className="text-[#111827] flex items-center gap-1.5">
-                              <IconCoins className="w-3.5 h-3.5 text-brand" />
-                              <span>Lương:</span>
-                              <span className="tabular-nums font-bold text-brand">{c.market_evidence.salary ? `${fmtSalaryFromMillions(c.market_evidence.salary.median_trieu)}/tháng` : "Thỏa thuận"}</span>
-                            </p>
-                            <p className="text-[#9CA3AF] flex items-center gap-1.5">
-                              <IconGradCap className="w-3.5 h-3.5 text-[#9CA3AF]" />
-                              <span>Lộ trình:</span>
-                              <span className="text-[#111827]">
-                                {vocationalFriendly ? "Cao đẳng / Trung cấp nghề" : "Đại học chính quy (4-5 năm)"}
-                              </span>
-                            </p>
-                          </div>
+                          {/* Quyền từ chối */}
+                          <button
+                            type="button"
+                            onClick={() => setRejected((r) => [...r, c.industry])}
+                            className="mt-4 w-full rounded-xl border border-gray-200 py-2.5 text-xs font-bold text-gray-500 transition hover:border-red-300 hover:bg-red-50/50 hover:text-red-500 active:scale-[0.98]"
+                          >
+                            Không phải tôi / Muốn hướng khác →
+                          </button>
                         </article>
                       );
                     })}
                   </div>
                 )}
               </div>
+
+              {/* Chân trời mới — nghề ít hiển nhiên nhưng khoảng cách kỹ năng gần */}
+              {horizonCandidates.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <IconBulb className="w-4 h-4 text-brand" />
+                    <h3 className="text-base font-extrabold text-[#111827]">Chân trời mới</h3>
+                    <span className="text-xs text-ink-soft">— nghề bạn có thể chưa nghĩ tới, nhưng kỹ năng khá gần với hồ sơ hiện tại</span>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {horizonCandidates.map((c) => (
+                      <div key={c.industry} className="rounded-2xl border border-dashed border-brand/30 bg-brand-light/20 p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <h4 className="font-bold text-[#111827]">{c.industry}</h4>
+                          <span className="shrink-0 text-xs font-bold text-brand">{c.relevance_score}% phù hợp</span>
+                        </div>
+                        <p className="mt-1 text-xs text-ink-soft">
+                          {fmtInt(c.market_evidence.posting_count)} tin · lương{" "}
+                          {c.market_evidence.salary ? `${fmtSalaryFromMillions(c.market_evidence.salary.median_trieu)}/tháng` : "thỏa thuận"}
+                        </p>
+                        <p className="mt-1.5 text-xs text-ink">
+                          Kỹ năng gần: {c.market_evidence.top_skills.slice(0, 3).map((s) => s.name).join(", ") || "—"}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Skill gap & Timeline 4 bước */}
               {topSkills.length > 0 && (

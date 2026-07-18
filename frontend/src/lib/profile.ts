@@ -68,3 +68,135 @@ export function saveProfile(p: UserProfile) {
 export function clearProfile() {
   localStorage.removeItem(KEY);
 }
+
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
+export type DimensionGroup =
+  | "ability_skill"
+  | "activity_interest"
+  | "work_values"
+  | "goals_exploration"
+  | "context_preferences";
+
+export interface QuickstartQuestion {
+  id: string;
+  text: string;
+  type: "text" | "single" | "multi";
+  options?: string[];
+  group: DimensionGroup;
+  dimension: string;
+}
+
+export interface EvidenceClaim {
+  group: DimensionGroup;
+  dimension: string;
+  value: string;
+}
+
+export interface EvidenceItem {
+  evidence_id: string;
+  source_type: "self_report" | "document" | "assessment" | "interaction" | "ai_inference" | string;
+  source_ref?: string;
+  claims: EvidenceClaim[];
+  assessment_detail?: {
+    name: string;
+    provider: string;
+    score: number;
+    scale_max: number;
+    percentile_top?: number;
+    taken_at?: string;
+  };
+  confidence: "low" | "medium" | "high" | string;
+  collected_at: string;
+  user_confirmed?: boolean;
+}
+
+export interface ProfileApiResponse {
+  snapshot: {
+    profile_id: string;
+    evidence_coverage: {
+      total_evidence: number;
+      confirmed_evidence: number;
+      groups_with_evidence: number;
+      groups_total: number;
+    };
+  };
+  evidence: EvidenceItem[];
+}
+
+async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers || {}),
+    },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.message || body?.error || `api_error_${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
+
+export async function createBackendProfile(): Promise<string> {
+  const data = await apiJson<{ profile_id: string }>("/profile", { method: "POST" });
+  return data.profile_id;
+}
+
+export async function getQuickstartQuestions(): Promise<QuickstartQuestion[]> {
+  const data = await apiJson<{ questions: QuickstartQuestion[] }>("/profile/quickstart");
+  return data.questions;
+}
+
+export async function getBackendProfile(profileId: string): Promise<ProfileApiResponse> {
+  return apiJson<ProfileApiResponse>(`/profile/${profileId}`);
+}
+
+export async function submitQuickstartAnswers(
+  profileId: string,
+  answers: { question_id: string; answer: string | string[] }[]
+) {
+  return apiJson(`/profile/${profileId}/quickstart`, {
+    method: "POST",
+    body: JSON.stringify({ answers }),
+  });
+}
+
+export async function addEvidence(
+  profileId: string,
+  payload: {
+    source_type?: "self_report" | "document" | "interaction" | "ai_inference";
+    source_ref?: string;
+    confidence?: "low" | "medium" | "high";
+    claims: EvidenceClaim[];
+  }
+) {
+  return apiJson(`/profile/${profileId}/evidence`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function addAssessment(
+  profileId: string,
+  payload: {
+    name: string;
+    provider: string;
+    score: number;
+    scale_max: number;
+    percentile_top?: number;
+    taken_at?: string;
+    claims?: EvidenceClaim[];
+  }
+) {
+  return apiJson(`/profile/${profileId}/assessment`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function hasCompletedOnboarding(profile: ProfileApiResponse): boolean {
+  const quickstartCount = profile.evidence.filter((e) => e.source_type === "self_report" && e.source_ref?.startsWith("qs-")).length;
+  return quickstartCount >= 3;
+}

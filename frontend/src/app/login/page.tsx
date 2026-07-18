@@ -8,6 +8,7 @@ import { LogoMark } from "@/components/ui/Compass";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { linkSessionToProfile } from "@/lib/linkProfile";
+import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -45,7 +46,8 @@ export default function LoginPage() {
         return;
       }
       const profileId = await linkSessionToProfile(supabase, data.user);
-      router.push(`/profile/${profileId}`);
+      const profile = await getBackendProfile(profileId);
+      router.push(hasCompletedOnboarding(profile) ? `/profile/${profileId}` : `/onboarding?profileId=${profileId}`);
     } catch (err: any) {
       setError(err?.message || "Đăng nhập thất bại. Vui lòng thử lại.");
     } finally {

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabaseClient";
 import { linkSessionToProfile } from "@/lib/linkProfile";
+import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
 import { LogoMark } from "@/components/ui/Compass";
 
 export default function AuthCallbackPage() {
@@ -32,7 +33,8 @@ export default function AuthCallbackPage() {
       try {
         setStatus("Đang mở hồ sơ của bạn…");
         const profileId = await linkSessionToProfile(supabase, session.user);
-        router.replace(`/profile/${profileId}`);
+        const profile = await getBackendProfile(profileId);
+        router.replace(hasCompletedOnboarding(profile) ? `/profile/${profileId}` : `/onboarding?profileId=${profileId}`);
       } catch (err) {
         console.error("[auth/callback] link profile failed:", err);
         setStatus("Có lỗi khi liên kết hồ sơ. Đang đưa bạn về trang đăng nhập…");

@@ -8,6 +8,7 @@ import { LogoMark } from "@/components/ui/Compass";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { linkSessionToProfile } from "@/lib/linkProfile";
+import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
 
 const REGIONS = [
   "Hồ Chí Minh",
@@ -70,7 +71,8 @@ export default function RegisterPage() {
           name: name.trim(),
           region,
         });
-        router.push(`/profile/${profileId}`);
+        const profile = await getBackendProfile(profileId);
+        router.push(hasCompletedOnboarding(profile) ? `/profile/${profileId}` : `/onboarding?profileId=${profileId}`);
       } else {
         // Email confirmation BẬT → chờ user xác nhận qua email.
         setInfo(`Đã gửi email xác nhận tới ${email.trim()}. Xác nhận xong rồi đăng nhập nhé.`);

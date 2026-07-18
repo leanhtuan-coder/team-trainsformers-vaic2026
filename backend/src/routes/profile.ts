@@ -2,6 +2,7 @@ import { Router } from "express";
 import { randomUUID } from "node:crypto";
 import { QUICKSTART_QUESTIONS } from "../profile/quickstart.js";
 import { buildSnapshot } from "../profile/snapshot.js";
+import { scoreRiasec } from "../profile/riasec.js";
 import type { AssessmentDetail, Evidence, Profile } from "../profile/schema.js";
 import { loadProfile, saveProfile } from "../profile/store.js";
 import { matchPathways } from "../matching/engine.js";
@@ -96,10 +97,91 @@ router.post("/:id/assessment", async (req, res) => {
 });
 
 /** Đọc hồ sơ: Derived Profile Snapshot (tính lại từ ledger) + toàn bộ evidence để truy vết. */
+/** Ghi bằng chứng tự do vào Evidence Ledger: thông tin nền, chứng chỉ mô tả bằng chữ, trải nghiệm, sở thích mới.
+ *  Endpoint này giữ nguyên nguyên tắc append-only: không sửa/xóa evidence cũ, chỉ thêm evidence mới đã được user xác nhận. */
+router.post("/:id/evidence", async (req, res) => {
+  const profile = await loadProfile(req.params.id);
+  if (!profile) return res.status(404).json({ error: "profile_not_found" });
+
+  const allowedSources = new Set(["self_report", "document", "interaction", "ai_inference"]);
+  const allowedGroups = new Set(["ability_skill", "activity_interest", "work_values", "goals_exploration", "context_preferences"]);
+  const sourceType = String(req.body?.source_type || "self_report");
+  const sourceRef = String(req.body?.source_ref || "manual-entry").trim();
+  const confidence = String(req.body?.confidence || "medium");
+  const claims = Array.isArray(req.body?.claims) ? req.body.claims : [];
+
+  if (!allowedSources.has(sourceType)) {
+    return res.status(400).json({ error: "invalid_source_type" });
+  }
+  if (!["low", "medium", "high"].includes(confidence)) {
+    return res.status(400).json({ error: "invalid_confidence" });
+  }
+
+  const cleanClaims = claims
+    .map((c: any) => ({
+      group: String(c?.group || "").trim(),
+      dimension: String(c?.dimension || "").trim(),
+      value: String(c?.value || "").trim(),
+    }))
+    .filter((c: any) => allowedGroups.has(c.group) && c.dimension && c.value);
+
+  if (cleanClaims.length === 0) {
+    return res.status(400).json({
+      error: "claims_required",
+      message: "Body cần { claims: [{ group, dimension, value }] } hợp lệ.",
+    });
+  }
+
+  const evidence: Evidence = {
+    evidence_id: randomUUID(),
+    source_type: sourceType as Evidence["source_type"],
+    source_ref: sourceRef || "manual-entry",
+    claims: cleanClaims as Evidence["claims"],
+    confidence: confidence as Evidence["confidence"],
+    collected_at: new Date().toISOString(),
+    user_confirmed: req.body?.user_confirmed !== false,
+  };
+
+  profile.evidence.push(evidence);
+  await saveProfile(profile);
+  res.status(201).json({ evidence_id: evidence.evidence_id, snapshot: buildSnapshot(profile) });
+});
+
 router.get("/:id", async (req, res) => {
   const profile = await loadProfile(req.params.id);
   if (!profile) return res.status(404).json({ error: "profile_not_found" });
   res.json({ snapshot: buildSnapshot(profile), evidence: profile.evidence });
+});
+
+/** Holland Code (RIASEC) — deterministic, tính từ Evidence Ledger (xem profile/riasec.ts). */
+router.get("/:id/riasec", async (req, res) => {
+  const profile = await loadProfile(req.params.id);
+  if (!profile) return res.status(404).json({ error: "profile_not_found" });
+  res.json(scoreRiasec(profile));
+});
+
+/** Câu phá hoà (E1.3): user chọn 1 nhóm RIASEC để chốt khi 2 nhóm sát điểm.
+ *  Ghi 1 evidence 'interaction' (weight 1.2) rồi trả về snapshot RIASEC mới. */
+router.post("/:id/riasec/tiebreak", async (req, res) => {
+  const profile = await loadProfile(req.params.id);
+  if (!profile) return res.status(404).json({ error: "profile_not_found" });
+
+  const letter = String(req.body?.letter || "").toUpperCase();
+  if (!["R", "I", "A", "S", "E", "C"].includes(letter)) {
+    return res.status(400).json({ error: "invalid_letter", message: "letter phải là một trong R/I/A/S/E/C" });
+  }
+
+  profile.evidence.push({
+    evidence_id: randomUUID(),
+    source_type: "interaction", // hành vi phá hoà — trọng số 1.2
+    source_ref: "riasec-tiebreak",
+    claims: [{ group: "activity_interest", dimension: "phá hoà RIASEC", value: letter }],
+    confidence: "medium",
+    collected_at: new Date().toISOString(),
+    user_confirmed: true,
+  });
+  await saveProfile(profile);
+  res.json(scoreRiasec(profile));
 });
 
 /** Pathway Portfolio (Slice C, bước rule-based — xem backend/src/matching/engine.ts). */
