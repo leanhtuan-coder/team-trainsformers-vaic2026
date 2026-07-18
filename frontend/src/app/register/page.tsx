@@ -7,7 +7,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { LogoMark } from "@/components/ui/Compass";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
-import { linkSessionToProfile } from "@/lib/linkProfile";
+import { linkSessionToProfile, friendlyProfileError } from "@/lib/linkProfile";
 import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
 
 const REGIONS = [
@@ -78,7 +78,7 @@ export default function RegisterPage() {
         setInfo(`Đã gửi email xác nhận tới ${email.trim()}. Xác nhận xong rồi đăng nhập nhé.`);
       }
     } catch (err: any) {
-      setError(err?.message || "Đăng ký thất bại. Vui lòng thử lại.");
+      setError(friendlyProfileError(err));
     } finally {
       setLoading(false);
     }

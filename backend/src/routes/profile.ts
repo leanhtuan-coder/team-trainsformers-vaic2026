@@ -3,6 +3,9 @@ import { randomUUID } from "node:crypto";
 import { QUICKSTART_QUESTIONS } from "../profile/quickstart.js";
 import { buildSnapshot } from "../profile/snapshot.js";
 import { scoreRiasec } from "../profile/riasec.js";
+import { scoreRiasecWithNvidia, isNvidiaConfigured } from "../llm/nvidia.js";
+import { scoreRiasecWithGroq, isGroqConfigured, type QuestionAnswer } from "../llm/groq.js";
+import { scoreRiasecFallback } from "../profile/riasecFallback.js";
 import type { AssessmentDetail, Evidence, Profile } from "../profile/schema.js";
 import { loadProfile, saveProfile } from "../profile/store.js";
 import { matchPathways } from "../matching/engine.js";
@@ -37,17 +40,17 @@ router.post("/:id/quickstart", async (req, res) => {
   }
 
   const created: string[] = [];
+  const toScore: QuestionAnswer[] = []; // câu tự do RIASEC — chấm điểm sau khi lưu self_report
   for (const { question_id, answer } of answers) {
     const question = QUICKSTART_QUESTIONS.find((q) => q.id === question_id);
     if (!question) continue;
     const values = Array.isArray(answer) ? answer : [answer];
+    const answerText = values.filter((v) => typeof v === "string" && v.trim()).join(", ").trim();
     const evidence: Evidence = {
       evidence_id: randomUUID(),
       source_type: "self_report",
       source_ref: question.id,
-      claims: values
-        .filter((v) => typeof v === "string" && v.trim())
-        .map((v) => ({ group: question.group, dimension: question.dimension, value: v.trim() })),
+      claims: answerText ? [{ group: question.group, dimension: question.dimension, value: answerText }] : [],
       confidence: "medium",
       collected_at: new Date().toISOString(),
       user_confirmed: true,
@@ -55,6 +58,53 @@ router.post("/:id/quickstart", async (req, res) => {
     if (evidence.claims.length === 0) continue;
     profile.evidence.push(evidence);
     created.push(evidence.evidence_id);
+    toScore.push({ id: question.id, dimension: question.dimension, question: question.text, answer: answerText });
+  }
+
+  // Chấm RIASEC cho các câu tự do vừa nộp: gpt-oss-120b qua NVIDIA NIM trước (key đã cấu hình sẵn
+  // cho chatbot La Bàn), Groq dự phòng nếu ai cấu hình GROQ_API_KEY, cuối cùng mới fallback từ khoá
+  // — KHÔNG chặn cứng luồng, self_report facts đã lưu ở trên dù chấm điểm có lỗi cả 3 lớp.
+  if (toScore.length > 0) {
+    let llmUsed = false;
+    let result: Awaited<ReturnType<typeof scoreRiasecWithGroq>> | null = null;
+    if (isNvidiaConfigured()) {
+      try {
+        result = await scoreRiasecWithNvidia(toScore);
+        llmUsed = true;
+      } catch (err) {
+        console.error("[riasec] NVIDIA NIM chấm điểm lỗi, thử Groq:", err);
+      }
+    }
+    if (!result && isGroqConfigured()) {
+      try {
+        result = await scoreRiasecWithGroq(toScore);
+        llmUsed = true;
+      } catch (err) {
+        console.error("[riasec] Groq chấm điểm lỗi, dùng fallback từ khoá:", err);
+      }
+    }
+    if (!result) result = scoreRiasecFallback(toScore);
+
+    for (const qa of toScore) {
+      const letters = result[qa.id] ?? [];
+      if (letters.length === 0) continue;
+      const summary = letters
+        .slice()
+        .sort((a, b) => b.score - a.score)
+        .map((l) => `${l.letter} ${l.score}/10`)
+        .join(", ");
+      const scoreEvidence: Evidence = {
+        evidence_id: randomUUID(),
+        source_type: "ai_inference",
+        source_ref: qa.id,
+        claims: [{ group: "activity_interest", dimension: `${qa.dimension} — chấm RIASEC`, value: summary }],
+        ai_riasec: letters,
+        confidence: llmUsed ? "high" : "low",
+        collected_at: new Date().toISOString(),
+        user_confirmed: true, // là kết quả trực tiếp của hành động nộp quickstart, không phải suy luận ẩn (ETH-11)
+      };
+      profile.evidence.push(scoreEvidence);
+    }
   }
 
   await saveProfile(profile);

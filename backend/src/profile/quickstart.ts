@@ -7,136 +7,67 @@ export interface QuickstartQuestion {
   options?: string[];
   group: DimensionGroup;
   dimension: string;
+  /** Mô tả ngắn cho UI + ngữ cảnh cho LLM chấm điểm (không phải chip lựa chọn — câu hỏi tự do). */
+  description?: string;
+  /** Gợi ý nhóm RIASEC hay gặp ở câu này — CHỈ để mồi ngữ cảnh cho LLM, không ép buộc kết quả. */
+  hint_letters?: string;
 }
 
+// 6 câu hỏi tự do (Chặng 1 — theo đúng user-jouney.docx): mỗi câu chấm bằng LLM (gpt-oss-120b),
+// KHÔNG còn là trắc nghiệm chọn đáp án. Xem profile/riasecScorer.ts.
 export const QUICKSTART_QUESTIONS: QuickstartQuestion[] = [
   {
-    id: "qs-01-object",
-    text: "Câu 1. Đối tượng làm việc nào khiến bạn thấy cuốn hút nhất?",
-    type: "single",
-    options: [
-      "Máy móc, thiết bị, xây dựng thứ gì đó bằng tay",
-      "Con số, dữ liệu, phân tích",
-      "Con người: giúp đỡ, chăm sóc, dạy dỗ",
-      "Ý tưởng, sáng tạo, cái đẹp"
-    ],
+    id: "q1-interest",
+    text: "Việc gì khiến bạn quên cả thời gian?",
+    type: "text",
     group: "activity_interest",
-    dimension: "đối tượng làm việc cuốn hút",
+    dimension: "Sở thích (Interest)",
+    description: "Nhóm hứng thú tự nhiên, không \"gồng\"",
+    hint_letters: "R / I / A / S — nhóm trội nhất",
   },
   {
-    id: "qs-02-teamrole",
-    text: "Câu 2. Trong một dự án nhóm, bạn thường là người…?",
-    type: "single",
-    options: [
-      "Đứng ra dẫn dắt, thuyết phục mọi người",
-      "Lên kế hoạch, sắp xếp cho chạy trơn tru",
-      "Kết nối, hòa giải, chăm lo cảm xúc nhóm",
-      "Giải quyết phần khó nhất về kỹ thuật/logic"
-    ],
+    id: "q2-aptitude",
+    text: "Điều gì bạn làm dễ mà người khác thấy khó?",
+    type: "text",
     group: "ability_skill",
-    dimension: "vai trò trong dự án nhóm",
+    dimension: "Năng lực (Aptitude)",
+    description: "Điểm mạnh bẩm sinh, tách khỏi sở thích",
+    hint_letters: "Bất kỳ nhóm nào — nhưng là năng lực thật",
   },
   {
-    id: "qs-03-satisfaction",
-    text: "Câu 3. Bạn thấy thỏa mãn nhất khi…?",
-    type: "single",
-    options: [
-      "Sửa được một thứ hỏng / làm ra sản phẩm chạy được",
-      "Tìm ra quy luật ẩn trong mớ thông tin",
-      "Thấy người khác tiến bộ/khỏe hơn nhờ mình",
-      "Tạo ra thứ chưa ai làm, được công nhận"
-    ],
+    id: "q3-value",
+    text: "Công việc phải có gì bạn mới thấy đáng làm?",
+    type: "text",
     group: "work_values",
-    dimension: "nguồn gốc sự thỏa mãn",
+    dimension: "Giá trị (Value)",
+    description: "Động lực cốt lõi → quyết định độ bền với nghề",
+    hint_letters: "S (giúp người) / A (sáng tạo) / E (thành đạt) / C (ổn định)",
   },
   {
-    id: "qs-04-subject",
-    text: "Câu 4. Môn học hoặc hoạt động bạn thấy dễ chịu nhất?",
-    type: "single",
-    options: [
-      "Toán, Lý, Tin",
-      "Văn, Ngoại ngữ, Sử",
-      "Sinh, Hóa",
-      "Mỹ thuật, Âm nhạc, sáng tạo"
-    ],
-    group: "ability_skill",
-    dimension: "môn học hoạt động dễ chịu",
-  },
-  {
-    id: "qs-05-building",
-    text: "Câu 5. Bạn thích \"xây\" thứ nào hơn?",
-    type: "single",
-    options: [
-      "Thứ vô hình: phần mềm, hệ thống, quy trình",
-      "Thứ sờ được: máy móc, công trình, sản phẩm vật lý",
-      "Thứ thuộc về con người: trải nghiệm, bài giảng, dịch vụ",
-      "Thứ thuộc về cái đẹp: hình ảnh, âm thanh, tác phẩm"
-    ],
-    group: "activity_interest",
-    dimension: "đối tượng muốn xây dựng",
-  },
-  {
-    id: "qs-06-strength",
-    text: "Câu 6. Việc nào bạn thấy mình làm tốt hơn hẳn bạn bè cùng lớp? (chọn tối đa 2)",
-    type: "multi",
-    options: [
-      "Giải bài logic/toán khó",
-      "Viết, thuyết trình, thuyết phục",
-      "Nhớ chi tiết, làm cẩn thận không sai sót",
-      "Vẽ, thiết kế, cảm nhận thẩm mỹ",
-      "Làm tay chân, lắp ráp, sửa chữa"
-    ],
-    group: "ability_skill",
-    dimension: "năng lực nổi trội tự nhận",
-  },
-  {
-    id: "qs-07-datahandling",
-    text: "Câu 7. Với một bảng dữ liệu, bạn thích làm gì hơn?",
-    type: "single",
-    options: [
-      "Kiểm tra cho khớp, đúng quy tắc, không sai sót",
-      "Tìm insight, dự đoán xu hướng từ nó",
-      "Trình bày cho người khác hiểu, kể thành câu chuyện"
-    ],
-    group: "activity_interest",
-    dimension: "phương thức xử lý dữ liệu",
-  },
-  {
-    id: "qs-08-environment",
-    text: "Câu 8. Môi trường làm việc bạn muốn?",
-    type: "single",
-    options: [
-      "Ngoài hiện trường, vận động, không ngồi bàn nhiều",
-      "Văn phòng, ổn định, quy trình rõ ràng",
-      "Tiếp xúc nhiều người, năng động",
-      "Tự do, linh hoạt, tự đặt nhịp"
-    ],
+    id: "q4-environment",
+    text: "Bạn làm tốt nhất khi một mình / nhóm / dẫn dắt?",
+    type: "text",
     group: "context_preferences",
-    dimension: "môi trường làm việc mong muốn",
+    dimension: "Môi trường & tương tác (Environment)",
+    description: "Bối cảnh làm việc phù hợp",
+    hint_letters: "I·R (độc lập) vs S (hợp tác) vs E (dẫn dắt)",
   },
   {
-    id: "qs-09-route",
-    text: "Câu 9. Con đường nào nghe hấp dẫn hơn với bạn?",
-    type: "single",
-    options: [
-      "Nghề ổn định, rõ lộ trình, ít biến động",
-      "Nghề mới, thay đổi nhanh, nhiều cơ hội đột phá",
-      "Tự làm chủ, tự do nhưng tự chịu rủi ro"
-    ],
+    id: "q5-trait",
+    text: "Gặp vấn đề khó, bước đầu tiên bạn làm gì?",
+    type: "text",
+    group: "ability_skill",
+    dimension: "Tính cách hành vi (Trait)",
+    description: "Phong cách xử lý, phản xạ tự nhiên",
+    hint_letters: "I (phân tích) / S (hỏi) / R (thử ngay) / C (lập kế hoạch)",
+  },
+  {
+    id: "q6-aspiration",
+    text: "5 năm nữa muốn được nhìn nhận là ai?",
+    type: "text",
     group: "goals_exploration",
-    dimension: "độ mở định hướng nghề",
-  },
-  {
-    id: "qs-10-avoid",
-    text: "Câu 10. Điều gì khiến bạn thấy ngán nhất ở một công việc?",
-    type: "single",
-    options: [
-      "Ngồi yên một chỗ, lặp đi lặp lại",
-      "Giao tiếp/thuyết phục người lạ liên tục",
-      "Làm việc mơ hồ, không có đáp án đúng",
-      "Áp lực deadline/cạnh tranh cao"
-    ],
-    group: "work_values",
-    dimension: "yếu tố né tránh trong công việc",
+    dimension: "Khát vọng & bản sắc (Aspiration)",
+    description: "Định hướng dài hạn, ghép chân dung tổng thể",
+    hint_letters: "E (ảnh hưởng) / I (chuyên gia) / A (dấu ấn) / S (cống hiến)",
   },
 ];

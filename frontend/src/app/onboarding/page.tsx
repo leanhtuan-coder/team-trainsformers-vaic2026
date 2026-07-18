@@ -18,126 +18,51 @@ const PROVINCES = [
   "Làm việc từ xa (Remote)", "Nước ngoài"
 ];
 
-const HOLLAND_QUESTIONS = [
+// 6 câu hỏi tự do (Chặng 1 — user-jouney.docx) — chấm bằng LLM (gpt-oss-120b/Groq) ở backend,
+// KHÔNG còn là trắc nghiệm chọn đáp án. Id phải khớp backend/src/profile/quickstart.ts.
+const RIASEC_QUESTIONS = [
   {
-    id: "qs-01-object",
-    group: "activity_interest",
-    dimension: "đối tượng cuốn hút",
-    question: "Đối tượng làm việc nào khiến bạn thấy cuốn hút nhất?",
-    options: [
-      { text: "Máy móc, thiết bị, xây dựng thứ gì đó bằng tay", plus: ["4", "7"], minus: [] },
-      { text: "Con số, dữ liệu, phân tích", plus: ["3", "1"], minus: [] },
-      { text: "Con người: giúp đỡ, chăm sóc, dạy dỗ", plus: ["5", "6"], minus: [] },
-      { text: "Ý tưởng, sáng tạo, cái đẹp", plus: ["9", "2"], minus: [] }
-    ]
+    id: "q1-interest",
+    dimension: "Sở thích (Interest)",
+    question: "Việc gì khiến bạn quên cả thời gian?",
+    description: "Nhóm hứng thú tự nhiên, không \"gồng\"",
+    placeholder: "Ví dụ: mình có thể ngồi cả buổi mày mò sửa máy tính mà không thấy chán…",
   },
   {
-    id: "qs-02-teamrole",
-    group: "activity_interest",
-    dimension: "vai trò dự án nhóm",
-    question: "Trong một dự án nhóm, bạn thường là người…?",
-    options: [
-      { text: "Đứng ra dẫn dắt, thuyết phục mọi người", plus: ["2"], minus: [] },
-      { text: "Lên kế hoạch, sắp xếp cho chạy trơn tru", plus: ["3"], minus: [] },
-      { text: "Kết nối, hòa giải, chăm lo cảm xúc nhóm", plus: ["6", "5"], minus: [] },
-      { text: "Giải quyết phần khó nhất về kỹ thuật/logic", plus: ["1", "4"], minus: [] }
-    ]
+    id: "q2-aptitude",
+    dimension: "Năng lực (Aptitude)",
+    question: "Điều gì bạn làm dễ mà người khác thấy khó?",
+    description: "Điểm mạnh bẩm sinh, tách khỏi sở thích",
+    placeholder: "Ví dụ: mình nhớ số liệu rất nhanh, bạn bè phải ghi chép còn mình thì không…",
   },
   {
-    id: "qs-03-satisfaction",
-    group: "activity_interest",
-    dimension: "động lực thỏa mãn",
-    question: "Bạn thấy thỏa mãn nhất khi…?",
-    options: [
-      { text: "Sửa được một thứ hỏng / làm ra sản phẩm chạy được", plus: ["4", "1"], minus: [] },
-      { text: "Tìm ra quy luật ẩn trong mớ thông tin", plus: ["3", "1"], minus: [] },
-      { text: "Thấy người khác tiến bộ/khỏe hơn nhờ mình", plus: ["5", "6"], minus: [] },
-      { text: "Tạo ra thứ chưa ai làm, được công nhận", plus: ["9", "2"], minus: [] }
-    ]
+    id: "q3-value",
+    dimension: "Giá trị (Value)",
+    question: "Công việc phải có gì bạn mới thấy đáng làm?",
+    description: "Động lực cốt lõi → quyết định độ bền với nghề",
+    placeholder: "Ví dụ: phải giúp được người khác, hoặc phải thấy mình tiến bộ mỗi ngày…",
   },
   {
-    id: "qs-04-subject",
-    group: "activity_interest",
-    dimension: "môn học dễ chịu",
-    question: "Môn học hoặc hoạt động bạn thấy dễ chịu nhất?",
-    options: [
-      { text: "Toán, Lý, Tin", plus: ["1", "4", "3"], minus: [] },
-      { text: "Văn, Ngoại ngữ, Sử", plus: ["6", "2"], minus: [] },
-      { text: "Sinh, Hóa", plus: ["5"], minus: [] },
-      { text: "Mỹ thuật, Âm nhạc, sáng tạo", plus: ["9"], minus: [] }
-    ]
+    id: "q4-environment",
+    dimension: "Môi trường & tương tác (Environment)",
+    question: "Bạn làm tốt nhất khi một mình / nhóm / dẫn dắt?",
+    description: "Bối cảnh làm việc phù hợp",
+    placeholder: "Ví dụ: mình làm tốt nhất khi được tự do làm một mình, ít bị ngắt quãng…",
   },
   {
-    id: "qs-05-building",
-    group: "activity_interest",
-    dimension: "loại hình xây dựng",
-    question: "Bạn thích \"xây\" thứ nào hơn?",
-    options: [
-      { text: "Thứ vô hình: phần mềm, hệ thống, quy trình", plus: ["1"], minus: [] },
-      { text: "Thứ sờ được: máy móc, công trình, sản phẩm vật lý", plus: ["4", "7"], minus: [] },
-      { text: "Thứ thuộc về con người: trải nghiệm, bài giảng, dịch vụ", plus: ["6"], minus: [] },
-      { text: "Thứ thuộc về cái đẹp: hình ảnh, âm thanh, tác phẩm", plus: ["9"], minus: [] }
-    ]
+    id: "q5-trait",
+    dimension: "Tính cách hành vi (Trait)",
+    question: "Gặp vấn đề khó, bước đầu tiên bạn làm gì?",
+    description: "Phong cách xử lý, phản xạ tự nhiên",
+    placeholder: "Ví dụ: mình thường thử ngay bằng tay, sai thì sửa, ít khi lên kế hoạch trước…",
   },
   {
-    id: "qs-06-strength",
-    group: "ability_skill",
-    dimension: "thế mạnh vượt trội",
-    question: "Việc nào bạn thấy mình làm tốt hơn hẳn bạn bè cùng lớp?",
-    options: [
-      { text: "Giải bài logic/toán khó", plus: ["1", "3", "4"], minus: [] },
-      { text: "Viết, thuyết trình, thuyết phục", plus: ["2", "6"], minus: [] },
-      { text: "Nhớ chi tiết, làm cẩn thận không sai sót", plus: ["3", "5"], minus: [] },
-      { text: "Vẽ, thiết kế, cảm nhận thẩm mỹ", plus: ["9"], minus: [] },
-      { text: "Làm tay chân, lắp ráp, sửa chữa", plus: ["4", "7"], minus: [] }
-    ]
+    id: "q6-aspiration",
+    dimension: "Khát vọng & bản sắc (Aspiration)",
+    question: "5 năm nữa muốn được nhìn nhận là ai?",
+    description: "Định hướng dài hạn, ghép chân dung tổng thể",
+    placeholder: "Ví dụ: một chuyên gia giỏi trong lĩnh vực của mình, được mọi người tin tưởng…",
   },
-  {
-    id: "qs-07-datahandling",
-    group: "activity_interest",
-    dimension: "tương tác dữ liệu",
-    question: "Với một bảng dữ liệu, bạn thích làm gì hơn?",
-    options: [
-      { text: "Kiểm tra cho khớp, đúng quy tắc, không sai sót", plus: ["3"], minus: [] },
-      { text: "Tìm insight, dự đoán xu hướng từ nó", plus: ["1", "2"], minus: [] },
-      { text: "Trình bày cho người khác hiểu, kể thành câu chuyện", plus: ["2", "6"], minus: [] }
-    ]
-  },
-  {
-    id: "qs-08-environment",
-    group: "context_preferences",
-    dimension: "môi trường mong muốn",
-    question: "Môi trường làm việc bạn muốn?",
-    options: [
-      { text: "Ngoài hiện trường, vận động, không ngồi bàn nhiều", plus: ["4", "7"], minus: [] },
-      { text: "Văn phòng, ổn định, quy trình rõ ràng", plus: ["3"], minus: [] },
-      { text: "Tiếp xúc nhiều người, năng động", plus: ["6", "2"], minus: [] },
-      { text: "Tự do, linh hoạt, tự đặt nhịp", plus: ["9", "1"], minus: [] }
-    ]
-  },
-  {
-    id: "qs-09-route",
-    group: "goals_exploration",
-    dimension: "lộ trình định hướng",
-    question: "Con đường nào nghe hấp dẫn hơn với bạn?",
-    options: [
-      { text: "Nghề ổn định, rõ lộ trình, ít biến động", plus: ["3", "6", "5"], minus: [] },
-      { text: "Nghề mới, thay đổi nhanh, nhiều cơ hội đột phá", plus: ["1", "2"], minus: [] },
-      { text: "Tự làm chủ, tự do nhưng tự chịu rủi ro", plus: ["9", "2"], minus: [] }
-    ]
-  },
-  {
-    id: "qs-10-avoid",
-    group: "work_values",
-    dimension: "nỗi sợ/điểm ghét công việc",
-    question: "Điều gì khiến bạn thấy ngán nhất ở một công việc? (Câu phản chứng)",
-    options: [
-      { text: "Ngồi yên một chỗ, lặp đi lặp lại", plus: ["2", "4", "6"], minus: ["3", "7"] },
-      { text: "Giao tiếp/thuyết phục người lạ liên tục", plus: ["1", "3", "4"], minus: ["2", "6"] },
-      { text: "Làm việc mơ hồ, không có đáp án đúng", plus: ["3", "4"], minus: ["9", "2"] },
-      { text: "Áp lực deadline/cạnh tranh cao", plus: ["3", "6"], minus: ["2", "5"] }
-    ]
-  }
 ];
 
 function OnboardingContent() {
@@ -153,8 +78,8 @@ function OnboardingContent() {
   const [currentLoc, setCurrentLoc] = useState("");
   const [preferLoc, setPreferLoc] = useState("");
 
-  // Màn 2: Trắc nghiệm Holland
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  // Màn 2: 6 câu hỏi tự do (RIASEC — chấm bằng AI ở backend)
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmMsg, setConfirmMsg] = useState("");
   const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
@@ -189,8 +114,8 @@ function OnboardingContent() {
 
   const handleNextTab2 = () => {
     const missing: number[] = [];
-    HOLLAND_QUESTIONS.forEach((q, idx) => {
-      if (answers[q.id] === undefined) {
+    RIASEC_QUESTIONS.forEach((q, idx) => {
+      if (!answers[q.id]?.trim()) {
         missing.push(idx + 1);
       }
     });
@@ -237,14 +162,10 @@ function OnboardingContent() {
         headers: { "Content-Type": "application/json" }
       });
 
-      // 2. Gửi câu trả lời Holland Quickstart
-      const formattedAnswers = Object.entries(answers).map(([qId, optIdx]) => {
-        const q = HOLLAND_QUESTIONS.find((item) => item.id === qId);
-        return {
-          question_id: qId,
-          answer: q ? q.options[optIdx].text : ""
-        };
-      });
+      // 2. Gửi 6 câu trả lời tự do — backend sẽ chấm RIASEC bằng AI (gpt-oss-120b/Groq)
+      const formattedAnswers = Object.entries(answers)
+        .filter(([, text]) => text.trim())
+        .map(([qId, text]) => ({ question_id: qId, answer: text.trim() }));
 
       // Thêm thông tin cơ bản làm self_report
       formattedAnswers.push(
@@ -437,35 +358,28 @@ function OnboardingContent() {
             </div>
           )}
 
-          {/* TAB 2: CÂU HỎI HOLLAND */}
+          {/* TAB 2: 6 CÂU HỎI TỰ DO — CHẤM BẰNG AI */}
           {activeTab === 2 && (
             <div className="space-y-6 fade-up">
-              <h3 className="text-base font-bold text-[#1f1e1c] border-b border-gray-100 pb-2">Hứng thú tự nhiên & sở thích</h3>
+              <div className="border-b border-gray-100 pb-2">
+                <h3 className="text-base font-bold text-[#1f1e1c]">Kể cho AI nghe về bạn</h3>
+                <p className="text-xs text-[#6b6a64] mt-1">
+                  Trả lời tự do bằng câu văn của riêng bạn — AI sẽ đọc và chấm điểm Holland Code (RIASEC), càng chi tiết càng chính xác.
+                </p>
+              </div>
               <div className="space-y-5 max-h-[500px] overflow-y-auto pr-2">
-                {HOLLAND_QUESTIONS.map((q, qIdx) => (
+                {RIASEC_QUESTIONS.map((q, qIdx) => (
                   <div key={q.id} className="p-4 bg-[#faf9f5] border border-[#e3e1d8] rounded-xl">
-                    <p className="text-sm font-semibold text-[#1f1e1c] mb-3">
+                    <p className="text-sm font-semibold text-[#1f1e1c]">
                       <span className="text-[#0c447c] font-bold">Câu {qIdx + 1}.</span> {q.question}
                     </p>
-                    <div className="grid grid-cols-1 gap-2.5">
-                      {q.options.map((opt, optIdx) => (
-                        <label
-                          key={optIdx}
-                          className={`flex items-start gap-3 p-3 bg-white border rounded-xl cursor-pointer hover:border-[#005c6d] transition ${
-                            answers[q.id] === optIdx ? "border-2 border-[#005c6d] bg-[#e6f1fb]" : "border-[#e3e1d8]"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name={q.id}
-                            className="mt-1"
-                            checked={answers[q.id] === optIdx}
-                            onChange={() => setAnswers({ ...answers, [q.id]: optIdx })}
-                          />
-                          <span className="text-sm text-[#1f1e1c]">{opt.text}</span>
-                        </label>
-                      ))}
-                    </div>
+                    <p className="text-xs text-[#8a8981] mt-0.5 mb-3">{q.dimension} — {q.description}</p>
+                    <textarea
+                      className="w-full bg-white border border-[#e3e1d8] rounded-xl px-4 py-3 outline-none focus:border-[#005c6d] text-sm min-h-[80px]"
+                      placeholder={q.placeholder}
+                      value={answers[q.id] || ""}
+                      onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                    />
                   </div>
                 ))}
               </div>

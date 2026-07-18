@@ -1,16 +1,19 @@
-// ─── Module chấm Holland Code (RIASEC) — DETERMINISTIC, KHÔNG dùng LLM ───
-// Additive lên trên Evidence Ledger: đọc evidence đã có, KHÔNG sửa schema/ledger.
+// ─── Module chấm Holland Code (RIASEC) ───
+// 6 câu tự do (Chặng 1, user-jouney.docx) được chấm bằng LLM (gpt-oss-120b qua Groq — xem
+// llm/groq.ts), lưu kết quả có cấu trúc vào evidence.ai_riasec (source_type "ai_inference").
+// Không có key/lỗi mạng → fallback đếm từ khoá (riasecFallback.ts), gắn nhãn rõ độ tin cậy thấp hơn.
 // Nguyên tắc:
 //  - Chỉ dùng tín hiệu sở thích/năng lực/hành vi. TUYỆT ĐỐI không đọc giới tính/địa phương (ETH-02).
-//  - Mỗi điểm số kèm "reasons" (evidence nào đóng góp) để truy vết minh bạch (ETH-06).
+//  - Mỗi điểm số kèm "reasons" (evidence + lý do AI/từ khoá) để truy vết minh bạch (ETH-06).
 //  - Thiếu dữ liệu thì hạ confidence / báo insufficient_data, không bịa (ETH-04).
 //
 // Công thức (theo spec BA Canvas):
-//   raw_X = Σ (signal_base × source_weight × sign)
+//   raw_X = Σ (điểm_AI_0-10 × source_weight × sign)
 //   chuẩn hoá về thang 0..10 (tương đối theo nhóm điểm cao nhất)
 //   confidence = completeness×0.4 + evidence_ratio×0.4 + consistency×0.2
 
 import { buildSnapshot } from "./snapshot.js";
+import { QUICKSTART_QUESTIONS } from "./quickstart.js";
 import type { Evidence, Profile } from "./schema.js";
 
 export type RiasecLetter = "R" | "I" | "A" | "S" | "E" | "C";
@@ -37,99 +40,11 @@ export function sourceWeight(e: Evidence): number {
   }
 }
 
-/** Ánh xạ đáp án quickstart → nhóm RIASEC. Key = question id; giá trị = { sign, options }.
- *  sign = -1 nghĩa là câu phản chứng (né tránh) → TRỪ điểm nhóm tương ứng.
- *  Q9 (độ mở định hướng nghề) cố ý KHÔNG map — nó nuôi "lộ trình/horizon", không phải type RIASEC. */
-type OptionMap = Record<string, RiasecLetter[]>;
-const RIASEC_MAP: Record<string, { sign: 1 | -1; options: OptionMap }> = {
-  "qs-01-object": {
-    sign: 1,
-    options: {
-      "Máy móc, thiết bị, xây dựng thứ gì đó bằng tay": ["R"],
-      "Con số, dữ liệu, phân tích": ["I"],
-      "Con người: giúp đỡ, chăm sóc, dạy dỗ": ["S"],
-      "Ý tưởng, sáng tạo, cái đẹp": ["A"],
-    },
-  },
-  "qs-02-teamrole": {
-    sign: 1,
-    options: {
-      "Đứng ra dẫn dắt, thuyết phục mọi người": ["E"],
-      "Lên kế hoạch, sắp xếp cho chạy trơn tru": ["C"],
-      "Kết nối, hòa giải, chăm lo cảm xúc nhóm": ["S"],
-      "Giải quyết phần khó nhất về kỹ thuật/logic": ["I"],
-    },
-  },
-  "qs-03-satisfaction": {
-    sign: 1,
-    options: {
-      "Sửa được một thứ hỏng / làm ra sản phẩm chạy được": ["R"],
-      "Tìm ra quy luật ẩn trong mớ thông tin": ["I"],
-      "Thấy người khác tiến bộ/khỏe hơn nhờ mình": ["S"],
-      "Tạo ra thứ chưa ai làm, được công nhận": ["A"],
-    },
-  },
-  "qs-04-subject": {
-    sign: 1,
-    options: {
-      "Toán, Lý, Tin": ["I"],
-      "Văn, Ngoại ngữ, Sử": ["A"],
-      "Sinh, Hóa": ["I"],
-      "Mỹ thuật, Âm nhạc, sáng tạo": ["A"],
-    },
-  },
-  "qs-05-building": {
-    sign: 1,
-    options: {
-      "Thứ vô hình: phần mềm, hệ thống, quy trình": ["I"],
-      "Thứ sờ được: máy móc, công trình, sản phẩm vật lý": ["R"],
-      "Thứ thuộc về con người: trải nghiệm, bài giảng, dịch vụ": ["S"],
-      "Thứ thuộc về cái đẹp: hình ảnh, âm thanh, tác phẩm": ["A"],
-    },
-  },
-  "qs-06-strength": {
-    sign: 1,
-    options: {
-      "Giải bài logic/toán khó": ["I"],
-      "Viết, thuyết trình, thuyết phục": ["E"],
-      "Nhớ chi tiết, làm cẩn thận không sai sót": ["C"],
-      "Vẽ, thiết kế, cảm nhận thẩm mỹ": ["A"],
-      "Làm tay chân, lắp ráp, sửa chữa": ["R"],
-    },
-  },
-  "qs-07-datahandling": {
-    sign: 1,
-    options: {
-      "Kiểm tra cho khớp, đúng quy tắc, không sai sót": ["C"],
-      "Tìm insight, dự đoán xu hướng từ nó": ["I"],
-      "Trình bày cho người khác hiểu, kể thành câu chuyện": ["S"],
-    },
-  },
-  "qs-08-environment": {
-    sign: 1,
-    options: {
-      "Ngoài hiện trường, vận động, không ngồi bàn nhiều": ["R"],
-      "Văn phòng, ổn định, quy trình rõ ràng": ["C"],
-      "Tiếp xúc nhiều người, năng động": ["S"],
-      "Tự do, linh hoạt, tự đặt nhịp": ["A"],
-    },
-  },
-  "qs-10-avoid": {
-    sign: -1, // phản chứng: né tránh việc gì → trừ điểm nhóm đó
-    options: {
-      "Ngồi yên một chỗ, lặp đi lặp lại": ["C"],
-      "Giao tiếp/thuyết phục người lạ liên tục": ["E", "S"],
-      "Làm việc mơ hồ, không có đáp án đúng": ["A"],
-      "Áp lực deadline/cạnh tranh cao": ["E"],
-    },
-  },
-};
-
-const SIGNAL_BASE = 1; // mỗi tín hiệu chip = 1 đơn vị (không có LLM chấm 0-10)
-// Số câu quickstart ĐÓNG GÓP vào RIASEC (Q9 cố ý loại → nuôi horizon/lộ trình).
-// Dùng làm mẫu số cho completeness để không phạt oan người đã trả lời đủ.
-const RIASEC_QUESTION_COUNT = Object.keys(RIASEC_MAP).length;
-const MIN_FULL_ANSWERS = 6; // < 6 câu → chỉ là chân dung sơ bộ (E1.2 need_more_info)
+const SIGNAL_BASE = 1; // mỗi tín hiệu phá hoà = 1 đơn vị (điểm AI/fallback đã có sẵn thang 0-10)
+// 6 id câu hỏi quickstart tự do — nguồn sự thật duy nhất, tránh lệch giữa route/scorer.
+const QUICKSTART_IDS = new Set(QUICKSTART_QUESTIONS.map((q) => q.id));
+const RIASEC_QUESTION_COUNT = QUICKSTART_QUESTIONS.length; // = 6
+const MIN_FULL_ANSWERS = RIASEC_QUESTION_COUNT; // < 6 câu → chỉ là chân dung sơ bộ (E1.2 need_more_info)
 
 export interface RiasecReason {
   source_ref: string; // câu hỏi / bài test tạo ra tín hiệu
@@ -214,16 +129,22 @@ export function scoreRiasec(profile: Profile): RiasecResult {
       }
       continue;
     }
-    const map = RIASEC_MAP[e.source_ref];
-    if (!map) continue; // evidence không map được sang RIASEC (vd assessment không có claim type) → chỉ tính vào confidence
-    answeredQuickstart.add(e.source_ref);
-    const weight = sourceWeight(e);
-    for (const claim of e.claims) {
-      const letters = map.options[claim.value];
-      if (!letters) continue;
-      for (const letter of letters) {
-        raw[letter] += SIGNAL_BASE * weight * map.sign;
-        reasons[letter].push({ source_ref: e.source_ref, value: claim.value, weight, sign: map.sign });
+    if (!QUICKSTART_IDS.has(e.source_ref)) continue; // evidence khác (vd assessment) — không tính RIASEC ở đây
+
+    // self_report của 1 trong 6 câu tự do = "đã trả lời" (dùng cho completeness), KHÔNG tự nó cho điểm —
+    // điểm đến từ evidence ai_inference đi kèm (do LLM/fallback chấm, xem dưới).
+    if (e.source_type === "self_report") {
+      answeredQuickstart.add(e.source_ref);
+      continue;
+    }
+
+    // ai_inference mang điểm RIASEC đã chấm sẵn (LLM gpt-oss-120b qua Groq, hoặc fallback từ khoá).
+    if (e.source_type === "ai_inference" && e.ai_riasec) {
+      const weight = sourceWeight(e);
+      for (const s of e.ai_riasec) {
+        if (!RIASEC_LETTERS.includes(s.letter)) continue;
+        raw[s.letter] += s.score * weight;
+        reasons[s.letter].push({ source_ref: e.source_ref, value: s.reason || `${s.letter} ${s.score}/10`, weight, sign: 1 });
       }
     }
   }

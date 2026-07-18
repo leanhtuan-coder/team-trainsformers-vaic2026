@@ -196,7 +196,19 @@ export async function addAssessment(
   });
 }
 
+// 6 id câu hỏi quickstart tự do (Chặng 1) — phải khớp backend/src/profile/quickstart.ts.
+const RIASEC_QUESTION_IDS = [
+  "q1-interest",
+  "q2-aptitude",
+  "q3-value",
+  "q4-environment",
+  "q5-trait",
+  "q6-aspiration",
+];
+
 export function hasCompletedOnboarding(profile: ProfileApiResponse): boolean {
-  const quickstartCount = profile.evidence.filter((e) => e.source_type === "self_report" && e.source_ref?.startsWith("qs-")).length;
+  const quickstartCount = profile.evidence.filter(
+    (e) => e.source_type === "self_report" && !!e.source_ref && RIASEC_QUESTION_IDS.includes(e.source_ref)
+  ).length;
   return quickstartCount >= 3;
 }

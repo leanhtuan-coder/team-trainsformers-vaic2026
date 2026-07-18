@@ -53,6 +53,10 @@ export interface Evidence {
   user_confirmed: boolean;
   /** Evidence mới thay evidence cũ (không xóa bản cũ — ledger là append-only). */
   supersedes?: string;
+  /** Điểm RIASEC do AI (hoặc fallback từ khoá) chấm cho câu trả lời tự do — chỉ có trên evidence
+   *  source_type "ai_inference" tạo ra từ profile/riasecScorer.ts. Tách khỏi claims (text tự do)
+   *  để không lẫn "fact" (lời user nói) với "inference" (điểm do AI suy ra) — ETH-06. */
+  ai_riasec?: { letter: "R" | "I" | "A" | "S" | "E" | "C"; score: number; reason: string }[];
 }
 
 /** File A của 1 học sinh: chỉ gồm metadata + Evidence Ledger. Snapshot không lưu, tính khi đọc. */
