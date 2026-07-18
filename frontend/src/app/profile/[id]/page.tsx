@@ -338,8 +338,8 @@ function getOwnedSkills(evidenceList: EvidenceItem[], topSkillsList: any[]): Set
     }
   }
 
-  const hasPeopleWorkstyle = evidenceList.some(ev => 
-    ev.source_type === "self_report" && 
+  const hasPeopleWorkstyle = evidenceList.some(ev =>
+    ev.source_type === "self_report" &&
     ev.claims?.some(c => c.dimension === "đối tượng làm việc cuốn hút" && c.value.toLowerCase().includes("con người"))
   );
   if (hasPeopleWorkstyle) {
@@ -642,161 +642,11 @@ const BRANCH_TIMELINE: Record<string, string[]> = {
   ]
 };
 
-// Dữ liệu Mock dự phòng Offline cho Giám khảo VAIC 2026 đề phòng backend lỗi kết nối lúc chấm thi
-const MOCK_JUDGE_PROFILE: any = {
-  profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
-  created_at: "2026-07-18T10:17:47.076Z",
-  evidence: [
-    {
-      evidence_id: "8abbc847-5f75-4c15-bb69-26db3dbaad55",
-      source_type: "assessment",
-      source_ref: "T&C Việt Nam — Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ",
-      claims: [
-        { group: "activity_interest", dimension: "Holland R", value: "1" },
-        { group: "activity_interest", dimension: "Holland I", value: "1" },
-        { group: "activity_interest", dimension: "Holland A", value: "1" },
-        { group: "activity_interest", dimension: "Holland S", value: "1" },
-        { group: "activity_interest", dimension: "Holland E", value: "1" },
-        { group: "activity_interest", dimension: "Holland C", value: "2" }
-      ],
-      user_confirmed: true
-    },
-    {
-      evidence_id: "3bb37af7-8906-4812-b7b4-c8f5e3f8a177",
-      source_type: "self_report",
-      source_ref: "qs-01-object",
-      claims: [{ group: "activity_interest", dimension: "đối tượng làm việc cuốn hút", value: "Máy móc, thiết bị, xây dựng thứ gì đó bằng tay" }],
-      user_confirmed: true
-    },
-    {
-      evidence_id: "7976931e-5be6-4b7d-bbf7-806798a23a07",
-      source_type: "self_report",
-      source_ref: "qs-02-teamrole",
-      claims: [{ group: "ability_skill", dimension: "vai trò trong dự án nhóm", value: "Kết nối, hòa giải, chăm lo cảm xúc nhóm" }],
-      user_confirmed: true
-    },
-    {
-      evidence_id: "8b3518e0-55bb-4308-8457-26a5b18b5e21",
-      source_type: "assessment",
-      source_ref: "IDP — IELTS",
-      claims: [],
-      assessment_detail: {
-        name: "IELTS",
-        provider: "IDP",
-        score: 7.5,
-        scale_max: 9,
-        percentile_top: 5,
-        taken_at: "2026-07-18T15:23:06.178Z"
-      },
-      confidence: "high",
-      collected_at: "2026-07-18T15:23:06.197Z",
-      user_confirmed: true
-    }
-  ],
-  snapshot: {
-    profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
-    generated_at: "2026-07-18T10:17:47.076Z",
-    evidence_coverage: {
-      total_evidence: 4,
-      confirmed_evidence: 4,
-      by_source_type: { self_report: 2, document: 0, assessment: 2, interaction: 0, ai_inference: 0 },
-      groups_with_evidence: 4,
-      groups_total: 8
-    }
-  }
-};
-
-const MOCK_JUDGE_PORTFOLIO: any = {
-  profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
-  candidates: [
-    {
-      industry: "CNTT / Lập trình",
-      job_title: "Kỹ sư phần mềm (Software Engineer)",
-      details: {
-        market_demand_pct: 94,
-        min_salary_million: 18.5,
-        max_salary_million: 35.0,
-        stages: [
-          {
-            stage_title: "Chặng 1: Xây dựng nền tảng (6 - 12 tháng)",
-            action_plan: [
-              "Học vững cấu trúc dữ liệu, thuật toán cơ bản bằng ngôn ngữ Python hoặc JavaScript",
-              "Tự xây dựng ít nhất 2 dự án web cá nhân đầy đủ (Frontend & Backend) và tải lên GitHub",
-              "Duy trì điểm GPA môn Tin học và Tiếng Anh trên lớp ở mức xuất sắc (trên 8.5)"
-            ]
-          },
-          {
-            stage_title: "Chặng 2: Học việc & Trải nghiệm thực tế (12 - 18 tháng)",
-            action_plan: [
-              "Tìm kiếm các cơ hội thực tập ngắn hạn (Internship) tại các doanh nghiệp công nghệ",
-              "Tham gia ít nhất một cuộc thi Hackathon hoặc cuộc thi lập trình cấp trường/thành phố để rèn luyện kỹ năng làm việc nhóm",
-              "Luyện thi các chứng chỉ lập trình hoặc cloud cơ bản (AWS Practitioner / Azure Fundamentals)"
-            ]
-          },
-          {
-            stage_title: "Chặng 3: Ứng tuyển & Tăng tốc sự nghiệp (18 - 24 tháng)",
-            action_plan: [
-              "Hệ thống hóa lại các kỹ năng chuyên sâu (React, Node.js, Database) để chuẩn bị cho buổi phỏng vấn chuyên môn",
-              "Chuẩn bị Portfolio cá nhân chuyên nghiệp và CV song ngữ (Anh - Việt)",
-              "Tham gia phỏng vấn thử (Mock Interview) trên các nền tảng tuyển dụng chuyên biệt"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      industry: "Dữ liệu / AI",
-      job_title: "Data Analyst",
-      details: {
-        market_demand_pct: 88,
-        min_salary_million: 15.0,
-        max_salary_million: 28.0,
-        stages: [
-          {
-            stage_title: "Chặng 1: Nền tảng phân tích (6 tháng)",
-            action_plan: [
-              "Làm chủ kỹ năng phân tích số liệu trên Excel nâng cao (Pivot Table, VLOOKUP, VBA)",
-              "Học cú pháp truy vấn SQL cơ bản để lọc và truy xuất dữ liệu từ các hệ quản trị CSDL",
-              "Luyện tập vẽ các biểu đồ phân tích dữ liệu trực quan bằng công cụ Tableau hoặc Power BI"
-            ]
-          },
-          {
-            stage_title: "Chặng 2: Nâng cao & Thực hành (6 - 12 tháng)",
-            action_plan: [
-              "Học các thư viện phân tích dữ liệu bằng Python (Pandas, NumPy, Matplotlib)",
-              "Thực hiện phân tích một tập dữ liệu tuyển dụng thô trên Kaggle và viết báo cáo chi tiết",
-              "Luyện tập kỹ năng trình bày số liệu (Data Storytelling) để thuyết trình báo cáo trước đám đông"
-            ]
-          },
-          {
-            stage_title: "Chặng 3: Định hình nghề nghiệp (12 - 18 tháng)",
-            action_plan: [
-              "Ứng tuyển các vị trí cộng tác viên hoặc thực tập sinh phân tích dữ liệu tại các Agency lớn",
-              "Tự xây dựng các Dashboard giám sát thị trường thực tế để làm phong phú portfolio",
-              "Học hỏi thêm các kiến thức cơ bản về Big Data và Data Warehouse để chuẩn bị cho các nấc thang tiếp theo"
-            ]
-          }
-        ]
-      }
-    }
-  ]
-};
-
-const MOCK_JUDGE_RIASEC: any = {
-  status: "success",
-  holland_code: "CSI",
-  confidence: {
-    score: 0.85,
-    reason: "Kết quả được củng cố bởi 1 bài test Holland chính thức từ IDP/T&C Việt Nam kết hợp các dữ liệu tự khai nhất quán."
-  },
-  scores: { R: 2, I: 4, A: 1, S: 3, E: 2, C: 6 }
-};
-
 function StudentPortalPageContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const profileId = typeof params?.id === "string" ? params.id : "";
   const activeTab = searchParams.get("tab") || "roadmap";
 
@@ -854,44 +704,26 @@ function StudentPortalPageContent() {
   }, []);
 
   const loadAll = useCallback(async () => {
-    try {
-      const resProfile = await fetch(`${API_BASE}/profile/${profileId}`);
-      if (resProfile.status === 404) {
-        if (profileId === "de3a0a26-b7c0-4222-9999-de3a0a26b7c0") {
-          setData(MOCK_JUDGE_PROFILE);
-          setPortfolio(MOCK_JUDGE_PORTFOLIO);
-          setRiasec(MOCK_JUDGE_RIASEC);
-          setPathwayError(null);
-          return;
-        }
-        setNotFound(true);
-        return;
-      }
-      if (!resProfile.ok) throw new Error("profile_load_failed");
-      const profileJson = await resProfile.json();
-      setData(profileJson as ProfileResponse);
-
-      const resPath = await fetch(`${API_BASE}/profile/${profileId}/pathways`);
-      if (resPath.ok) {
-        setPortfolio((await resPath.json()) as PathwayPortfolio);
-        setPathwayError(null);
-      } else {
-        const err = await resPath.json().catch(() => null);
-        setPathwayError(err?.message || "Chưa tải được gợi ý lộ trình từ backend.");
-      }
-
-      const resRia = await fetch(`${API_BASE}/profile/${profileId}/riasec`);
-      if (resRia.ok) setRiasec((await resRia.json()) as RiasecResult);
-    } catch (err) {
-      if (profileId === "de3a0a26-b7c0-4222-9999-de3a0a26b7c0") {
-        setData(MOCK_JUDGE_PROFILE);
-        setPortfolio(MOCK_JUDGE_PORTFOLIO);
-        setRiasec(MOCK_JUDGE_RIASEC);
-        setPathwayError(null);
-        return;
-      }
-      throw err;
+    const resProfile = await fetch(`${API_BASE}/profile/${profileId}`);
+    if (resProfile.status === 404) {
+      setNotFound(true);
+      return;
     }
+    if (!resProfile.ok) throw new Error("profile_load_failed");
+    const profileJson = await resProfile.json();
+    setData(profileJson as ProfileResponse);
+
+    const resPath = await fetch(`${API_BASE}/profile/${profileId}/pathways`);
+    if (resPath.ok) {
+      setPortfolio((await resPath.json()) as PathwayPortfolio);
+      setPathwayError(null);
+    } else {
+      const err = await resPath.json().catch(() => null);
+      setPathwayError(err?.message || "Chưa tải được gợi ý lộ trình từ backend.");
+    }
+
+    const resRia = await fetch(`${API_BASE}/profile/${profileId}/riasec`);
+    if (resRia.ok) setRiasec((await resRia.json()) as RiasecResult);
   }, [profileId]);
 
   useEffect(() => {
@@ -900,9 +732,6 @@ function StudentPortalPageContent() {
     if (ref && ref.profile_id === profileId) {
       setStudentName(ref.name);
       setStudentRegion(ref.region);
-    } else if (profileId === "de3a0a26-b7c0-4222-9999-de3a0a26b7c0") {
-      setStudentName("Giám khảo VAIC 2026");
-      setStudentRegion("Hà Nội");
     }
     loadAll()
       .catch(() => setLoadError(true))
@@ -942,13 +771,13 @@ function StudentPortalPageContent() {
   // Bot handler gửi tin nhắn qua backend API thật
   const handleSendMessage = async (text: string) => {
     if (!text.trim() || chatBusy) return;
-    
+
     const userMsg = {
       sender: "user",
       text: text,
       time: new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
     };
-    
+
     setMessages((prev) => [...prev, userMsg]);
     setInputValue("");
     setChatBusy(true);
@@ -959,10 +788,10 @@ function StudentPortalPageContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text })
       });
-      
+
       const botData = await res.json();
       const replyText = botData.reply || "Mình gặp lỗi nhỏ khi xử lý câu hỏi. Bạn hỏi lại nhé!";
-      
+
       let opts: string[] = ["Nghề nào phù hợp tôi?", "Lương các ngành ra sao?", "Làm sao học SQL?"];
       const query = text.toLowerCase();
       if (query.includes("phù hợp") || query.includes("gợi ý")) {
@@ -1043,10 +872,10 @@ function StudentPortalPageContent() {
   const confCls = !riasec
     ? ""
     : riasec.confidence.score >= 0.7
-    ? "bg-emerald-100 text-emerald-700"
-    : riasec.confidence.score >= 0.4
-    ? "bg-amber-100 text-amber-700"
-    : "bg-red-100 text-red-700";
+      ? "bg-emerald-100 text-emerald-700"
+      : riasec.confidence.score >= 0.4
+        ? "bg-amber-100 text-amber-700"
+        : "bg-red-100 text-red-700";
   const coverage = data.snapshot.evidence_coverage;
   const assessments = data.evidence.filter((e) => e.source_type === "assessment");
 
@@ -1074,8 +903,8 @@ function StudentPortalPageContent() {
   const horizonKey = horizonVal.toLowerCase().includes("ngắn") || horizonVal.toLowerCase().includes("nghề")
     ? "đường ngắn"
     : horizonVal.toLowerCase().includes("cao đẳng")
-    ? "cao đẳng"
-    : "đại học";
+      ? "cao đẳng"
+      : "đại học";
 
   const milestones = MILESTONES[horizonKey] ?? MILESTONES["đại học"];
 
@@ -1089,7 +918,7 @@ function StudentPortalPageContent() {
 
   return (
     <div className="min-h-screen bg-[#F4F6F8] font-sans flex overflow-hidden">
-      
+
       {/* ─── SIDEBAR TRÁI ─── */}
       <aside className="w-64 bg-[#005c6d] text-white flex flex-col h-screen fixed left-0 top-0 z-40 border-r border-[#004b58] flex-shrink-0">
         {/* Logo */}
@@ -1113,11 +942,10 @@ function StudentPortalPageContent() {
           <button
             type="button"
             onClick={() => setTab("market")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${
-              activeTab === "market"
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "market"
                 ? "bg-[#004b58] text-white font-semibold shadow-sm"
                 : "text-white/80 hover:bg-white/5 hover:text-white"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
               <IconChart className="w-4 h-4 text-white/70" />
@@ -1132,11 +960,10 @@ function StudentPortalPageContent() {
           <button
             type="button"
             onClick={() => setTab("roadmap")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${
-              activeTab === "roadmap"
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "roadmap"
                 ? "bg-[#004b58] text-white font-semibold shadow-sm"
                 : "text-white/80 hover:bg-white/5 hover:text-white"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
               <IconRoute className="w-4 h-4 text-white/70" />
@@ -1151,11 +978,10 @@ function StudentPortalPageContent() {
           <button
             type="button"
             onClick={() => setTab("chat")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${
-              activeTab === "chat"
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "chat"
                 ? "bg-[#004b58] text-white font-semibold shadow-sm"
                 : "text-white/80 hover:bg-white/5 hover:text-white"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
               <IconChat className="w-4 h-4 text-white/70" />
@@ -1170,11 +996,10 @@ function StudentPortalPageContent() {
           <button
             type="button"
             onClick={() => setTab("ledger")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${
-              activeTab === "ledger"
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "ledger"
                 ? "bg-[#004b58] text-white font-semibold shadow-sm"
                 : "text-white/80 hover:bg-white/5 hover:text-white"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
               <IconBriefcase className="w-4 h-4 text-white/70" />
@@ -1210,7 +1035,7 @@ function StudentPortalPageContent() {
 
       {/* ─── MAIN CONTENT CONTAINER (BÊN PHẢI) ─── */}
       <div className="pl-64 flex-1 h-screen overflow-y-auto flex flex-col bg-[#F4F6F8]">
-        
+
         {/* Header Bar */}
         <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-gray-200/70 bg-white sticky top-0 z-30">
           <h1 className="text-lg font-bold text-[#111827]">{HEADER_TITLES[activeTab] || "Student Portal"}</h1>
@@ -1237,7 +1062,7 @@ function StudentPortalPageContent() {
 
         {/* Dynamic Tab Body */}
         <main className="flex-1 p-6 space-y-6">
-          
+
           {/* TAB 1: ROADMAP ("Lộ trình của tôi") */}
           {activeTab === "roadmap" && (
             <div className="space-y-6 fade-up">
@@ -1386,7 +1211,7 @@ function StudentPortalPageContent() {
                           <IconBulb className="w-4 h-4 text-[#005c6d]" />
                           Phân tích thế mạnh từ Holland Code ({riasec!.holland_code})
                         </h4>
-                        
+
                         <div className="grid gap-3 text-xs md:grid-cols-2">
                           <div className="space-y-1">
                             <p className="font-bold text-[#111827]">Thế mạnh & Hành vi:</p>
@@ -1396,7 +1221,7 @@ function StudentPortalPageContent() {
                               ))}
                             </ul>
                           </div>
-                          
+
                           <div className="space-y-1">
                             <p className="font-bold text-[#111827]">Môi trường phù hợp:</p>
                             <ul className="list-disc pl-4 space-y-1 text-ink-soft">
@@ -1463,11 +1288,11 @@ function StudentPortalPageContent() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-extrabold text-[#111827]">
-                    {selectedJobTitle 
+                    {selectedJobTitle
                       ? `Lộ trình học tập & Kỹ năng: ${selectedJobTitle}`
                       : selectedIndustry
-                      ? `Các nhánh nghề (Job Titles) thuộc ngành ${selectedIndustry}`
-                      : "Nghề nghiệp phù hợp với bạn"
+                        ? `Các nhánh nghề (Job Titles) thuộc ngành ${selectedIndustry}`
+                        : "Nghề nghiệp phù hợp với bạn"
                     }
                   </h3>
                   <span className="text-xs text-[#9CA3AF] font-medium flex items-center gap-1">
@@ -1544,11 +1369,10 @@ function StudentPortalPageContent() {
                                         )}
                                       </b>
                                       {c.market_evidence.salary && (
-                                        <span className={`ml-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                                          riasec && riasec.confidence.evidence_ratio > 0 
-                                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                                        <span className={`ml-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full ${riasec && riasec.confidence.evidence_ratio > 0
+                                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                                             : "bg-amber-50 text-amber-700 border border-amber-200"
-                                        }`}>
+                                          }`}>
                                           {riasec && riasec.confidence.evidence_ratio > 0 ? "Đã xác minh" : "Sơ khởi"}
                                         </span>
                                       )}
@@ -1686,9 +1510,8 @@ function StudentPortalPageContent() {
                             <p className="font-semibold text-gray-500 mt-2">Kỹ năng cốt lõi cần có:</p>
                             <div className="flex flex-wrap gap-1.5 mt-1">
                               {branch.requiredSkills.map(sk => (
-                                <span key={sk} className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                                  owned.has(sk) ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-gray-50 text-gray-600 border border-gray-100"
-                                }`}>
+                                <span key={sk} className={`px-2 py-0.5 rounded text-[10px] font-medium ${owned.has(sk) ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-gray-50 text-gray-600 border border-gray-100"
+                                  }`}>
                                   {sk} {owned.has(sk) ? "✓" : ""}
                                 </span>
                               ))}
@@ -1721,7 +1544,7 @@ function StudentPortalPageContent() {
                       {/* Skill Gap phân loại buộc có / cần có / nên có */}
                       <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm lg:col-span-7 space-y-4">
                         <h3 className="font-bold text-ink text-base">Bản đồ kỹ năng: {selectedJobTitle}</h3>
-                        
+
                         {(() => {
                           const branchData = (RAG_SKILL_MAP[selectedIndustry] || []).find(b => b.name === selectedJobTitle) || {
                             requiredSkills: ["Giao tiếp", "Làm việc nhóm", "Cẩn thận"],
@@ -1739,9 +1562,8 @@ function StudentPortalPageContent() {
                                     return (
                                       <div key={sk} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
                                         <span className="font-medium text-gray-700">{sk}</span>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                                          hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                                        }`}>
+                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                                          }`}>
                                           {hasSk ? "Đã có" : "↗ Cần học"}
                                         </span>
                                       </div>
@@ -1758,9 +1580,8 @@ function StudentPortalPageContent() {
                                     return (
                                       <div key={sk} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
                                         <span className="font-medium text-gray-700">{sk}</span>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                                          hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                                        }`}>
+                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                                          }`}>
                                           {hasSk ? "Đã có" : "↗ Cần học"}
                                         </span>
                                       </div>
@@ -1777,9 +1598,8 @@ function StudentPortalPageContent() {
                                     return (
                                       <div key={sk} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
                                         <span className="font-medium text-gray-700">{sk}</span>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                                          hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                                        }`}>
+                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                                          }`}>
                                           {hasSk ? "Đã có" : "↗ Cần học"}
                                         </span>
                                       </div>
@@ -1849,7 +1669,7 @@ function StudentPortalPageContent() {
           {/* TAB 3: CHAT ("Trợ lý AI") */}
           {activeTab === "chat" && (
             <div className="flex-1 flex flex-col h-[calc(100vh-10rem)] bg-white rounded-2xl border border-gray-200/80 overflow-hidden shadow-sm fade-up">
-              
+
               {/* Chat messages */}
               <div ref={chatScrollRef} className="flex-1 p-5 overflow-y-auto space-y-4 bg-gray-50/50 scrollbar-none">
                 {messages.map((m, idx) => (
@@ -1860,14 +1680,13 @@ function StudentPortalPageContent() {
                       </div>
                     )}
                     <div className="flex flex-col max-w-[80%]">
-                      <div className={`rounded-2xl p-4 text-sm leading-relaxed whitespace-pre-line shadow-sm border ${
-                        m.sender === "user"
+                      <div className={`rounded-2xl p-4 text-sm leading-relaxed whitespace-pre-line shadow-sm border ${m.sender === "user"
                           ? "bg-[#005c6d] text-white border-[#005c6d]"
                           : "bg-white text-[#111827] border-gray-200"
-                      }`}>
+                        }`}>
                         {m.text}
                       </div>
-                      
+
                       {/* Message Options / Nút trả lời nhanh */}
                       {m.options && m.options.length > 0 && !chatBusy && (
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -1883,12 +1702,12 @@ function StudentPortalPageContent() {
                           ))}
                         </div>
                       )}
-                      
+
                       <span className="text-[10px] text-gray-400 mt-1 self-start">{m.time}</span>
                     </div>
                   </div>
                 ))}
-                
+
                 {chatBusy && (
                   <div className="flex justify-start items-center gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-[#005c6d] text-white flex items-center justify-center text-sm font-semibold shrink-0 animate-pulse">
@@ -1972,9 +1791,8 @@ function StudentPortalPageContent() {
                             )
                           )}
                           <span
-                            className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                              ev.confidence === "high" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-                            }`}
+                            className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${ev.confidence === "high" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                              }`}
                           >
                             Độ tin cậy: {ev.confidence === "high" ? "cao" : ev.confidence === "medium" ? "trung bình" : ev.confidence}
                           </span>

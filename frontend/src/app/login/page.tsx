@@ -8,7 +8,7 @@ import { LogoMark } from "@/components/ui/Compass";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { linkSessionToProfile } from "@/lib/linkProfile";
-import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
+import { getBackendProfile, hasCompletedOnboarding, savePortalRef } from "@/lib/profile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,30 +22,25 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    // Tài khoản test demo phục vụ Ban Tổ Chức (BTC) chấm thi
+    // ── Tài khoản demo phục vụ Ban Giám Khảo VAIC 2026 ──
     if (email.trim().toLowerCase() === "giamkhao@careerradar.vn" && password === "vaic2026") {
       setLoading(true);
       try {
         const demoProfileId = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
-        
-        // Lưu Portal Ref giả lập vào localStorage để Portal load được tên & vùng
-        const { savePortalRef } = await import("@/lib/profile");
         savePortalRef({
           profile_id: demoProfileId,
           name: "Giám khảo VAIC 2026",
           region: "Hà Nội",
           completedAt: new Date().toISOString()
         });
-
-        // Chuyển hướng trực tiếp vào Portal cá nhân hóa
         router.push(`/profile/${demoProfileId}`);
       } catch (err: any) {
-        setError("Lỗi đăng nhập tài khoản giám khảo: " + err.message);
-      } finally {
+        setError("Lỗi tài khoản demo: " + err.message);
         setLoading(false);
       }
       return;
     }
+    // ─────────────────────────────────────────────────────
 
     if (!isSupabaseConfigured) {
       setError("Chưa cấu hình Supabase — điền NEXT_PUBLIC_SUPABASE_URL/ANON_KEY trong .env.local.");
@@ -65,8 +60,8 @@ export default function LoginPage() {
           /invalid login credentials/i.test(msg)
             ? "Email hoặc mật khẩu không đúng."
             : /email not confirmed/i.test(msg)
-            ? "Tài khoản chưa xác nhận email. Kiểm tra hộp thư của bạn nhé."
-            : msg || "Đăng nhập thất bại. Vui lòng thử lại."
+              ? "Tài khoản chưa xác nhận email. Kiểm tra hộp thư của bạn nhé."
+              : msg || "Đăng nhập thất bại. Vui lòng thử lại."
         );
         return;
       }
@@ -92,7 +87,7 @@ export default function LoginPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:flex-row items-center justify-center max-w-[1400px] mx-auto w-full px-6 md:px-8 lg:px-16 gap-10 lg:gap-24 xl:gap-32 pb-12">
-        
+
         {/* Left Column — Form */}
         <div className="w-full max-w-[400px] xl:max-w-[440px] flex flex-col justify-center flex-shrink-0 mt-8 lg:mt-0">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#111827] tracking-tight leading-tight mb-3">
