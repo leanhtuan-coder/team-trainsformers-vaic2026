@@ -1,4 +1,8 @@
+"use client";
+
+import { m } from "framer-motion";
 import { LogoMark } from "@/components/ui/Compass";
+import { REVEAL_VIEWPORT, fadeIn } from "@/lib/animation";
 
 const COLUMNS = [
   {
@@ -31,7 +35,14 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer id="ve-chung-toi" className="bg-brand-deep px-6 py-14 text-white/80">
+    <m.footer
+      id="ve-chung-toi"
+      variants={fadeIn}
+      initial="hidden"
+      whileInView="visible"
+      viewport={REVEAL_VIEWPORT}
+      className="bg-brand-deep px-6 py-14 text-white/80"
+    >
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-5">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
@@ -61,6 +72,6 @@ export function Footer() {
         <p>© 2026 · TrainSformers × VEX Technology Solutions</p>
         <p>Được xây dựng tại VAIC 2026 · Hà Nội, Việt Nam</p>
       </div>
-    </footer>
+    </m.footer>
   );
 }
