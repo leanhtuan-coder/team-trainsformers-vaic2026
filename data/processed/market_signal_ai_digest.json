@@ -1,0 +1,773 @@
+{
+  "purpose": "Compact digest for AI analysis. Keeps high-signal fields only; source snapshot remains the ground truth.",
+  "generated_at": "2026-07-18T15:23:22.069Z",
+  "sample": {
+    "analyzed_jobs_with_full_description": 1332,
+    "total_scraped_listing_records": 3365,
+    "caveat": "Snapshot một thời điểm; các tỷ lệ là cơ cấu nhu cầu hiện tại, không phải xu hướng tăng/giảm theo thời gian."
+  },
+  "coverage": {
+    "description_present": {
+      "count": 1332,
+      "ratio": 0.396
+    },
+    "industry_extracted": {
+      "count": 1111,
+      "ratio": 0.834
+    },
+    "skills_extracted": {
+      "count": 801,
+      "ratio": 0.601
+    },
+    "salary_disclosed": {
+      "count": 971,
+      "ratio": 0.729
+    },
+    "salary_negotiable": {
+      "count": 361,
+      "ratio": 0.271
+    },
+    "salary_unknown": {
+      "count": 0,
+      "ratio": 0
+    },
+    "note": "Mẫu phân tích gồm 1332 tin tuyển dụng crawl được mô tả đầy đủ (trên 3365 tin thu thập ở mức danh sách). Mọi thống kê kỹ năng/ngành/vùng/lương đều tính trên cùng mẫu này. Thống kê lương CHỈ dùng nhóm có số cụ thể, không suy diễn cho nhóm 'thoả thuận'."
+  },
+  "market_headlines": [
+    "Mẫu phân tích có 1332 tin đủ mô tả trên 3365 tin crawl.",
+    "Ngành có nhu cầu lớn nhất: Kế toán (143), Bán lẻ - Hàng tiêu dùng - FMCG (141), Marketing / Quảng cáo (140), Xây dựng (127), Tài chính (96).",
+    "Kỹ năng bắt buộc nổi bật: Giao tiếp (128), Kỹ năng giao tiếp (83), Đàm phán (62), Excel (54), Tin học văn phòng (51), Chăm Sóc Khách Hàng (44), Giải quyết vấn đề (44), AutoCAD (41).",
+    "Địa bàn chính: Hồ Chí Minh (637), Hà Nội (629), Bắc Ninh (27), Đà Nẵng (26), Đồng Nai (23)."
+  ],
+  "top_required_skills": [
+    {
+      "name": "Giao tiếp",
+      "count": 128
+    },
+    {
+      "name": "Kỹ năng giao tiếp",
+      "count": 83
+    },
+    {
+      "name": "Đàm phán",
+      "count": 62
+    },
+    {
+      "name": "Excel",
+      "count": 54
+    },
+    {
+      "name": "Tin học văn phòng",
+      "count": 51
+    },
+    {
+      "name": "Chăm Sóc Khách Hàng",
+      "count": 44
+    },
+    {
+      "name": "Giải quyết vấn đề",
+      "count": 44
+    },
+    {
+      "name": "AutoCAD",
+      "count": 41
+    },
+    {
+      "name": "Kỹ năng đàm phán",
+      "count": 38
+    },
+    {
+      "name": "Lập Kế Hoạch",
+      "count": 29
+    },
+    {
+      "name": "Trung thực",
+      "count": 28
+    },
+    {
+      "name": "Cẩn thận",
+      "count": 28
+    },
+    {
+      "name": "Làm việc nhóm",
+      "count": 27
+    },
+    {
+      "name": "thuyết phục",
+      "count": 26
+    },
+    {
+      "name": "Xử lý tình huống",
+      "count": 25
+    }
+  ],
+  "top_preferred_skills": [
+    {
+      "name": "Làm việc nhóm",
+      "count": 16
+    },
+    {
+      "name": "Tin học văn phòng",
+      "count": 15
+    },
+    {
+      "name": "FMCG",
+      "count": 12
+    },
+    {
+      "name": "Excel",
+      "count": 9
+    },
+    {
+      "name": "Giao tiếp",
+      "count": 9
+    },
+    {
+      "name": "Marketing",
+      "count": 8
+    },
+    {
+      "name": "Giải quyết vấn đề",
+      "count": 8
+    },
+    {
+      "name": "F&B",
+      "count": 8
+    },
+    {
+      "name": "ERP",
+      "count": 8
+    },
+    {
+      "name": "Tiếng Anh",
+      "count": 8
+    }
+  ],
+  "top_industries": [
+    {
+      "industry": "Kế toán",
+      "jobs": 143,
+      "demand_share_pct": 10.7,
+      "entry_level_pct": 18.2,
+      "salary_median_trieu": 16,
+      "salary_sample": 113,
+      "top_skills": [
+        "Excel",
+        "Kế Toán",
+        "phần mềm kế toán",
+        "Cẩn thận",
+        "Lập Báo Cáo Tài Chính"
+      ],
+      "top_provinces": [
+        "Hà Nội",
+        "Hồ Chí Minh",
+        "Hải Phòng"
+      ]
+    },
+    {
+      "industry": "Bán lẻ - Hàng tiêu dùng - FMCG",
+      "jobs": 141,
+      "demand_share_pct": 10.6,
+      "entry_level_pct": 24.8,
+      "salary_median_trieu": 16,
+      "salary_sample": 109,
+      "top_skills": [
+        "Giao tiếp",
+        "Đàm phán",
+        "Chăm Sóc Khách Hàng",
+        "Kỹ năng giao tiếp",
+        "Xử lý tình huống"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Bắc Ninh"
+      ]
+    },
+    {
+      "industry": "Marketing / Quảng cáo",
+      "jobs": 140,
+      "demand_share_pct": 10.5,
+      "entry_level_pct": 27.1,
+      "salary_median_trieu": 16.5,
+      "salary_sample": 104,
+      "top_skills": [
+        "Giao tiếp",
+        "Kỹ năng giao tiếp",
+        "Đàm phán",
+        "Tin học văn phòng",
+        "Phân tích dữ liệu"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Thanh Hóa"
+      ]
+    },
+    {
+      "industry": "Xây dựng",
+      "jobs": 127,
+      "demand_share_pct": 9.5,
+      "entry_level_pct": 32.3,
+      "salary_median_trieu": 20,
+      "salary_sample": 96,
+      "top_skills": [
+        "AutoCAD",
+        "Kỹ năng giao tiếp",
+        "Giao tiếp",
+        "Làm việc nhóm",
+        "Đàm phán"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Đà Nẵng"
+      ]
+    },
+    {
+      "industry": "Tài chính",
+      "jobs": 96,
+      "demand_share_pct": 7.2,
+      "entry_level_pct": 29.2,
+      "salary_median_trieu": 21,
+      "salary_sample": 63,
+      "top_skills": [
+        "Giao tiếp",
+        "Kỹ năng giao tiếp",
+        "Excel",
+        "Tin học văn phòng",
+        "Trung thực"
+      ],
+      "top_provinces": [
+        "Hà Nội",
+        "Hồ Chí Minh",
+        "Hưng Yên"
+      ]
+    },
+    {
+      "industry": "IT - Phần mềm",
+      "jobs": 96,
+      "demand_share_pct": 7.2,
+      "entry_level_pct": 16.7,
+      "salary_median_trieu": 22.5,
+      "salary_sample": 46,
+      "top_skills": [
+        "Giao tiếp",
+        "SQL",
+        "Java",
+        "Docker",
+        "Kỹ năng giao tiếp"
+      ],
+      "top_provinces": [
+        "Hà Nội",
+        "Hồ Chí Minh",
+        "Bắc Ninh"
+      ]
+    },
+    {
+      "industry": "Điện / Điện tử / Điện lạnh",
+      "jobs": 83,
+      "demand_share_pct": 6.2,
+      "entry_level_pct": 39.8,
+      "salary_median_trieu": 15.5,
+      "salary_sample": 59,
+      "top_skills": [
+        "AutoCAD",
+        "Đọc Hiểu Bản Vẽ Kỹ Thuật",
+        "Giải quyết vấn đề",
+        "Giao tiếp",
+        "Cơ Khí"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Bắc Ninh"
+      ]
+    },
+    {
+      "industry": "Nhân sự",
+      "jobs": 78,
+      "demand_share_pct": 5.9,
+      "entry_level_pct": 15.4,
+      "salary_median_trieu": 13.5,
+      "salary_sample": 52,
+      "top_skills": [
+        "Giao tiếp",
+        "tuyển dụng",
+        "Excel",
+        "Kỹ năng giao tiếp",
+        "tính lương"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Hải Phòng"
+      ]
+    },
+    {
+      "industry": "Công nghệ kỹ thuật",
+      "jobs": 78,
+      "demand_share_pct": 5.9,
+      "entry_level_pct": 37.2,
+      "salary_median_trieu": 17.5,
+      "salary_sample": 60,
+      "top_skills": [
+        "Giao tiếp",
+        "Kỹ năng giao tiếp",
+        "Tin học văn phòng",
+        "Đàm phán",
+        "thuyết phục"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Đồng Nai"
+      ]
+    },
+    {
+      "industry": "Thương mại điện tử",
+      "jobs": 74,
+      "demand_share_pct": 5.6,
+      "entry_level_pct": 20.3,
+      "salary_median_trieu": 17.8,
+      "salary_sample": 54,
+      "top_skills": [
+        "Chăm Sóc Khách Hàng",
+        "Đàm phán",
+        "Giao tiếp",
+        "Digital Marketing",
+        "Excel"
+      ],
+      "top_provinces": [
+        "Hà Nội",
+        "Hồ Chí Minh",
+        "Bắc Ninh"
+      ]
+    },
+    {
+      "industry": "Cơ khí / Tự động hóa",
+      "jobs": 70,
+      "demand_share_pct": 5.3,
+      "entry_level_pct": 31.4,
+      "salary_median_trieu": 16.5,
+      "salary_sample": 50,
+      "top_skills": [
+        "Giao tiếp",
+        "AutoCAD",
+        "Đàm phán",
+        "Giải quyết vấn đề",
+        "Đọc Hiểu Bản Vẽ Kỹ Thuật"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Đồng Nai"
+      ]
+    },
+    {
+      "industry": "Thiết kế / Kiến trúc",
+      "jobs": 68,
+      "demand_share_pct": 5.1,
+      "entry_level_pct": 26.5,
+      "salary_median_trieu": 17.5,
+      "salary_sample": 48,
+      "top_skills": [
+        "AutoCAD",
+        "Sketchup",
+        "Revit",
+        "Photoshop",
+        "Giao tiếp"
+      ],
+      "top_provinces": [
+        "Hồ Chí Minh",
+        "Hà Nội",
+        "Đà Nẵng"
+      ]
+    }
+  ],
+  "top_provinces": [
+    {
+      "name": "Hồ Chí Minh",
+      "count": 637
+    },
+    {
+      "name": "Hà Nội",
+      "count": 629
+    },
+    {
+      "name": "Bắc Ninh",
+      "count": 27
+    },
+    {
+      "name": "Đà Nẵng",
+      "count": 26
+    },
+    {
+      "name": "Đồng Nai",
+      "count": 23
+    },
+    {
+      "name": "Hải Phòng",
+      "count": 21
+    },
+    {
+      "name": "Hưng Yên",
+      "count": 12
+    },
+    {
+      "name": "Tây Ninh",
+      "count": 9
+    },
+    {
+      "name": "Thanh Hóa",
+      "count": 5
+    },
+    {
+      "name": "Cần Thơ",
+      "count": 4
+    }
+  ],
+  "salary_highlights_by_median": [
+    {
+      "industry": "Ngân hàng",
+      "median_trieu": 25,
+      "range_trieu": [
+        10,
+        85
+      ],
+      "sample_size": 25
+    },
+    {
+      "industry": "IT - Phần mềm",
+      "median_trieu": 22.5,
+      "range_trieu": [
+        2.5,
+        50
+      ],
+      "sample_size": 46
+    },
+    {
+      "industry": "Kiểm toán",
+      "median_trieu": 22.5,
+      "range_trieu": [
+        9,
+        55
+      ],
+      "sample_size": 29
+    },
+    {
+      "industry": "Bất động sản",
+      "median_trieu": 22,
+      "range_trieu": [
+        9,
+        125
+      ],
+      "sample_size": 27
+    },
+    {
+      "industry": "Tài chính",
+      "median_trieu": 21,
+      "range_trieu": [
+        8,
+        85
+      ],
+      "sample_size": 63
+    },
+    {
+      "industry": "Xây dựng",
+      "median_trieu": 20,
+      "range_trieu": [
+        8.5,
+        117
+      ],
+      "sample_size": 96
+    },
+    {
+      "industry": "Giáo dục / Đào tạo",
+      "median_trieu": 19,
+      "range_trieu": [
+        0.4,
+        44
+      ],
+      "sample_size": 49
+    },
+    {
+      "industry": "Y tế / Dược phẩm",
+      "median_trieu": 19,
+      "range_trieu": [
+        10.5,
+        50
+      ],
+      "sample_size": 31
+    },
+    {
+      "industry": "Thương mại điện tử",
+      "median_trieu": 17.8,
+      "range_trieu": [
+        2,
+        50
+      ],
+      "sample_size": 54
+    },
+    {
+      "industry": "Công nghệ kỹ thuật",
+      "median_trieu": 17.5,
+      "range_trieu": [
+        6,
+        80
+      ],
+      "sample_size": 60
+    }
+  ],
+  "entry_friendly_industries": [
+    {
+      "industry": "Điện / Điện tử / Điện lạnh",
+      "entry_level_pct": 39.8,
+      "jobs": 83,
+      "salary_median_trieu": 15.5
+    },
+    {
+      "industry": "Công nghệ kỹ thuật",
+      "entry_level_pct": 37.2,
+      "jobs": 78,
+      "salary_median_trieu": 17.5
+    },
+    {
+      "industry": "Y tế / Dược phẩm",
+      "entry_level_pct": 37,
+      "jobs": 46,
+      "salary_median_trieu": 19
+    },
+    {
+      "industry": "Ngân hàng",
+      "entry_level_pct": 34,
+      "jobs": 50,
+      "salary_median_trieu": 25
+    },
+    {
+      "industry": "Giáo dục / Đào tạo",
+      "entry_level_pct": 32.7,
+      "jobs": 55,
+      "salary_median_trieu": 19
+    },
+    {
+      "industry": "Xây dựng",
+      "entry_level_pct": 32.3,
+      "jobs": 127,
+      "salary_median_trieu": 20
+    },
+    {
+      "industry": "Cơ khí / Tự động hóa",
+      "entry_level_pct": 31.4,
+      "jobs": 70,
+      "salary_median_trieu": 16.5
+    },
+    {
+      "industry": "Tài chính",
+      "entry_level_pct": 29.2,
+      "jobs": 96,
+      "salary_median_trieu": 21
+    }
+  ],
+  "skill_insights": [
+    {
+      "skill": "Giao tiếp",
+      "jobs": 128,
+      "demand_share_pct": 9.6,
+      "salary_median_trieu": 17.5,
+      "salary_sample": 95,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Marketing / Quảng cáo",
+        "Nhân sự",
+        "Logistic / Vận tải"
+      ]
+    },
+    {
+      "skill": "Kỹ năng giao tiếp",
+      "jobs": 83,
+      "demand_share_pct": 6.2,
+      "salary_median_trieu": 19.3,
+      "salary_sample": 60,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Xây dựng",
+        "Marketing / Quảng cáo",
+        "Tài chính"
+      ]
+    },
+    {
+      "skill": "Đàm phán",
+      "jobs": 62,
+      "demand_share_pct": 4.7,
+      "salary_median_trieu": 22.5,
+      "salary_sample": 42,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Marketing / Quảng cáo",
+        "Xây dựng",
+        "Tài chính"
+      ]
+    },
+    {
+      "skill": "Excel",
+      "jobs": 54,
+      "demand_share_pct": 4.1,
+      "salary_median_trieu": 14.8,
+      "salary_sample": 44,
+      "top_industries": [
+        "Kế toán",
+        "Nhân sự",
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Tài chính"
+      ]
+    },
+    {
+      "skill": "Tin học văn phòng",
+      "jobs": 51,
+      "demand_share_pct": 3.8,
+      "salary_median_trieu": 17.5,
+      "salary_sample": 31,
+      "top_industries": [
+        "Kế toán",
+        "Marketing / Quảng cáo",
+        "Tài chính",
+        "Bán lẻ - Hàng tiêu dùng - FMCG"
+      ]
+    },
+    {
+      "skill": "Chăm Sóc Khách Hàng",
+      "jobs": 44,
+      "demand_share_pct": 3.3,
+      "salary_median_trieu": 19.3,
+      "salary_sample": 32,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Thực phẩm / Đồ uống",
+        "Nhà hàng / Khách sạn",
+        "Chăm sóc sức khỏe / Làm đẹp"
+      ]
+    },
+    {
+      "skill": "Giải quyết vấn đề",
+      "jobs": 44,
+      "demand_share_pct": 3.3,
+      "salary_median_trieu": 20,
+      "salary_sample": 30,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Điện / Điện tử / Điện lạnh",
+        "Thực phẩm / Đồ uống",
+        "Logistic / Vận tải"
+      ]
+    },
+    {
+      "skill": "AutoCAD",
+      "jobs": 41,
+      "demand_share_pct": 3.1,
+      "salary_median_trieu": 16.5,
+      "salary_sample": 30,
+      "top_industries": [
+        "Xây dựng",
+        "Thiết kế / Kiến trúc",
+        "Điện / Điện tử / Điện lạnh",
+        "Cơ khí / Tự động hóa"
+      ]
+    },
+    {
+      "skill": "Kỹ năng đàm phán",
+      "jobs": 38,
+      "demand_share_pct": 2.9,
+      "salary_median_trieu": 22.3,
+      "salary_sample": 26,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Y tế / Dược phẩm",
+        "Xây dựng",
+        "May mặc / Thời trang"
+      ]
+    },
+    {
+      "skill": "Lập Kế Hoạch",
+      "jobs": 29,
+      "demand_share_pct": 2.2,
+      "salary_median_trieu": 24.5,
+      "salary_sample": 18,
+      "top_industries": [
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Xây dựng",
+        "Tài chính",
+        "Kế toán"
+      ]
+    },
+    {
+      "skill": "Trung thực",
+      "jobs": 28,
+      "demand_share_pct": 2.1,
+      "salary_median_trieu": 12.5,
+      "salary_sample": 23,
+      "top_industries": [
+        "Kế toán",
+        "Tài chính",
+        "Xây dựng",
+        "Sản xuất"
+      ]
+    },
+    {
+      "skill": "Cẩn thận",
+      "jobs": 28,
+      "demand_share_pct": 2.1,
+      "salary_median_trieu": 12,
+      "salary_sample": 21,
+      "top_industries": [
+        "Kế toán",
+        "Tài chính",
+        "Bán lẻ - Hàng tiêu dùng - FMCG",
+        "Sản xuất"
+      ]
+    }
+  ],
+  "experience_distribution": [
+    {
+      "level": "1 năm",
+      "count": 400,
+      "ratio": 0.3
+    },
+    {
+      "level": "2 năm",
+      "count": 258,
+      "ratio": 0.194
+    },
+    {
+      "level": "Không yêu cầu",
+      "count": 255,
+      "ratio": 0.191
+    },
+    {
+      "level": "3 năm",
+      "count": 173,
+      "ratio": 0.13
+    },
+    {
+      "level": "Dưới 1 năm",
+      "count": 132,
+      "ratio": 0.099
+    },
+    {
+      "level": "5 năm",
+      "count": 65,
+      "ratio": 0.049
+    },
+    {
+      "level": "Trên 5 năm",
+      "count": 35,
+      "ratio": 0.026
+    },
+    {
+      "level": "4 năm",
+      "count": 14,
+      "ratio": 0.011
+    }
+  ],
+  "analysis_prompt": "Dựa trên digest này, hãy phân tích cơ hội nghề nghiệp cho học sinh/sinh viên: ngành dễ vào, kỹ năng nên học trước, vùng có nhiều nhu cầu, và lưu ý độ tin cậy của dữ liệu."
+}
