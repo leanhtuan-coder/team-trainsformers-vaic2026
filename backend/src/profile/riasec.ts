@@ -182,6 +182,26 @@ export function scoreRiasec(profile: Profile): RiasecResult {
   const answeredQuickstart = new Set<string>();
 
   for (const e of active) {
+    // Trắc nghiệm Holland đầy đủ (108 câu)
+    if (e.source_ref === "Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ") {
+      const weight = sourceWeight(e);
+      answeredQuickstart.add("full-holland-test");
+      for (const claim of e.claims) {
+        const letter = claim.dimension.replace("Holland ", "").toUpperCase() as RiasecLetter;
+        if (RIASEC_LETTERS.includes(letter)) {
+          const valNum = Number(claim.value) || 0;
+          raw[letter] += valNum * weight;
+          reasons[letter].push({
+            source_ref: e.source_ref,
+            value: `Điểm trắc nghiệm đầy đủ: ${valNum}/18`,
+            weight,
+            sign: 1
+          });
+        }
+      }
+      continue;
+    }
+
     // Câu phá hoà (E1.3): claim.value là chữ RIASEC → cộng thẳng, KHÔNG tính vào answered_count.
     if (e.source_ref.startsWith("riasec-tiebreak")) {
       const w = sourceWeight(e);

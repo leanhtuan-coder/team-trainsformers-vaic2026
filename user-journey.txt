@@ -1,0 +1,120 @@
+CHẶNG 1 — Chẩn đoán & Kết quả scan
+Mục tiêu: Từ onboarding → sinh Holland Code + chân dung + nghề gợi ý. Cho phép nâng cấp bằng bài test chuẩn.
+Main Flow
+User hoàn thành onboarding (profile + 6 câu + upload tùy chọn).
+Hệ thống chấm điểm RIASEC: LLM chấm thô từng nguồn → nhân trọng số → chuẩn hóa 0–10.
+Hệ thống lấy 3 nhóm cao nhất → sinh Holland Code.
+Hệ thống tính confidence.
+Hệ thống lấy số việc làm theo vùng (từ "nơi mong muốn làm việc") + fit mỗi nghề.
+Hiển thị kết quả: RIASEC+ chân dung + điểm mạnh → nghề gợi ý (fit × việc/vùng x xu hướng) → độ tin cậy → follow-up.
+Ngay dưới kết quả, hiển thị thẻ mời làm bài test chuẩn (nâng độ tin cậy).
+User chọn "Làm test" hoặc "Để sau".
+Nếu "Để sau" → chuyển Chặng 2 với data hiện có.
+User có thể bấm vào chữ ‘Xu hướng’ để reference sang dashboard đã filter theo ngành nghề đó
+Exception Flow
+E1.1 — Dữ liệu < 3 câu: Không xuất Holland Code. Hiện xu hướng sơ bộ + status insufficient_data. Ưu tiên đẩy user vào bài test chuẩn thay vì tiếp tục.
+E1.2 — Thiếu 3–5 câu: Hiện chân dung sơ bộ, confidence thấp, nêu trục còn thiếu, hỏi lại đúng câu đó. Status need_more_info.
+E1.3 — Điểm sát nhau (top3≈top4 <0.5): Hiện 2 mã khả dĩ, giảm confidence, hỏi câu phân biệt A/B. Status need_tiebreaker.
+E1.4 — Mâu thuẫn tự khai vs hồ sơ: Kết quả nghiêng theo hồ sơ (trọng số cao), nêu cả hai như "điểm khám phá".
+E1.5 — Chọn "Làm test" (nâng cấp): Vào sub-flow bài test chuẩn (xem dưới).
+Sub-flow: Bài test chuẩn
+S1. User vào bài test, hiện tổng số câu + thanh progress.
+S2. User trả lời từng câu; hệ thống tự lưu tiến độ.
+S3. Hoàn thành → map output test sang RIASEC → hợp nhất với data cũ (test chuẩn trọng số cao nhất, gần ghi đè 6 câu).
+S4. Cập nhật confidence ▲, tinh chỉnh nghề gợi ý → hiện kết quả mới.
+Ex-S1 — User thoát giữa chừng: Lưu tiến độ, cho quay lại tiếp. Không mất câu đã trả lời.
+Ex-S2 — Test mâu thuẫn 6 câu: Ưu tiên test chuẩn, nêu điểm khác biệt, không phủ định.
+CHẶNG 2 — Chọn ngành 
+Main Flow
+Hệ thống đưa câu hỏi trắc nghiệm vd: Bạn muốn phân tích ngành nào:  ngành (A) / ngành khác (B) / cả hai.
+User chọn 1 ngành (A) / ngành khác (B) / cả hai.
+Đến chặng 3
+Exception Flow
+E2.1 — User nhập ngành ngoài gợi ý: Nhận diện ngành. Nếu không nhận diện → gợi ý ngành gần đúng để xác nhận.
+CHẶNG 3 — Rẽ nhánh nghề (Job Titles)
+Mục tiêu: Phân tích các nhánh (job title) trong ngành → fit + kỹ năng từng nhánh.
+Main Flow
+Hệ thống lấy các job title thuộc ngành đã chọn (từ RAG).
+Với mỗi nhánh: tính fit riêng với user, kỹ năng đặc trưng, độ dễ vào, số việc + lương, vùng
+Hiển thị các nhánh, gắn nhãn "Nên bắt đầu từ đây" cho 1–2 nhánh (fit cao × dễ vào × nhiều việc).
+User chọn nhánh muốn tìm hiểu.
+Chuyển Chặng 4 (lộ trình nhánh đó).
+Exception Flow
+E3.1 — Ngành có quá nhiều nhánh: Giới hạn hiển thị 4–5 nhánh phù hợp nhất, cho "xem thêm".
+E3.2 — Không nhánh nào fit cao: Hiện nhánh fit cao nhất hiện có + ghi chú "cần bổ sung kỹ năng nhiều", gợi ý cân nhắc ngành khác.
+E3.3 — RAG không trả về nhánh cho ngành hiếm: Dùng knowledge chung mô tả nhánh phổ biến + ghi chú độ tin cậy thấp hơn.
+E3.4 — User phân vân nhiều nhánh: Cho so sánh 2 nhánh side-by-side trước khi chọn.
+CHẶNG 4 — Lộ trình nhánh
+Mục tiêu: Sinh lộ trình cá nhân hóa, xếp theo impact, có mốc đo được.
+Main Flow
+Hệ thống lấy skill map của nhánh (từ RAG).
+Phân loại kỹ năng: buộc có / cần có / nên có.
+Đối chiếu với năng lực hiện có → đánh dấu đã có / chưa rõ / còn thiếu từng kỹ năng.
+Xếp thứ tự các kỹ năng cần học theo impact (mở nhiều cơ hội/công sức ít học trước).
+Cá nhân hóa: bỏ qua kỹ năng đã có, gia cố kỹ năng yếu.
+Mỗi bước gắn: tiêu chí đạt, mốc thời gian, khóa học gợi ý, fit sẽ tăng bao nhiêu.
+Hiển thị lộ trình 
+Exception Flow
+E4.1 — Không tìm được khóa học cụ thể: Gợi loại khóa + nơi tìm, không bịa tên khóa.
+E4.2 — User đã có gần hết kỹ năng: Lộ trình ngắn, thiên "tinh chỉnh + làm project chứng minh", nhấn mạnh sẵn sàng ứng tuyển.
+E4.3 — Gap quá lớn (Fit thấp): Lộ trình dài hơn, chia mốc nhỏ, cảnh báo "đây là chuyển hướng lớn", ước tính thời gian thực tế.
+E4.4 — Nguồn RAG lộ trình lỗi thời (ngành tech): Ưu tiên nguồn cập nhật nhất, chuẩn hóa về cấu trúc kỹ năng→cấp độ→nguồn học.
+E4.5 — User bấm "Đã biết rồi, bỏ qua bước": Cho làm test vượt qua (nối Chặng 5) để xác minh trước khi bỏ.
+CHẶNG 5 — Kiểm tra trình độ/ User tự khai
+Mục tiêu: Xác minh năng lực thật để gap đáng tin. Test chỉ xuất hiện khi thiếu bằng chứng.
+Main Flow
+Hệ thống kiểm tra độ đủ bằng chứng cho các kỹ năng của nhánh.
+Quyết định: đủ (hồ sơ khớp) → test tùy chọn; lệch → test phần thiếu; thiếu → test bắt buộc.
+Với kỹ năng đo được (kiến thức/logic/code) → gen mini-game/test có badge từ skill map (RAG), mỗi câu map 1 kỹ năng.
+Với kỹ năng không đo được (lãnh đạo/sáng tạo/giao tiếp) → yêu cầu upload chứng chỉ/portfolio + user tự đánh giá có dẫn chứng.
+User hoàn thành → chấm điểm theo thang định sẵn.
+Lưu kết quả → cập nhật skill profile → chuyển Chặng 6.
+Exception Flow
+E5.1 — User bỏ qua test (khi tùy chọn): Dùng gap dựa hồ sơ hiện có, gắn cờ độ tin cậy thấp hơn ở phần chưa xác minh.
+E5.2 — User thoát giữa test: Lưu tiến độ, cho làm tiếp. Kết quả một phần vẫn ghi nhận.
+E5.3 — Kết quả test thấp bất ngờ: Trình bày tế nhị, không phán xét, chuyển thành mục tiêu học trong lộ trình.
+E5.4 — Kết quả test cao hơn hồ sơ: Chỉ ra năng lực user chưa nhận ra, nâng đỡ, cập nhật fit tăng.
+E5.5 — Upload không hợp lệ (mục không đo được): Báo lỗi, cho upload lại, không chặn. Nếu bỏ trống → giữ kỹ năng đó ở trạng thái "chưa xác minh".
+E5.6 — Kỹ năng không thể gen test: Chuyển sang cơ chế upload/tự đánh giá, không ép vào game.
+CHẶNG 6 — Cập nhật & Ăn mừng (vòng lặp)
+Mục tiêu: Cập nhật fit/cấp độ/lương/việc làm sau mỗi milestone, tạo động lực, tự điều chỉnh lộ trình.
+Main Flow
+Sau khi skill profile cập nhật, hệ thống tính lại: Fit, cấp độ, range lương, số việc mở thêm, nhánh mới mở khóa.
+Range lương chỉ nhảy khi có bằng chứng xác minh.
+Hiển thị màn "ăn mừng": Fit ▲, cấp độ ▲,range lương tiềm năng, +N việc mở thêm, nhánh mới.
+Lộ trình tự điều chỉnh theo năng lực mới (quay lại Chặng 4).
+Hỏi: "Còn kỹ năng cần học?" → còn → tiếp tục học/kiểm tra; xong → "Sẵn sàng ứng tuyển".
+Exception Flow
+E6.2 — Fit giảm sau đo lại: (VD test cho thấy yếu hơn tự đánh giá) → trình bày trung thực, điều chỉnh lộ trình, không gây nản — nhấn "giờ ta biết chính xác hơn để đi đúng".
+E6.3 — Đo lại phát hiện mạnh ở hướng khác: Gợi ý cân nhắc nhánh/ngành mới phù hợp hơn (vòng về Chặng 2/3).
+E6.4 — Không có việc mới mở dù skill tăng: Hiện trung thực "kỹ năng này chưa mở thêm việc ở vùng bạn, nhưng cần cho bước sau", giữ động lực bằng tiến trình fit.
+E6.5 — User hoàn thành toàn bộ lộ trình: Chuyển trạng thái "Sẵn sàng ứng tuyển", dẫn tới dashboard việc phù hợp (nối Chặng 2).
+Bảng vòng lặp (loops) giữa các chặng
+Từ | Về | Điều kiện
+Từ
+Về
+Điều kiện
+Chặng 1 (exception) | Chặng 1 | Thiếu data/hòa → hỏi thêm rồi tính lại
+Chặng 1 (exception)
+Chặng 1
+Thiếu data/hòa → hỏi thêm rồi tính lại
+Chặng 2 (đổi ngành) | Chặng 2 | User chọn "đổi" → lặp chọn ngành
+Chặng 2 (đổi ngành)
+Chặng 2
+User chọn "đổi" → lặp chọn ngành
+Chặng 6 | Chặng 4 | Lộ trình tự điều chỉnh sau cập nhật
+Chặng 6
+Chặng 4
+Lộ trình tự điều chỉnh sau cập nhật
+Chặng 6 | Chặng 2/3 | Phát hiện mạnh ở hướng khác
+Chặng 6
+Chặng 2/3
+Phát hiện mạnh ở hướng khác
+Chặng 6 | Chặng 5 | Còn kỹ năng → kiểm tra tiếp
+Chặng 6
+Chặng 5
+Còn kỹ năng → kiểm tra tiếp
+3 rule xuyên suốt mọi chặng
+Không chặn cứng luồng — mọi exception cho phép tiếp tục (trừ khi thiếu data nghiêm trọng thì mời bổ sung, không ép).
+Đã xác minh > tự khai — range lương & fit chắc chắn chỉ nhảy khi có bằng chứng; tự khai gắn cờ tin cậy thấp.
+Trung thực nhưng nâng đỡ — tin không thuận (fit thấp, ít việc, kết quả kém) luôn kèm hướng hành động, không phán xét.

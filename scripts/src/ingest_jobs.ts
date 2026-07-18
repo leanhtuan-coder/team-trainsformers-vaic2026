@@ -286,7 +286,12 @@ async function main() {
   const MIN_SALARY_SAMPLE = 10;
   const salaryStat = (values: number[]) =>
     values.length >= MIN_SALARY_SAMPLE
-      ? { median_trieu: Math.round(median(values) * 10) / 10, sample_size: values.length }
+      ? {
+          median_trieu: Math.round(median(values) * 10) / 10,
+          min_trieu: Math.round(Math.min(...values) * 10) / 10,
+          max_trieu: Math.round(Math.max(...values) * 10) / 10,
+          sample_size: values.length,
+        }
       : null;
 
   const industryInsights = [...industryAgg.entries()]

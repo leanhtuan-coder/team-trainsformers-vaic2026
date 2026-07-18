@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T02:12:02.594Z",
+  "generated_at": "2026-07-18T15:23:22.069Z",
   "total_jobs": 1332,
   "total_scraped": 3365,
   "coverage": {
@@ -926,6 +926,8 @@
       "entry_level_ratio": 0.182,
       "salary": {
         "median_trieu": 16,
+        "min_trieu": 8,
+        "max_trieu": 55,
         "sample_size": 113
       },
       "top_skills": [
@@ -992,6 +994,8 @@
       "entry_level_ratio": 0.248,
       "salary": {
         "median_trieu": 16,
+        "min_trieu": 7.7,
+        "max_trieu": 50,
         "sample_size": 109
       },
       "top_skills": [
@@ -1058,6 +1062,8 @@
       "entry_level_ratio": 0.271,
       "salary": {
         "median_trieu": 16.5,
+        "min_trieu": 2,
+        "max_trieu": 65,
         "sample_size": 104
       },
       "top_skills": [
@@ -1124,6 +1130,8 @@
       "entry_level_ratio": 0.323,
       "salary": {
         "median_trieu": 20,
+        "min_trieu": 8.5,
+        "max_trieu": 117,
         "sample_size": 96
       },
       "top_skills": [
@@ -1190,6 +1198,8 @@
       "entry_level_ratio": 0.292,
       "salary": {
         "median_trieu": 21,
+        "min_trieu": 8,
+        "max_trieu": 85,
         "sample_size": 63
       },
       "top_skills": [
@@ -1256,6 +1266,8 @@
       "entry_level_ratio": 0.167,
       "salary": {
         "median_trieu": 22.5,
+        "min_trieu": 2.5,
+        "max_trieu": 50,
         "sample_size": 46
       },
       "top_skills": [
@@ -1318,6 +1330,8 @@
       "entry_level_ratio": 0.398,
       "salary": {
         "median_trieu": 15.5,
+        "min_trieu": 8.5,
+        "max_trieu": 80,
         "sample_size": 59
       },
       "top_skills": [
@@ -1384,6 +1398,8 @@
       "entry_level_ratio": 0.154,
       "salary": {
         "median_trieu": 13.5,
+        "min_trieu": 6,
+        "max_trieu": 30,
         "sample_size": 52
       },
       "top_skills": [
@@ -1450,6 +1466,8 @@
       "entry_level_ratio": 0.372,
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 6,
+        "max_trieu": 80,
         "sample_size": 60
       },
       "top_skills": [
@@ -1516,6 +1534,8 @@
       "entry_level_ratio": 0.203,
       "salary": {
         "median_trieu": 17.8,
+        "min_trieu": 2,
+        "max_trieu": 50,
         "sample_size": 54
       },
       "top_skills": [
@@ -1582,6 +1602,8 @@
       "entry_level_ratio": 0.314,
       "salary": {
         "median_trieu": 16.5,
+        "min_trieu": 8.5,
+        "max_trieu": 80,
         "sample_size": 50
       },
       "top_skills": [
@@ -1648,6 +1670,8 @@
       "entry_level_ratio": 0.265,
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 8.5,
+        "max_trieu": 30,
         "sample_size": 48
       },
       "top_skills": [
@@ -1714,6 +1738,8 @@
       "entry_level_ratio": 0.273,
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 10,
+        "max_trieu": 40,
         "sample_size": 43
       },
       "top_skills": [
@@ -1780,6 +1806,8 @@
       "entry_level_ratio": 0.217,
       "salary": {
         "median_trieu": 15,
+        "min_trieu": 7.5,
+        "max_trieu": 37.5,
         "sample_size": 35
       },
       "top_skills": [
@@ -1846,6 +1874,8 @@
       "entry_level_ratio": 0.327,
       "salary": {
         "median_trieu": 19,
+        "min_trieu": 0.4,
+        "max_trieu": 44,
         "sample_size": 49
       },
       "top_skills": [
@@ -1912,6 +1942,8 @@
       "entry_level_ratio": 0.255,
       "salary": {
         "median_trieu": 14.5,
+        "min_trieu": 9,
+        "max_trieu": 50,
         "sample_size": 39
       },
       "top_skills": [
@@ -1978,6 +2010,8 @@
       "entry_level_ratio": 0.34,
       "salary": {
         "median_trieu": 25,
+        "min_trieu": 10,
+        "max_trieu": 85,
         "sample_size": 25
       },
       "top_skills": [
@@ -2036,6 +2070,8 @@
       "entry_level_ratio": 0.149,
       "salary": {
         "median_trieu": 16.3,
+        "min_trieu": 6,
+        "max_trieu": 47.5,
         "sample_size": 36
       },
       "top_skills": [
@@ -2102,6 +2138,8 @@
       "entry_level_ratio": 0.37,
       "salary": {
         "median_trieu": 19,
+        "min_trieu": 10.5,
+        "max_trieu": 50,
         "sample_size": 31
       },
       "top_skills": [
@@ -2168,6 +2206,8 @@
       "entry_level_ratio": 0.227,
       "salary": {
         "median_trieu": 15,
+        "min_trieu": 10,
+        "max_trieu": 42.5,
         "sample_size": 30
       },
       "top_skills": [
@@ -2257,6 +2297,8 @@
       ],
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 6,
+        "max_trieu": 85,
         "sample_size": 95
       }
     },
@@ -2288,6 +2330,8 @@
       ],
       "salary": {
         "median_trieu": 19.3,
+        "min_trieu": 8,
+        "max_trieu": 70,
         "sample_size": 60
       }
     },
@@ -2319,6 +2363,8 @@
       ],
       "salary": {
         "median_trieu": 22.5,
+        "min_trieu": 11.5,
+        "max_trieu": 80,
         "sample_size": 42
       }
     },
@@ -2350,6 +2396,8 @@
       ],
       "salary": {
         "median_trieu": 14.8,
+        "min_trieu": 3,
+        "max_trieu": 50,
         "sample_size": 44
       }
     },
@@ -2381,6 +2429,8 @@
       ],
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 6,
+        "max_trieu": 61,
         "sample_size": 31
       }
     },
@@ -2412,6 +2462,8 @@
       ],
       "salary": {
         "median_trieu": 19.3,
+        "min_trieu": 3,
+        "max_trieu": 58.8,
         "sample_size": 32
       }
     },
@@ -2443,6 +2495,8 @@
       ],
       "salary": {
         "median_trieu": 20,
+        "min_trieu": 9.3,
+        "max_trieu": 35,
         "sample_size": 30
       }
     },
@@ -2474,6 +2528,8 @@
       ],
       "salary": {
         "median_trieu": 16.5,
+        "min_trieu": 8.5,
+        "max_trieu": 30,
         "sample_size": 30
       }
     },
@@ -2505,6 +2561,8 @@
       ],
       "salary": {
         "median_trieu": 22.3,
+        "min_trieu": 8.5,
+        "max_trieu": 70,
         "sample_size": 26
       }
     },
@@ -2536,6 +2594,8 @@
       ],
       "salary": {
         "median_trieu": 24.5,
+        "min_trieu": 11.5,
+        "max_trieu": 50,
         "sample_size": 18
       }
     },
@@ -2567,6 +2627,8 @@
       ],
       "salary": {
         "median_trieu": 12.5,
+        "min_trieu": 9,
+        "max_trieu": 42.5,
         "sample_size": 23
       }
     },
@@ -2598,6 +2660,8 @@
       ],
       "salary": {
         "median_trieu": 12,
+        "min_trieu": 7.8,
+        "max_trieu": 40,
         "sample_size": 21
       }
     },
@@ -2629,6 +2693,8 @@
       ],
       "salary": {
         "median_trieu": 15.5,
+        "min_trieu": 9,
+        "max_trieu": 50,
         "sample_size": 20
       }
     },
@@ -2660,6 +2726,8 @@
       ],
       "salary": {
         "median_trieu": 22.5,
+        "min_trieu": 10.5,
+        "max_trieu": 85,
         "sample_size": 21
       }
     },
@@ -2691,6 +2759,8 @@
       ],
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 7.7,
+        "max_trieu": 70,
         "sample_size": 23
       }
     },
@@ -2722,6 +2792,8 @@
       ],
       "salary": {
         "median_trieu": 20,
+        "min_trieu": 11,
+        "max_trieu": 60,
         "sample_size": 19
       }
     },
@@ -2753,6 +2825,8 @@
       ],
       "salary": {
         "median_trieu": 16,
+        "min_trieu": 10,
+        "max_trieu": 35,
         "sample_size": 13
       }
     },
@@ -2784,6 +2858,8 @@
       ],
       "salary": {
         "median_trieu": 17.5,
+        "min_trieu": 9.5,
+        "max_trieu": 61,
         "sample_size": 21
       }
     },
@@ -2815,6 +2891,8 @@
       ],
       "salary": {
         "median_trieu": 20,
+        "min_trieu": 10,
+        "max_trieu": 32.5,
         "sample_size": 18
       }
     },
@@ -2846,6 +2924,8 @@
       ],
       "salary": {
         "median_trieu": 14,
+        "min_trieu": 11,
+        "max_trieu": 32.5,
         "sample_size": 14
       }
     }

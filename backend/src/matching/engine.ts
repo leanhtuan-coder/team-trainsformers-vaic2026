@@ -75,11 +75,58 @@ export interface PathwayPortfolio {
 const MIN_PERSONALIZED_CANDIDATES = 3;
 const MAX_CANDIDATES = 6;
 
+const INDUSTRY_RIASEC_MAP: Record<string, string[]> = {
+  "Kế toán": ["C"],
+  "Bán lẻ - Hàng tiêu dùng - FMCG": ["E", "S"],
+  "Marketing / Quảng cáo": ["A", "E"],
+  "Xây dựng": ["R", "I"],
+  "Tài chính": ["C", "I"],
+  "IT - Phần mềm": ["I", "R"],
+  "Điện / Điện tử / Điện lạnh": ["R", "I"],
+  "Nhân sự": ["S", "E"],
+  "Công nghệ kỹ thuật": ["R", "I"],
+  "Thương mại điện tử": ["E", "C"],
+  "Cơ khí / Tự động hóa": ["R", "I"],
+  "Thiết kế / Kiến trúc": ["A", "R"],
+  "Logistic / Vận tải": ["R", "C"],
+  "Sản xuất": ["R", "C"],
+  "Giáo dục / Đào tạo": ["S", "I"],
+  "Thực phẩm / Đồ uống": ["R", "S"],
+  "Ngân hàng": ["C", "E"],
+  "May mặc / Thời trang": ["A", "R"],
+  "Y tế / Dược phẩm": ["I", "S"],
+  "Xuất nhập khẩu / Hải quan": ["C", "E"],
+  "Chăm sóc sức khỏe / Làm đẹp": ["S", "A"],
+  "Kiểm toán": ["C", "I"],
+  "Nhà hàng / Khách sạn": ["S", "E"],
+  "Bất động sản": ["E", "S"],
+  "Thuế": ["C"],
+  "Luật / Pháp chế": ["I", "C"],
+  "Du lịch": ["S", "E"],
+  "Kho vận": ["C", "R"],
+  "IT - Phần cứng và máy tính": ["R", "I"],
+  "Bảo hiểm": ["E", "S"],
+};
+
 export function matchPathways(
   snapshot: DerivedProfileSnapshot,
   market: MarketSignalSnapshot
 ): PathwayPortfolio {
   const profileSources = collectProfileSources(snapshot);
+
+  // Trích xuất điểm Holland từ snapshot
+  const riasecScores: Record<string, number> = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+  let hasHollandData = false;
+  const actIntGroup = snapshot.groups.activity_interest || [];
+  for (const dim of actIntGroup) {
+    const match = dim.dimension.match(/^Holland ([RIASEC])$/i);
+    if (match) {
+      const letter = match[1].toUpperCase();
+      const maxVal = Math.max(...dim.values.map((v) => Number(v.value) || 0), 0);
+      riasecScores[letter] = maxVal;
+      if (maxVal > 0) hasHollandData = true;
+    }
+  }
 
   const allCandidates: PathwayCandidate[] = market.industry_insights.map((ind) => {
     const corpusTokens = new Set([
@@ -89,7 +136,10 @@ export function matchPathways(
 
     const matched_profile_evidence: MatchedProfileEvidence[] = [];
     let score = 0;
+
+    // 1. Khớp từ khóa thô (bỏ qua các dimension điểm số Holland)
     for (const src of profileSources) {
+      if (src.dimension.startsWith("Holland ")) continue;
       const overlap = [...new Set(src.tokens.filter((t) => corpusTokens.has(t)))];
       if (overlap.length > 0) {
         matched_profile_evidence.push({
@@ -98,7 +148,23 @@ export function matchPathways(
           matched_tokens: overlap,
           evidence_refs: src.evidence_refs,
         });
-        score += overlap.length;
+        score += overlap.length * 3;
+      }
+    }
+
+    // 2. Khớp theo nhóm RIASEC (Holland Code)
+    const mappedLetters = INDUSTRY_RIASEC_MAP[ind.industry] || [];
+    if (hasHollandData && mappedLetters.length > 0) {
+      const sum = mappedLetters.reduce((s, L) => s + (riasecScores[L] || 0), 0);
+      const avgScore = sum / mappedLetters.length;
+      if (avgScore > 0) {
+        score += avgScore * 2;
+        matched_profile_evidence.push({
+          dimension: "Holland Code",
+          value: `Sở thích nổi trội ở nhóm ${mappedLetters.join("/")} (đạt trung bình ${Math.round(avgScore * 10) / 10}/18 điểm).`,
+          matched_tokens: [],
+          evidence_refs: [],
+        });
       }
     }
 

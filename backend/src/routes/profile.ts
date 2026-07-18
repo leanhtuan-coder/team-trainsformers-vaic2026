@@ -201,13 +201,79 @@ router.get("/:id/pathways", async (req, res) => {
   }
 });
 
-/** Placeholder cho AI phỏng vấn (LangGraph agent — Đức Minh phụ trách trong 48h). */
-router.post("/:id/interview", (_req, res) => {
-  res.status(501).json({
-    error: "not_implemented",
-    message:
-      "AI phỏng vấn chưa triển khai — cần LangGraph agent + LLM key. Contract dự kiến: POST body {message}, response {reply, extracted_evidence: Evidence[] (source_type: interaction, user_confirmed: false — cần user xác nhận trước khi vào snapshot)}.",
-  });
+/** AI phỏng vấn / Chat tư vấn hướng nghiệp kết nối NVIDIA NIM (Llama 3.1 70B). */
+router.post("/:id/interview", async (req, res) => {
+  const { message } = req.body;
+  if (!message) {
+    return res.status(400).json({ error: "missing_message" });
+  }
+
+  const profile = await loadProfile(req.params.id);
+  if (!profile) return res.status(404).json({ error: "profile_not_found" });
+
+  const apiKey = process.env.NVIDIA_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({
+      error: "api_key_missing",
+      message: "Chưa cấu hình NVIDIA_API_KEY ở backend."
+    });
+  }
+
+  try {
+    const riasecResult = scoreRiasec(profile);
+    const market = await loadMarketSnapshot();
+    const portfolio = matchPathways(buildSnapshot(profile), market);
+    const topCareers = portfolio.candidates.slice(0, 3).map(c => 
+      `- Ngành: ${c.industry} (Khớp: ${c.relevance_score}%), Lương: ${c.market_evidence.salary ? c.market_evidence.salary.median_trieu + ' triệu/tháng' : 'Thỏa thuận'}, Số tin tuyển: ${c.market_evidence.posting_count}`
+    ).join("\n");
+
+    const systemPrompt = `Bạn là La Bàn — trợ lý hướng nghiệp AI thông minh được phát triển bởi dự án CareerRadar.
+Nhiệm vụ của bạn là tư vấn hướng nghiệp sâu sắc, thực tế, thân thiện cho học sinh trung học Việt Nam dựa trên hồ sơ năng lực của họ.
+
+Thông tin học sinh hiện tại:
+- Tên: ${profile.snapshot?.name || "Học sinh"}
+- Vùng miền mong muốn làm việc: ${profile.snapshot?.preferred_location || "Toàn quốc"}
+- Holland Code (RIASEC): ${riasecResult.holland_code || "Chưa có đủ dữ liệu"}
+- Top 3 ngành nghề phù hợp nhất dựa trên phân tích dữ liệu thị trường thực tế:
+${topCareers}
+
+Hãy trò chuyện trực tiếp với học sinh. 
+Yêu cầu:
+1. Hãy trả lời ngắn gọn, cô đọng, thực tế, đầy đủ thông tin hữu ích (không sáo rỗng, tối đa 3-4 câu/đoạn).
+2. Xưng hô là "Mình" hoặc "La Bàn" và gọi học sinh là "bạn" hoặc bằng tên của họ nếu biết.
+3. Sử dụng tiếng Việt tự nhiên, động viên, chuyên nghiệp.
+4. Đưa ra các gợi ý cụ thể về kỹ năng cần học, trường đào tạo, cao đẳng hoặc trung cấp nghề phù hợp ở Việt Nam.`;
+
+    const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "meta/llama-3.1-70b-instruct",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ],
+        temperature: 0.5,
+        max_tokens: 1024
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("NVIDIA NIM Error:", errText);
+      throw new Error("nvidia_api_failed");
+    }
+
+    const result = await response.json();
+    const reply = result.choices?.[0]?.message?.content || "Mình chưa thể trả lời câu hỏi này lúc này. Bạn thử hỏi câu khác nhé!";
+    res.json({ reply });
+  } catch (err) {
+    console.error("Lỗi gọi AI interview:", err);
+    res.status(500).json({ error: "ai_service_error", message: "Đã xảy ra lỗi khi kết nối với AI." });
+  }
 });
 
 /** Placeholder cho trích xuất tài liệu user tải lên (cần LLM). */

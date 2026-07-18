@@ -21,11 +21,20 @@ import { MarketCharts } from "@/components/dashboard/MarketCharts";
 import { ChatPanel } from "@/components/chat/ChatPanel";
 import { clearPortalRef, loadPortalRef, type PortalRef } from "@/lib/profile";
 
+interface MarketStats {
+  totalJobs: number;
+  careerGroups: number;
+  provinces: number;
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
 export default function HomePage() {
   const router = useRouter();
   const [portal, setPortal] = useState<PortalRef | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [retakeCount, setRetakeCount] = useState(0);
+  const [stats, setStats] = useState<MarketStats | null>(null);
 
   useEffect(() => {
     setPortal(loadPortalRef());
@@ -34,6 +43,27 @@ export default function HomePage() {
       setChatOpen(true);
       window.history.replaceState(null, "", window.location.pathname);
     }
+
+    // Fetch dynamic stats from backend
+    fetch(`${API_BASE}/market/snapshot`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          const totalJobs = data.total_scraped || 3365;
+          const careerGroups = data.industry_insights?.length || 30;
+          const provSet = new Set<string>();
+          data.industry_insights?.forEach((ind: any) => {
+            ind.top_provinces?.forEach((p: any) => {
+              if (p.name) provSet.add(p.name);
+            });
+          });
+          const provinces = provSet.size || 25;
+          setStats({ totalJobs, careerGroups, provinces });
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi tải snapshot landing page:", err);
+      });
   }, []);
 
   const openChat = () => setChatOpen(true);
@@ -58,7 +88,7 @@ export default function HomePage() {
     <>
       <Navbar onStart={openChat} />
       <main>
-        <Hero onStart={openChat} />
+        <Hero onStart={openChat} totalJobs={stats?.totalJobs} />
 
         {/* Dashboard thị trường CHUNG (công khai) — dữ liệu thật từ GET /api/market/snapshot */}
         <section
@@ -84,13 +114,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        <TrustStat />
+        <TrustStat stats={stats} />
         <Problem />
-        <HowItWorks />
+        <HowItWorks totalJobs={stats?.totalJobs} />
         <Features />
         <Testimonial />
         <Audience onStart={openChat} />
-        <Faq />
+        <Faq totalJobs={stats?.totalJobs} />
         <CtaBand onStart={openChat} />
       </main>
       <Footer />

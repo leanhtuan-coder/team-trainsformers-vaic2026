@@ -14,7 +14,7 @@ export interface MarketSignalSnapshot {
     posting_count: number;
     demand_share: number;
     entry_level_ratio: number;
-    salary: { median_trieu: number; sample_size: number } | null;
+    salary: { median_trieu: number; min_trieu: number; max_trieu: number; sample_size: number } | null;
     top_skills: { name: string; count: number }[];
     top_provinces: { name: string; count: number }[];
   }[];

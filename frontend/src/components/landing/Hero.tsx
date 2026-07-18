@@ -3,7 +3,7 @@
 import { HOT_LOCAL, META, TOP_SKILLS } from "@/lib/demoData";
 import { fmtInt } from "@/lib/format";
 
-export function Hero({ onStart }: { onStart: () => void }) {
+export function Hero({ onStart, totalJobs }: { onStart: () => void; totalJobs?: number }) {
   return (
     <section id="tong-quan" aria-labelledby="hero-heading" className="relative overflow-hidden">
       <div
@@ -47,7 +47,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           Chọn nghề bằng <span className="text-brand">dữ liệu thật</span>, không còn cảm tính
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-base text-ink-soft md:text-lg">
-          La Bàn Nghề phân tích hồ sơ năng lực của bạn và đối chiếu với {fmtInt(META.totalJobs)} tin
+          La Bàn Nghề phân tích hồ sơ năng lực của bạn và đối chiếu với {fmtInt(totalJobs ?? META.totalJobs)} tin
           tuyển dụng thật để đưa ra lộ trình nghề cụ thể — có giải thích, có tuyến học.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -66,7 +66,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           </a>
         </div>
         <p className="mt-5 text-sm text-ink-soft">
-          ✓ Miễn phí cho học sinh · Dữ liệu từ {fmtInt(META.totalJobs)} tin tuyển dụng thật
+          ✓ Miễn phí cho học sinh · Dữ liệu từ {fmtInt(totalJobs ?? META.totalJobs)} tin tuyển dụng thật
         </p>
       </div>
     </section>
