@@ -1,5 +1,8 @@
+"use client";
+
 import { SectionHead } from "@/components/ui/SectionHead";
 import { IconGradCap, IconUnlink, IconWrench } from "@/components/ui/icons";
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/motion";
 
 const PROBLEMS = [
   {
@@ -22,15 +25,19 @@ const PROBLEMS = [
 export function Problem() {
   return (
     <section aria-labelledby="problem-heading" className="bg-brand-light/60 px-6 py-20">
-      <SectionHead
-        kicker="Vấn đề"
-        title="Chọn nghề theo cảm tính — cái giá quá đắt"
-        sub="Ba khoảng trống khiến hàng loạt quyết định nghề nghiệp bắt đầu sai từ vạch xuất phát."
-      />
-      <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3">
+      <Reveal>
+        <SectionHead
+          kicker="Vấn đề"
+          title="Chọn nghề theo cảm tính — cái giá quá đắt"
+          sub="Ba khoảng trống khiến hàng loạt quyết định nghề nghiệp bắt đầu sai từ vạch xuất phát."
+        />
+      </Reveal>
+      <StaggerGroup className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3" stagger={0.14}>
         {PROBLEMS.map((p) => (
-          <article
+          <StaggerItem
             key={p.title}
+            as="article"
+            whileHover={{ y: -6 }}
             className="rounded-2xl border border-gray-200 bg-white p-7 transition-shadow hover:shadow-lg"
           >
             <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand-light text-2xl text-brand">
@@ -38,9 +45,9 @@ export function Problem() {
             </span>
             <h3 className="mt-5 text-lg font-bold text-ink">{p.title}</h3>
             <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{p.desc}</p>
-          </article>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }
