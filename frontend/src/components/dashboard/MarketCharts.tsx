@@ -16,6 +16,8 @@ import {
 import { fmtInt, fmtMillionsShort, fmtSalaryFromMillions } from "@/lib/format";
 import { looseMatch } from "@/lib/text";
 import { IconX } from "@/components/ui/icons";
+import { BubbleChart, type BubblePoint } from "./BubbleChart";
+import { JobsBubbleRace } from "./JobsBubbleRace";
 
 const ALL_CLUSTERS = "Tất cả khối ngành";
 const ALL_REGIONS = "Toàn quốc";
@@ -226,6 +228,20 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
   const hotRows = isAllRegions ? activeHotLocal : activeHotLocal.filter((h) => h.region === region);
   const selectedCta = ctaCluster ? activeClusterDemand.find((c) => c.cluster === ctaCluster) : undefined;
 
+  // Bản đồ cơ hội: gộp nhu cầu (số tin + tăng trưởng) với lương trung vị theo khối ngành.
+  // Chỉ giữ khối ngành có đủ cả lương và tăng trưởng để bong bóng biểu diễn đúng 3 chiều.
+  const parseTrendPct = (trend: string): number => {
+    const match = trend.match(/-?\d+(\.\d+)?/);
+    return match ? parseFloat(match[0]) : 0;
+  };
+  const bubblePoints: BubblePoint[] = activeClusterDemand
+    .map((c) => {
+      const salary = salaryOf(c.cluster);
+      if (!salary) return null;
+      return { cluster: c.cluster, salary: salary.salary, growth: parseTrendPct(c.trend), jobs: c.jobs };
+    })
+    .filter((p): p is BubblePoint => p !== null);
+
   return (
     <div className="space-y-5">
       {/* Bộ lọc */}
@@ -280,6 +296,14 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
           sub={`tại ${region}`}
         />
       </div>
+
+      {/* Bong bóng động — hành trình việc làm 2000–2025 (dữ liệu thật) */}
+      <ChartCard
+        title="Hành trình việc làm 2000–2025"
+        sub="Mỗi bong bóng là một nhóm ngành — bấm Chạy để xem quy mô lao động và tăng trưởng biến đổi qua từng năm"
+      >
+        <JobsBubbleRace />
+      </ChartCard>
 
       <div className="grid gap-5 lg:grid-cols-12">
         {/* Xu thế tuyển dụng theo khối ngành */}
@@ -393,6 +417,16 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
           )}
         </ChartCard>
       </div>
+
+      {/* Bản đồ cơ hội — bubble chart 3 chiều */}
+      {bubblePoints.length >= 2 && (
+        <ChartCard
+          title="Bản đồ cơ hội nghề nghiệp"
+          sub="Lương trung vị × tốc độ tăng trưởng × số tin tuyển — bấm một bong bóng để xem bạn có hợp không"
+        >
+          <BubbleChart points={bubblePoints} activeCluster={cluster} onStart={onStart} />
+        </ChartCard>
+      )}
 
       <div className="grid gap-5 lg:grid-cols-12">
         {/* Nhu cầu theo vùng */}
