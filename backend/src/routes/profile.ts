@@ -223,6 +223,9 @@ router.post("/:id/interview", async (req, res) => {
     const riasecResult = scoreRiasec(profile);
     const market = await loadMarketSnapshot();
     const portfolio = matchPathways(buildSnapshot(profile), market);
+    const snap = buildSnapshot(profile);
+    const studentName = snap.groups?.goals_exploration?.find(d => d.dimension === "tên")?.values?.[0]?.value || "Học sinh";
+    const studentLocation = snap.groups?.context_preferences?.find(d => d.dimension === "vùng miền mong muốn làm việc")?.values?.[0]?.value || "Toàn quốc";
     const topCareers = portfolio.candidates.slice(0, 3).map(c => 
       `- Ngành: ${c.industry} (Khớp: ${c.relevance_score}%), Lương: ${c.market_evidence.salary ? c.market_evidence.salary.median_trieu + ' triệu/tháng' : 'Thỏa thuận'}, Số tin tuyển: ${c.market_evidence.posting_count}`
     ).join("\n");
@@ -231,8 +234,8 @@ router.post("/:id/interview", async (req, res) => {
 Nhiệm vụ của bạn là tư vấn hướng nghiệp sâu sắc, thực tế, thân thiện cho học sinh trung học Việt Nam dựa trên hồ sơ năng lực của họ.
 
 Thông tin học sinh hiện tại:
-- Tên: ${profile.snapshot?.name || "Học sinh"}
-- Vùng miền mong muốn làm việc: ${profile.snapshot?.preferred_location || "Toàn quốc"}
+- Tên: ${studentName}
+- Vùng miền mong muốn làm việc: ${studentLocation}
 - Holland Code (RIASEC): ${riasecResult.holland_code || "Chưa có đủ dữ liệu"}
 - Top 3 ngành nghề phù hợp nhất dựa trên phân tích dữ liệu thị trường thực tế:
 ${topCareers}
