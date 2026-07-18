@@ -90,4 +90,4 @@ Nút CTA chính trên landing (Hero, CtaBand, Audience) chuyển thành `m.butto
 
 ## 9. Ghi chú
 
-- Nhớ ghi phiên này vào `submission/AI_COLLABORATION_LOG.md` ở **repo team** (thư mục `submission/` không nằm trong repo frontend này) — yêu cầu bắt buộc của BTC.
+- Nhớ ghi phiên này vào `AI_COLLABORATION_LOG.md` ở **repo root** (`team-trainsformers-vaic2026/AI_COLLABORATION_LOG.md`) — yêu cầu bắt buộc của BTC.
