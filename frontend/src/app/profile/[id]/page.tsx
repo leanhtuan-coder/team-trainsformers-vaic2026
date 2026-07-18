@@ -353,10 +353,10 @@ function getSkillsToLearn(portfolio: PathwayPortfolio | null, topSkillsList: any
   const learn = new Set<string>();
   if (!portfolio) return learn;
   for (const c of portfolio.candidates) {
-    const skills = c.market_evidence.top_skills || [];
+    const skills = c.market_evidence?.top_skills || [];
     for (const skill of skills) {
       for (const t of topSkillsList) {
-        if (skill.name.toLowerCase().includes(t.name.toLowerCase()) || t.name.toLowerCase().includes(skill.name.toLowerCase())) {
+        if (skill.name?.toLowerCase().includes(t.name?.toLowerCase() || '') || t.name?.toLowerCase().includes(skill.name?.toLowerCase() || '')) {
           learn.add(t.name);
         }
       }
@@ -1326,9 +1326,9 @@ function StudentPortalPageContent() {
                     ) : (
                       <div className="grid gap-5 md:grid-cols-3">
                         {topCandidates.map((c: any) => {
-                          const entryPct = Math.round(c.market_evidence.entry_level_ratio * 100);
-                          const vocationalFriendly = c.market_evidence.entry_level_ratio >= 0.25;
-                          const gapSkill = c.market_evidence.top_skills.find((s: any) => !owned.has(s.name));
+                          const entryPct = Math.round((c.market_evidence?.entry_level_ratio ?? 0) * 100);
+                          const vocationalFriendly = (c.market_evidence?.entry_level_ratio ?? 0) >= 0.25;
+                          const gapSkill = c.market_evidence?.top_skills?.find((s: any) => !owned.has(s.name));
                           return (
                             <article key={c.industry} className="rounded-2xl border border-gray-200/80 bg-white p-5 flex flex-col shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-brand/40">
                               {/* Header */}
@@ -1363,11 +1363,11 @@ function StudentPortalPageContent() {
                                 <div className="rounded-xl bg-gray-50 p-3">
                                   <p className="font-bold uppercase tracking-wider text-[10px] text-gray-500">2 · Vì thị trường</p>
                                   <ul className="mt-1 space-y-0.5 text-[#111827]">
-                                    <li>· <b>{fmtInt(c.market_evidence.posting_count)}</b> tin tuyển (trong snapshot)</li>
+                                    <li>· <b>{fmtInt(c.market_evidence?.posting_count ?? 0)}</b> tin tuyển (trong snapshot)</li>
                                     <li>
                                       · Lương tham chiếu:{" "}
                                       <b className="text-[#005c6d]">
-                                        {c.market_evidence.salary ? (
+                                        {c.market_evidence?.salary ? (
                                           riasec && riasec.confidence.evidence_ratio > 0 ? (
                                             `${fmtSalaryFromMillions(c.market_evidence.salary.min_trieu)} - ${fmtSalaryFromMillions(c.market_evidence.salary.max_trieu)}/tháng`
                                           ) : (
@@ -1377,7 +1377,7 @@ function StudentPortalPageContent() {
                                           "Thỏa thuận"
                                         )}
                                       </b>
-                                      {c.market_evidence.salary && (
+                                      {c.market_evidence?.salary && (
                                         <span className={`ml-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full ${riasec && riasec.confidence.evidence_ratio > 0
                                           ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                                           : "bg-amber-50 text-amber-700 border border-amber-200"
@@ -1403,7 +1403,7 @@ function StudentPortalPageContent() {
                                 <div className="rounded-xl bg-[#FBF1DD]/60 p-3">
                                   <p className="font-bold uppercase tracking-wider text-[10px] text-[#8A5B06]">4 · Mặt trái (đặc thù ngành)</p>
                                   <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[#8A5B06]">
-                                    {careerTradeoffs(c.industry, c.market_evidence.entry_level_ratio).map((tr, i) => <li key={i}>{tr}</li>)}
+                                    {careerTradeoffs(c.industry, c.market_evidence?.entry_level_ratio ?? 0).map((tr, i) => <li key={i}>{tr}</li>)}
                                   </ul>
                                 </div>
 
@@ -1462,11 +1462,11 @@ function StudentPortalPageContent() {
                                 <span className="shrink-0 text-xs font-bold text-brand">{c.relevance_score}% phù hợp</span>
                               </div>
                               <p className="mt-1 text-xs text-ink-soft">
-                                {fmtInt(c.market_evidence.posting_count)} tin · lương{" "}
-                                {c.market_evidence.salary ? `${fmtSalaryFromMillions(c.market_evidence.salary.median_trieu)}/tháng` : "thỏa thuận"}
+                                {fmtInt(c.market_evidence?.posting_count ?? 0)} tin · lương{" "}
+                                {c.market_evidence?.salary ? `${fmtSalaryFromMillions(c.market_evidence.salary.median_trieu)}/tháng` : "thỏa thuận"}
                               </p>
                               <p className="mt-1.5 text-xs text-ink">
-                                Kỹ năng gần: {c.market_evidence.top_skills.slice(0, 3).map((s: any) => s.name).join(", ") || "—"}
+                              Kỹ năng gần: {c.market_evidence?.top_skills?.slice(0, 3).map((s: any) => s.name).join(", ") || "—"}
                               </p>
                             </div>
                           ))}
