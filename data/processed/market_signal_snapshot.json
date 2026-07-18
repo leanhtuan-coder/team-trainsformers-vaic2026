@@ -1,0 +1,2895 @@
+{
+  "generated_at": "2026-07-18T02:12:02.594Z",
+  "total_jobs": 1332,
+  "total_scraped": 3365,
+  "coverage": {
+    "description_present": {
+      "count": 1332,
+      "ratio": 0.396
+    },
+    "industry_extracted": {
+      "count": 1111,
+      "ratio": 0.834
+    },
+    "skills_extracted": {
+      "count": 801,
+      "ratio": 0.601
+    },
+    "salary_disclosed": {
+      "count": 971,
+      "ratio": 0.729
+    },
+    "salary_negotiable": {
+      "count": 361,
+      "ratio": 0.271
+    },
+    "salary_unknown": {
+      "count": 0,
+      "ratio": 0
+    },
+    "note": "Mẫu phân tích gồm 1332 tin tuyển dụng crawl được mô tả đầy đủ (trên 3365 tin thu thập ở mức danh sách). Mọi thống kê kỹ năng/ngành/vùng/lương đều tính trên cùng mẫu này. Thống kê lương CHỈ dùng nhóm có số cụ thể, không suy diễn cho nhóm 'thoả thuận'."
+  },
+  "top_skills_required": [
+    {
+      "name": "Giao tiếp",
+      "count": 128
+    },
+    {
+      "name": "Kỹ năng giao tiếp",
+      "count": 83
+    },
+    {
+      "name": "Đàm phán",
+      "count": 62
+    },
+    {
+      "name": "Excel",
+      "count": 54
+    },
+    {
+      "name": "Tin học văn phòng",
+      "count": 51
+    },
+    {
+      "name": "Chăm Sóc Khách Hàng",
+      "count": 44
+    },
+    {
+      "name": "Giải quyết vấn đề",
+      "count": 44
+    },
+    {
+      "name": "AutoCAD",
+      "count": 41
+    },
+    {
+      "name": "Kỹ năng đàm phán",
+      "count": 38
+    },
+    {
+      "name": "Lập Kế Hoạch",
+      "count": 29
+    },
+    {
+      "name": "Trung thực",
+      "count": 28
+    },
+    {
+      "name": "Cẩn thận",
+      "count": 28
+    },
+    {
+      "name": "Làm việc nhóm",
+      "count": 27
+    },
+    {
+      "name": "thuyết phục",
+      "count": 26
+    },
+    {
+      "name": "Xử lý tình huống",
+      "count": 25
+    },
+    {
+      "name": "Giao tiếp tốt",
+      "count": 23
+    },
+    {
+      "name": "Phân tích dữ liệu",
+      "count": 23
+    },
+    {
+      "name": "Kỹ năng bán hàng",
+      "count": 23
+    },
+    {
+      "name": "Tư vấn",
+      "count": 19
+    },
+    {
+      "name": "Kế Toán",
+      "count": 19
+    },
+    {
+      "name": "Kỹ năng giải quyết vấn đề",
+      "count": 19
+    },
+    {
+      "name": "Xây dựng mối quan hệ",
+      "count": 18
+    },
+    {
+      "name": "Kỹ năng Thuyết phục",
+      "count": 17
+    },
+    {
+      "name": "Word",
+      "count": 17
+    },
+    {
+      "name": "Tinh Thần Trách Nhiệm",
+      "count": 17
+    },
+    {
+      "name": "Bán Hàng",
+      "count": 17
+    },
+    {
+      "name": "Phân tích",
+      "count": 17
+    },
+    {
+      "name": "Quản lý thời gian",
+      "count": 16
+    },
+    {
+      "name": "chủ động",
+      "count": 16
+    },
+    {
+      "name": "Kỹ năng làm việc nhóm",
+      "count": 15
+    }
+  ],
+  "top_skills_preferred": [
+    {
+      "name": "Làm việc nhóm",
+      "count": 16
+    },
+    {
+      "name": "Tin học văn phòng",
+      "count": 15
+    },
+    {
+      "name": "FMCG",
+      "count": 12
+    },
+    {
+      "name": "Excel",
+      "count": 9
+    },
+    {
+      "name": "Giao tiếp",
+      "count": 9
+    },
+    {
+      "name": "Marketing",
+      "count": 8
+    },
+    {
+      "name": "Giải quyết vấn đề",
+      "count": 8
+    },
+    {
+      "name": "F&B",
+      "count": 8
+    },
+    {
+      "name": "ERP",
+      "count": 8
+    },
+    {
+      "name": "Tiếng Anh",
+      "count": 8
+    },
+    {
+      "name": "Tiếng Anh giao tiếp",
+      "count": 7
+    },
+    {
+      "name": "Kỹ năng giao tiếp",
+      "count": 7
+    },
+    {
+      "name": "AutoCAD",
+      "count": 7
+    },
+    {
+      "name": "Kỹ năng làm việc nhóm",
+      "count": 7
+    },
+    {
+      "name": "Kế Toán",
+      "count": 7
+    },
+    {
+      "name": "Chăm Sóc Khách Hàng",
+      "count": 7
+    },
+    {
+      "name": "Sales",
+      "count": 6
+    },
+    {
+      "name": "Logistics",
+      "count": 6
+    },
+    {
+      "name": "Tiếng Trung",
+      "count": 6
+    },
+    {
+      "name": "Microsoft Office",
+      "count": 5
+    },
+    {
+      "name": "kỹ năng tin học văn phòng",
+      "count": 5
+    },
+    {
+      "name": "Kỹ Năng Lập Kế Hoạch",
+      "count": 5
+    },
+    {
+      "name": "Làm Đẹp",
+      "count": 5
+    },
+    {
+      "name": "mỹ phẩm",
+      "count": 5
+    },
+    {
+      "name": "Revit",
+      "count": 5
+    },
+    {
+      "name": "Kỹ năng báo cáo",
+      "count": 5
+    },
+    {
+      "name": "Bán Lẻ",
+      "count": 5
+    },
+    {
+      "name": "Kỹ Năng Phân Tích Thị Trường",
+      "count": 5
+    },
+    {
+      "name": "Lifestyle",
+      "count": 5
+    },
+    {
+      "name": "Sketchup",
+      "count": 4
+    }
+  ],
+  "industries": [
+    {
+      "name": "Kế toán",
+      "count": 143
+    },
+    {
+      "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+      "count": 141
+    },
+    {
+      "name": "Marketing / Quảng cáo",
+      "count": 140
+    },
+    {
+      "name": "Xây dựng",
+      "count": 127
+    },
+    {
+      "name": "Tài chính",
+      "count": 96
+    },
+    {
+      "name": "IT - Phần mềm",
+      "count": 96
+    },
+    {
+      "name": "Điện / Điện tử / Điện lạnh",
+      "count": 83
+    },
+    {
+      "name": "Nhân sự",
+      "count": 78
+    },
+    {
+      "name": "Công nghệ kỹ thuật",
+      "count": 78
+    },
+    {
+      "name": "Thương mại điện tử",
+      "count": 74
+    },
+    {
+      "name": "Cơ khí / Tự động hóa",
+      "count": 70
+    },
+    {
+      "name": "Thiết kế / Kiến trúc",
+      "count": 68
+    },
+    {
+      "name": "Logistic / Vận tải",
+      "count": 66
+    },
+    {
+      "name": "Sản xuất",
+      "count": 60
+    },
+    {
+      "name": "Giáo dục / Đào tạo",
+      "count": 55
+    },
+    {
+      "name": "Thực phẩm / Đồ uống",
+      "count": 51
+    },
+    {
+      "name": "Ngân hàng",
+      "count": 50
+    },
+    {
+      "name": "May mặc / Thời trang",
+      "count": 47
+    },
+    {
+      "name": "Y tế / Dược phẩm",
+      "count": 46
+    },
+    {
+      "name": "Xuất nhập khẩu / Hải quan",
+      "count": 44
+    },
+    {
+      "name": "Chăm sóc sức khỏe / Làm đẹp",
+      "count": 40
+    },
+    {
+      "name": "Kiểm toán",
+      "count": 40
+    },
+    {
+      "name": "Nhà hàng / Khách sạn",
+      "count": 36
+    },
+    {
+      "name": "Bất động sản",
+      "count": 35
+    },
+    {
+      "name": "Thuế",
+      "count": 24
+    },
+    {
+      "name": "Luật / Pháp chế",
+      "count": 21
+    },
+    {
+      "name": "Du lịch",
+      "count": 20
+    },
+    {
+      "name": "Kho vận",
+      "count": 18
+    },
+    {
+      "name": "IT - Phần cứng và máy tính",
+      "count": 17
+    },
+    {
+      "name": "Bảo hiểm",
+      "count": 17
+    }
+  ],
+  "provinces": [
+    {
+      "name": "Hồ Chí Minh",
+      "count": 637
+    },
+    {
+      "name": "Hà Nội",
+      "count": 629
+    },
+    {
+      "name": "Bắc Ninh",
+      "count": 27
+    },
+    {
+      "name": "Đà Nẵng",
+      "count": 26
+    },
+    {
+      "name": "Đồng Nai",
+      "count": 23
+    },
+    {
+      "name": "Hải Phòng",
+      "count": 21
+    },
+    {
+      "name": "Hưng Yên",
+      "count": 12
+    },
+    {
+      "name": "Tây Ninh",
+      "count": 9
+    },
+    {
+      "name": "Thanh Hóa",
+      "count": 5
+    },
+    {
+      "name": "Cần Thơ",
+      "count": 4
+    },
+    {
+      "name": "Phú Thọ",
+      "count": 4
+    },
+    {
+      "name": "Huế",
+      "count": 3
+    },
+    {
+      "name": "Thái Nguyên",
+      "count": 2
+    },
+    {
+      "name": "Ninh Bình",
+      "count": 2
+    },
+    {
+      "name": "Khánh Hòa",
+      "count": 2
+    },
+    {
+      "name": "Đắk Lắk",
+      "count": 2
+    },
+    {
+      "name": "An Giang",
+      "count": 2
+    },
+    {
+      "name": "Lâm Đồng",
+      "count": 1
+    },
+    {
+      "name": "Lào Cai",
+      "count": 1
+    },
+    {
+      "name": "Quảng Ninh",
+      "count": 1
+    },
+    {
+      "name": "Vĩnh Long",
+      "count": 1
+    }
+  ],
+  "salary_by_industry": [
+    {
+      "industry": "Kế toán",
+      "sample_size": 113,
+      "median_trieu": 16,
+      "min_trieu": 8,
+      "max_trieu": 55
+    },
+    {
+      "industry": "Bán lẻ - Hàng tiêu dùng - FMCG",
+      "sample_size": 109,
+      "median_trieu": 16,
+      "min_trieu": 7.7,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Marketing / Quảng cáo",
+      "sample_size": 104,
+      "median_trieu": 16.5,
+      "min_trieu": 2,
+      "max_trieu": 65
+    },
+    {
+      "industry": "Xây dựng",
+      "sample_size": 96,
+      "median_trieu": 20,
+      "min_trieu": 8.5,
+      "max_trieu": 117
+    },
+    {
+      "industry": "Tài chính",
+      "sample_size": 63,
+      "median_trieu": 21,
+      "min_trieu": 8,
+      "max_trieu": 85
+    },
+    {
+      "industry": "Công nghệ kỹ thuật",
+      "sample_size": 60,
+      "median_trieu": 17.5,
+      "min_trieu": 6,
+      "max_trieu": 80
+    },
+    {
+      "industry": "Điện / Điện tử / Điện lạnh",
+      "sample_size": 59,
+      "median_trieu": 15.5,
+      "min_trieu": 8.5,
+      "max_trieu": 80
+    },
+    {
+      "industry": "Thương mại điện tử",
+      "sample_size": 54,
+      "median_trieu": 17.8,
+      "min_trieu": 2,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Nhân sự",
+      "sample_size": 52,
+      "median_trieu": 13.5,
+      "min_trieu": 6,
+      "max_trieu": 30
+    },
+    {
+      "industry": "Cơ khí / Tự động hóa",
+      "sample_size": 50,
+      "median_trieu": 16.5,
+      "min_trieu": 8.5,
+      "max_trieu": 80
+    },
+    {
+      "industry": "Giáo dục / Đào tạo",
+      "sample_size": 49,
+      "median_trieu": 19,
+      "min_trieu": 0.4,
+      "max_trieu": 44
+    },
+    {
+      "industry": "Thiết kế / Kiến trúc",
+      "sample_size": 48,
+      "median_trieu": 17.5,
+      "min_trieu": 8.5,
+      "max_trieu": 30
+    },
+    {
+      "industry": "IT - Phần mềm",
+      "sample_size": 46,
+      "median_trieu": 22.5,
+      "min_trieu": 2.5,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Logistic / Vận tải",
+      "sample_size": 43,
+      "median_trieu": 17.5,
+      "min_trieu": 10,
+      "max_trieu": 40
+    },
+    {
+      "industry": "Thực phẩm / Đồ uống",
+      "sample_size": 39,
+      "median_trieu": 14.5,
+      "min_trieu": 9,
+      "max_trieu": 50
+    },
+    {
+      "industry": "May mặc / Thời trang",
+      "sample_size": 36,
+      "median_trieu": 16.3,
+      "min_trieu": 6,
+      "max_trieu": 47.5
+    },
+    {
+      "industry": "Sản xuất",
+      "sample_size": 35,
+      "median_trieu": 15,
+      "min_trieu": 7.5,
+      "max_trieu": 37.5
+    },
+    {
+      "industry": "Y tế / Dược phẩm",
+      "sample_size": 31,
+      "median_trieu": 19,
+      "min_trieu": 10.5,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Chăm sóc sức khỏe / Làm đẹp",
+      "sample_size": 31,
+      "median_trieu": 17.5,
+      "min_trieu": 8,
+      "max_trieu": 70
+    },
+    {
+      "industry": "Xuất nhập khẩu / Hải quan",
+      "sample_size": 30,
+      "median_trieu": 15,
+      "min_trieu": 10,
+      "max_trieu": 42.5
+    },
+    {
+      "industry": "Kiểm toán",
+      "sample_size": 29,
+      "median_trieu": 22.5,
+      "min_trieu": 9,
+      "max_trieu": 55
+    },
+    {
+      "industry": "Nhà hàng / Khách sạn",
+      "sample_size": 28,
+      "median_trieu": 16.5,
+      "min_trieu": 8,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Bất động sản",
+      "sample_size": 27,
+      "median_trieu": 22,
+      "min_trieu": 9,
+      "max_trieu": 125
+    },
+    {
+      "industry": "Ngân hàng",
+      "sample_size": 25,
+      "median_trieu": 25,
+      "min_trieu": 10,
+      "max_trieu": 85
+    },
+    {
+      "industry": "Thuế",
+      "sample_size": 18,
+      "median_trieu": 18.3,
+      "min_trieu": 9,
+      "max_trieu": 45
+    },
+    {
+      "industry": "Du lịch",
+      "sample_size": 18,
+      "median_trieu": 20.8,
+      "min_trieu": 9,
+      "max_trieu": 44
+    },
+    {
+      "industry": "Bảo hiểm",
+      "sample_size": 12,
+      "median_trieu": 22.5,
+      "min_trieu": 12,
+      "max_trieu": 35
+    },
+    {
+      "industry": "Kho vận",
+      "sample_size": 12,
+      "median_trieu": 16.3,
+      "min_trieu": 9.5,
+      "max_trieu": 27.5
+    },
+    {
+      "industry": "IT - Phần cứng và máy tính",
+      "sample_size": 11,
+      "median_trieu": 16.5,
+      "min_trieu": 11,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Mỹ thuật / Nghệ thuật / Điện ảnh",
+      "sample_size": 10,
+      "median_trieu": 12.5,
+      "min_trieu": 8,
+      "max_trieu": 22.5
+    },
+    {
+      "industry": "Viễn thông",
+      "sample_size": 10,
+      "median_trieu": 15.8,
+      "min_trieu": 11,
+      "max_trieu": 40
+    },
+    {
+      "industry": "Luật / Pháp chế",
+      "sample_size": 10,
+      "median_trieu": 20,
+      "min_trieu": 8.5,
+      "max_trieu": 32.5
+    },
+    {
+      "industry": "Nông lâm ngư nghiệp",
+      "sample_size": 9,
+      "median_trieu": 20,
+      "min_trieu": 11,
+      "max_trieu": 45
+    },
+    {
+      "industry": "Công nghiệp hoá chất",
+      "sample_size": 9,
+      "median_trieu": 17,
+      "min_trieu": 13.5,
+      "max_trieu": 32.5
+    },
+    {
+      "industry": "Năng lượng / Môi trường",
+      "sample_size": 8,
+      "median_trieu": 16.8,
+      "min_trieu": 12.5,
+      "max_trieu": 20
+    },
+    {
+      "industry": "Bưu chính",
+      "sample_size": 5,
+      "median_trieu": 13.5,
+      "min_trieu": 10,
+      "max_trieu": 30
+    },
+    {
+      "industry": "Báo chí",
+      "sample_size": 5,
+      "median_trieu": 13.5,
+      "min_trieu": 10.5,
+      "max_trieu": 35
+    },
+    {
+      "industry": "Bán lẻ - Hàng tiêu dùng - FMCG Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 5,
+      "median_trieu": 25,
+      "min_trieu": 21.5,
+      "max_trieu": 30
+    },
+    {
+      "industry": "Game",
+      "sample_size": 4,
+      "median_trieu": 13,
+      "min_trieu": 11,
+      "max_trieu": 22.5
+    },
+    {
+      "industry": "Chứng khoán",
+      "sample_size": 4,
+      "median_trieu": 24.8,
+      "min_trieu": 15,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Y tế / Dược phẩm Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 3,
+      "median_trieu": 25,
+      "min_trieu": 17.5,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Giáo dục / Đào tạo Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 3,
+      "median_trieu": 17.5,
+      "min_trieu": 17.5,
+      "max_trieu": 25
+    },
+    {
+      "industry": "Hàng không",
+      "sample_size": 3,
+      "median_trieu": 17.5,
+      "min_trieu": 12.5,
+      "max_trieu": 27.5
+    },
+    {
+      "industry": "Phát thanh / Truyền hình",
+      "sample_size": 3,
+      "median_trieu": 11,
+      "min_trieu": 9.5,
+      "max_trieu": 11.5
+    },
+    {
+      "industry": "Marketing / Quảng cáo Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 2,
+      "median_trieu": 31.3,
+      "min_trieu": 22.5,
+      "max_trieu": 40
+    },
+    {
+      "industry": "Quan hệ công chúng",
+      "sample_size": 2,
+      "median_trieu": 15.5,
+      "min_trieu": 15,
+      "max_trieu": 16
+    },
+    {
+      "industry": "Hàng không Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 2,
+      "median_trieu": 18.8,
+      "min_trieu": 12.5,
+      "max_trieu": 25
+    },
+    {
+      "industry": "Bất động sản Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 2,
+      "median_trieu": 40.9,
+      "min_trieu": 14,
+      "max_trieu": 67.8
+    },
+    {
+      "industry": "Kho vận Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 2,
+      "median_trieu": 22,
+      "min_trieu": 15,
+      "max_trieu": 29
+    },
+    {
+      "industry": "Cơ khí / Tự động hóa Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 16,
+      "min_trieu": 16,
+      "max_trieu": 16
+    },
+    {
+      "industry": "Logistic / Vận tải Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 11,
+      "min_trieu": 11,
+      "max_trieu": 11
+    },
+    {
+      "industry": "In ấn / Xuất bản",
+      "sample_size": 1,
+      "median_trieu": 8.5,
+      "min_trieu": 8.5,
+      "max_trieu": 8.5
+    },
+    {
+      "industry": "Bảo hiểm Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 40,
+      "min_trieu": 40,
+      "max_trieu": 40
+    },
+    {
+      "industry": "Điện toán đám mây (Cloud)",
+      "sample_size": 1,
+      "median_trieu": 50,
+      "min_trieu": 50,
+      "max_trieu": 50
+    },
+    {
+      "industry": "Chính phủ/Dịch vụ công",
+      "sample_size": 1,
+      "median_trieu": 17,
+      "min_trieu": 17,
+      "max_trieu": 17
+    },
+    {
+      "industry": "Chăm sóc sức khỏe / Làm đẹp Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 25,
+      "min_trieu": 25,
+      "max_trieu": 25
+    },
+    {
+      "industry": "Bưu chính Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 30,
+      "min_trieu": 30,
+      "max_trieu": 30
+    },
+    {
+      "industry": "Sản xuất Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 17.5,
+      "min_trieu": 17.5,
+      "max_trieu": 17.5
+    },
+    {
+      "industry": "Hàng hải",
+      "sample_size": 1,
+      "median_trieu": 20,
+      "min_trieu": 20,
+      "max_trieu": 20
+    },
+    {
+      "industry": "Ngân hàng Yêu cầu khác Có máy tính",
+      "sample_size": 1,
+      "median_trieu": 15,
+      "min_trieu": 15,
+      "max_trieu": 15
+    },
+    {
+      "industry": "Bán lẻ - Hàng tiêu dùng - FMCG Yêu cầu khác Có bằng lái xe",
+      "sample_size": 1,
+      "median_trieu": 20,
+      "min_trieu": 20,
+      "max_trieu": 20
+    },
+    {
+      "industry": "Tài chính Yêu cầu khác Có phương tiện di chuyển",
+      "sample_size": 1,
+      "median_trieu": 12,
+      "min_trieu": 12,
+      "max_trieu": 12
+    }
+  ],
+  "trend_note": "Dữ liệu là snapshot 1 thời điểm (crawl 17/07/2026), tin đăng không có ngày đăng — các chỉ số dưới đây là TÍN HIỆU NHU CẦU HIỆN TẠI (demand share, cơ cấu), KHÔNG phải xu hướng tăng/giảm theo thời gian. Muốn có biến động theo thời gian cần chạy lại ingestion định kỳ và so sánh các snapshot. Lương chỉ thống kê khi mẫu >= 10 tin; dưới ngưỡng trả null (chưa đủ dữ liệu).",
+  "industry_insights": [
+    {
+      "industry": "Kế toán",
+      "posting_count": 143,
+      "demand_share": 0.107,
+      "entry_level_ratio": 0.182,
+      "salary": {
+        "median_trieu": 16,
+        "sample_size": 113
+      },
+      "top_skills": [
+        {
+          "name": "Excel",
+          "count": 21
+        },
+        {
+          "name": "Kế Toán",
+          "count": 16
+        },
+        {
+          "name": "phần mềm kế toán",
+          "count": 10
+        },
+        {
+          "name": "Cẩn thận",
+          "count": 9
+        },
+        {
+          "name": "Lập Báo Cáo Tài Chính",
+          "count": 9
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 8
+        },
+        {
+          "name": "Sử Dụng Phần Mềm Kế Toán",
+          "count": 7
+        },
+        {
+          "name": "Trung thực",
+          "count": 7
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 66
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 61
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 4
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 4
+        },
+        {
+          "name": "Hưng Yên",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "industry": "Bán lẻ - Hàng tiêu dùng - FMCG",
+      "posting_count": 141,
+      "demand_share": 0.106,
+      "entry_level_ratio": 0.248,
+      "salary": {
+        "median_trieu": 16,
+        "sample_size": 109
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 29
+        },
+        {
+          "name": "Đàm phán",
+          "count": 12
+        },
+        {
+          "name": "Chăm Sóc Khách Hàng",
+          "count": 12
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 11
+        },
+        {
+          "name": "Xử lý tình huống",
+          "count": 10
+        },
+        {
+          "name": "Lập Kế Hoạch",
+          "count": 9
+        },
+        {
+          "name": "Bán Hàng",
+          "count": 8
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 8
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 75
+        },
+        {
+          "name": "Hà Nội",
+          "count": 67
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 3
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 2
+        },
+        {
+          "name": "Tây Ninh",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "industry": "Marketing / Quảng cáo",
+      "posting_count": 140,
+      "demand_share": 0.105,
+      "entry_level_ratio": 0.271,
+      "salary": {
+        "median_trieu": 16.5,
+        "sample_size": 104
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 17
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 10
+        },
+        {
+          "name": "Đàm phán",
+          "count": 9
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 7
+        },
+        {
+          "name": "Phân tích dữ liệu",
+          "count": 7
+        },
+        {
+          "name": "Google Ads",
+          "count": 7
+        },
+        {
+          "name": "Digital Marketing",
+          "count": 6
+        },
+        {
+          "name": "Excel",
+          "count": 5
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 73
+        },
+        {
+          "name": "Hà Nội",
+          "count": 63
+        },
+        {
+          "name": "Thanh Hóa",
+          "count": 3
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 2
+        },
+        {
+          "name": "Hưng Yên",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "industry": "Xây dựng",
+      "posting_count": 127,
+      "demand_share": 0.095,
+      "entry_level_ratio": 0.323,
+      "salary": {
+        "median_trieu": 20,
+        "sample_size": 96
+      },
+      "top_skills": [
+        {
+          "name": "AutoCAD",
+          "count": 21
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 10
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 10
+        },
+        {
+          "name": "Làm việc nhóm",
+          "count": 7
+        },
+        {
+          "name": "Đàm phán",
+          "count": 6
+        },
+        {
+          "name": "Tinh Thần Trách Nhiệm",
+          "count": 6
+        },
+        {
+          "name": "Lập Kế Hoạch",
+          "count": 5
+        },
+        {
+          "name": "Đọc Hiểu Bản Vẽ Kỹ Thuật",
+          "count": 5
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 71
+        },
+        {
+          "name": "Hà Nội",
+          "count": 52
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 5
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 4
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "industry": "Tài chính",
+      "posting_count": 96,
+      "demand_share": 0.072,
+      "entry_level_ratio": 0.292,
+      "salary": {
+        "median_trieu": 21,
+        "sample_size": 63
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 10
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 8
+        },
+        {
+          "name": "Excel",
+          "count": 7
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 6
+        },
+        {
+          "name": "Trung thực",
+          "count": 6
+        },
+        {
+          "name": "Phân Tích Tài Chính",
+          "count": 6
+        },
+        {
+          "name": "Đàm phán",
+          "count": 5
+        },
+        {
+          "name": "Cẩn thận",
+          "count": 5
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 54
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 34
+        },
+        {
+          "name": "Hưng Yên",
+          "count": 3
+        },
+        {
+          "name": "Khánh Hòa",
+          "count": 1
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "IT - Phần mềm",
+      "posting_count": 96,
+      "demand_share": 0.072,
+      "entry_level_ratio": 0.167,
+      "salary": {
+        "median_trieu": 22.5,
+        "sample_size": 46
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 6
+        },
+        {
+          "name": "SQL",
+          "count": 6
+        },
+        {
+          "name": "Java",
+          "count": 5
+        },
+        {
+          "name": "Docker",
+          "count": 4
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 4
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 4
+        },
+        {
+          "name": "Git",
+          "count": 4
+        },
+        {
+          "name": ".NET",
+          "count": 3
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 71
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 27
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 2
+        },
+        {
+          "name": "Thanh Hóa",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Điện / Điện tử / Điện lạnh",
+      "posting_count": 83,
+      "demand_share": 0.062,
+      "entry_level_ratio": 0.398,
+      "salary": {
+        "median_trieu": 15.5,
+        "sample_size": 59
+      },
+      "top_skills": [
+        {
+          "name": "AutoCAD",
+          "count": 13
+        },
+        {
+          "name": "Đọc Hiểu Bản Vẽ Kỹ Thuật",
+          "count": 8
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 5
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 5
+        },
+        {
+          "name": "Cơ Khí",
+          "count": 3
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 3
+        },
+        {
+          "name": "Phân tích dữ liệu",
+          "count": 2
+        },
+        {
+          "name": "Tuân Thủ Quy Trình An Toàn",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 39
+        },
+        {
+          "name": "Hà Nội",
+          "count": 38
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 6
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 4
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "industry": "Nhân sự",
+      "posting_count": 78,
+      "demand_share": 0.059,
+      "entry_level_ratio": 0.154,
+      "salary": {
+        "median_trieu": 13.5,
+        "sample_size": 52
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 12
+        },
+        {
+          "name": "tuyển dụng",
+          "count": 10
+        },
+        {
+          "name": "Excel",
+          "count": 9
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 7
+        },
+        {
+          "name": "tính lương",
+          "count": 6
+        },
+        {
+          "name": "Thuế Tncn",
+          "count": 5
+        },
+        {
+          "name": "Word",
+          "count": 4
+        },
+        {
+          "name": "chấm công",
+          "count": 4
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 41
+        },
+        {
+          "name": "Hà Nội",
+          "count": 33
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 1
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 1
+        },
+        {
+          "name": "Hưng Yên",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Công nghệ kỹ thuật",
+      "posting_count": 78,
+      "demand_share": 0.059,
+      "entry_level_ratio": 0.372,
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 60
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 10
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 7
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 4
+        },
+        {
+          "name": "Đàm phán",
+          "count": 4
+        },
+        {
+          "name": "thuyết phục",
+          "count": 4
+        },
+        {
+          "name": "Kỹ năng bán hàng",
+          "count": 4
+        },
+        {
+          "name": "AutoCAD",
+          "count": 4
+        },
+        {
+          "name": "Đọc Hiểu Bản Vẽ Kỹ Thuật",
+          "count": 4
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 40
+        },
+        {
+          "name": "Hà Nội",
+          "count": 38
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 7
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 2
+        },
+        {
+          "name": "Tây Ninh",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "industry": "Thương mại điện tử",
+      "posting_count": 74,
+      "demand_share": 0.056,
+      "entry_level_ratio": 0.203,
+      "salary": {
+        "median_trieu": 17.8,
+        "sample_size": 54
+      },
+      "top_skills": [
+        {
+          "name": "Chăm Sóc Khách Hàng",
+          "count": 4
+        },
+        {
+          "name": "Đàm phán",
+          "count": 3
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 3
+        },
+        {
+          "name": "Digital Marketing",
+          "count": 3
+        },
+        {
+          "name": "Excel",
+          "count": 3
+        },
+        {
+          "name": "Kế Toán",
+          "count": 3
+        },
+        {
+          "name": "CRM",
+          "count": 3
+        },
+        {
+          "name": "API",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 41
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 29
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 3
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 3
+        },
+        {
+          "name": "Cần Thơ",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Cơ khí / Tự động hóa",
+      "posting_count": 70,
+      "demand_share": 0.053,
+      "entry_level_ratio": 0.314,
+      "salary": {
+        "median_trieu": 16.5,
+        "sample_size": 50
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 6
+        },
+        {
+          "name": "AutoCAD",
+          "count": 6
+        },
+        {
+          "name": "Đàm phán",
+          "count": 4
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 4
+        },
+        {
+          "name": "Đọc Hiểu Bản Vẽ Kỹ Thuật",
+          "count": 4
+        },
+        {
+          "name": "Cơ Khí",
+          "count": 4
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 3
+        },
+        {
+          "name": "Kiểm Soát Chất Lượng",
+          "count": 3
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 29
+        },
+        {
+          "name": "Hà Nội",
+          "count": 26
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 11
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 5
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "industry": "Thiết kế / Kiến trúc",
+      "posting_count": 68,
+      "demand_share": 0.051,
+      "entry_level_ratio": 0.265,
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 48
+      },
+      "top_skills": [
+        {
+          "name": "AutoCAD",
+          "count": 20
+        },
+        {
+          "name": "Sketchup",
+          "count": 11
+        },
+        {
+          "name": "Revit",
+          "count": 9
+        },
+        {
+          "name": "Photoshop",
+          "count": 7
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 5
+        },
+        {
+          "name": "3D Max",
+          "count": 5
+        },
+        {
+          "name": "lumion",
+          "count": 4
+        },
+        {
+          "name": "3ds Max",
+          "count": 4
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 44
+        },
+        {
+          "name": "Hà Nội",
+          "count": 24
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 4
+        },
+        {
+          "name": "Huế",
+          "count": 2
+        },
+        {
+          "name": "Tây Ninh",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Logistic / Vận tải",
+      "posting_count": 66,
+      "demand_share": 0.05,
+      "entry_level_ratio": 0.273,
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 43
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 11
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 8
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 6
+        },
+        {
+          "name": "Xử lý tình huống",
+          "count": 5
+        },
+        {
+          "name": "Excel",
+          "count": 5
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 5
+        },
+        {
+          "name": "Đàm phán",
+          "count": 4
+        },
+        {
+          "name": "Chăm Sóc Khách Hàng",
+          "count": 3
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 33
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 29
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 3
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 3
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "industry": "Sản xuất",
+      "posting_count": 60,
+      "demand_share": 0.045,
+      "entry_level_ratio": 0.217,
+      "salary": {
+        "median_trieu": 15,
+        "sample_size": 35
+      },
+      "top_skills": [
+        {
+          "name": "Đàm phán",
+          "count": 5
+        },
+        {
+          "name": "Cẩn thận",
+          "count": 4
+        },
+        {
+          "name": "Lãnh đạo",
+          "count": 4
+        },
+        {
+          "name": "Quản Lý Sản Xuất",
+          "count": 4
+        },
+        {
+          "name": "Trung thực",
+          "count": 3
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 3
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 2
+        },
+        {
+          "name": "Lập Kế Hoạch",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 31
+        },
+        {
+          "name": "Hà Nội",
+          "count": 11
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 9
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 3
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "industry": "Giáo dục / Đào tạo",
+      "posting_count": 55,
+      "demand_share": 0.041,
+      "entry_level_ratio": 0.327,
+      "salary": {
+        "median_trieu": 19,
+        "sample_size": 49
+      },
+      "top_skills": [
+        {
+          "name": "kỹ năng tư vấn",
+          "count": 3
+        },
+        {
+          "name": "Giao tiếp tốt",
+          "count": 3
+        },
+        {
+          "name": "Kỹ năng sư phạm",
+          "count": 3
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 3
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 3
+        },
+        {
+          "name": "Tính Toán Tiền Lương",
+          "count": 2
+        },
+        {
+          "name": "phát âm chuẩn",
+          "count": 2
+        },
+        {
+          "name": "kỹ năng giao tiếp tốt",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 41
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 12
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 2
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 1
+        },
+        {
+          "name": "Ninh Bình",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Thực phẩm / Đồ uống",
+      "posting_count": 51,
+      "demand_share": 0.038,
+      "entry_level_ratio": 0.255,
+      "salary": {
+        "median_trieu": 14.5,
+        "sample_size": 39
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 9
+        },
+        {
+          "name": "Chăm Sóc Khách Hàng",
+          "count": 5
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 5
+        },
+        {
+          "name": "Đàm phán",
+          "count": 4
+        },
+        {
+          "name": "Xử lý tình huống",
+          "count": 4
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 4
+        },
+        {
+          "name": "Làm việc nhóm",
+          "count": 3
+        },
+        {
+          "name": "Lập Kế Hoạch",
+          "count": 3
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 24
+        },
+        {
+          "name": "Hà Nội",
+          "count": 19
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 2
+        },
+        {
+          "name": "Bắc Ninh",
+          "count": 1
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Ngân hàng",
+      "posting_count": 50,
+      "demand_share": 0.038,
+      "entry_level_ratio": 0.34,
+      "salary": {
+        "median_trieu": 25,
+        "sample_size": 25
+      },
+      "top_skills": [
+        {
+          "name": "Giao tiếp",
+          "count": 10
+        },
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 5
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 4
+        },
+        {
+          "name": "Đàm phán",
+          "count": 4
+        },
+        {
+          "name": "Kỹ năng làm việc nhóm",
+          "count": 3
+        },
+        {
+          "name": "Docker",
+          "count": 3
+        },
+        {
+          "name": "Phân tích",
+          "count": 3
+        },
+        {
+          "name": "thuyết phục",
+          "count": 3
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 37
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 11
+        },
+        {
+          "name": "Khánh Hòa",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "May mặc / Thời trang",
+      "posting_count": 47,
+      "demand_share": 0.035,
+      "entry_level_ratio": 0.149,
+      "salary": {
+        "median_trieu": 16.3,
+        "sample_size": 36
+      },
+      "top_skills": [
+        {
+          "name": "Kỹ năng đàm phán",
+          "count": 4
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 4
+        },
+        {
+          "name": "Bán Hàng",
+          "count": 3
+        },
+        {
+          "name": "Giải quyết vấn đề",
+          "count": 3
+        },
+        {
+          "name": "Đàm phán",
+          "count": 3
+        },
+        {
+          "name": "Activation",
+          "count": 2
+        },
+        {
+          "name": "Excel",
+          "count": 2
+        },
+        {
+          "name": "Tìm kiếm khách hàng",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 31
+        },
+        {
+          "name": "Hà Nội",
+          "count": 13
+        },
+        {
+          "name": "Cần Thơ",
+          "count": 1
+        },
+        {
+          "name": "Huế",
+          "count": 1
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Y tế / Dược phẩm",
+      "posting_count": 46,
+      "demand_share": 0.035,
+      "entry_level_ratio": 0.37,
+      "salary": {
+        "median_trieu": 19,
+        "sample_size": 31
+      },
+      "top_skills": [
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 7
+        },
+        {
+          "name": "Kỹ năng đàm phán",
+          "count": 6
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 4
+        },
+        {
+          "name": "Đàm phán",
+          "count": 3
+        },
+        {
+          "name": "Tư vấn",
+          "count": 2
+        },
+        {
+          "name": "Thuyết Phục Khách Hàng",
+          "count": 2
+        },
+        {
+          "name": "Sử Dụng Thiết Bị Y Tế",
+          "count": 2
+        },
+        {
+          "name": "Xây dựng mối quan hệ",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hà Nội",
+          "count": 30
+        },
+        {
+          "name": "Hồ Chí Minh",
+          "count": 18
+        },
+        {
+          "name": "Thanh Hóa",
+          "count": 1
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 1
+        },
+        {
+          "name": "Phú Thọ",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "industry": "Xuất nhập khẩu / Hải quan",
+      "posting_count": 44,
+      "demand_share": 0.033,
+      "entry_level_ratio": 0.227,
+      "salary": {
+        "median_trieu": 15,
+        "sample_size": 30
+      },
+      "top_skills": [
+        {
+          "name": "Kỹ năng giao tiếp",
+          "count": 6
+        },
+        {
+          "name": "Excel",
+          "count": 4
+        },
+        {
+          "name": "Kỹ năng đàm phán",
+          "count": 4
+        },
+        {
+          "name": "Giao tiếp",
+          "count": 3
+        },
+        {
+          "name": "Xuất Nhập Khẩu",
+          "count": 3
+        },
+        {
+          "name": "Đàm phán",
+          "count": 2
+        },
+        {
+          "name": "Chăm Sóc Khách Hàng",
+          "count": 2
+        },
+        {
+          "name": "Tin học văn phòng",
+          "count": 2
+        }
+      ],
+      "top_provinces": [
+        {
+          "name": "Hồ Chí Minh",
+          "count": 24
+        },
+        {
+          "name": "Hà Nội",
+          "count": 14
+        },
+        {
+          "name": "Đồng Nai",
+          "count": 3
+        },
+        {
+          "name": "Hải Phòng",
+          "count": 3
+        },
+        {
+          "name": "Đà Nẵng",
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "skill_insights": [
+    {
+      "skill": "Giao tiếp",
+      "posting_count": 128,
+      "demand_share": 0.096,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 29
+        },
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 17
+        },
+        {
+          "name": "Nhân sự",
+          "count": 12
+        },
+        {
+          "name": "Logistic / Vận tải",
+          "count": 11
+        },
+        {
+          "name": "Ngân hàng",
+          "count": 10
+        }
+      ],
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 95
+      }
+    },
+    {
+      "skill": "Kỹ năng giao tiếp",
+      "posting_count": 83,
+      "demand_share": 0.062,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 11
+        },
+        {
+          "name": "Xây dựng",
+          "count": 10
+        },
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 10
+        },
+        {
+          "name": "Tài chính",
+          "count": 8
+        },
+        {
+          "name": "Logistic / Vận tải",
+          "count": 8
+        }
+      ],
+      "salary": {
+        "median_trieu": 19.3,
+        "sample_size": 60
+      }
+    },
+    {
+      "skill": "Đàm phán",
+      "posting_count": 62,
+      "demand_share": 0.047,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 12
+        },
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 9
+        },
+        {
+          "name": "Xây dựng",
+          "count": 6
+        },
+        {
+          "name": "Tài chính",
+          "count": 5
+        },
+        {
+          "name": "Sản xuất",
+          "count": 5
+        }
+      ],
+      "salary": {
+        "median_trieu": 22.5,
+        "sample_size": 42
+      }
+    },
+    {
+      "skill": "Excel",
+      "posting_count": 54,
+      "demand_share": 0.041,
+      "top_industries": [
+        {
+          "name": "Kế toán",
+          "count": 21
+        },
+        {
+          "name": "Nhân sự",
+          "count": 9
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 7
+        },
+        {
+          "name": "Tài chính",
+          "count": 7
+        },
+        {
+          "name": "Thuế",
+          "count": 5
+        }
+      ],
+      "salary": {
+        "median_trieu": 14.8,
+        "sample_size": 44
+      }
+    },
+    {
+      "skill": "Tin học văn phòng",
+      "posting_count": 51,
+      "demand_share": 0.038,
+      "top_industries": [
+        {
+          "name": "Kế toán",
+          "count": 8
+        },
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 7
+        },
+        {
+          "name": "Tài chính",
+          "count": 6
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 6
+        },
+        {
+          "name": "Logistic / Vận tải",
+          "count": 6
+        }
+      ],
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 31
+      }
+    },
+    {
+      "skill": "Chăm Sóc Khách Hàng",
+      "posting_count": 44,
+      "demand_share": 0.033,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 12
+        },
+        {
+          "name": "Thực phẩm / Đồ uống",
+          "count": 5
+        },
+        {
+          "name": "Nhà hàng / Khách sạn",
+          "count": 5
+        },
+        {
+          "name": "Chăm sóc sức khỏe / Làm đẹp",
+          "count": 4
+        },
+        {
+          "name": "Thương mại điện tử",
+          "count": 4
+        }
+      ],
+      "salary": {
+        "median_trieu": 19.3,
+        "sample_size": 32
+      }
+    },
+    {
+      "skill": "Giải quyết vấn đề",
+      "posting_count": 44,
+      "demand_share": 0.033,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 8
+        },
+        {
+          "name": "Điện / Điện tử / Điện lạnh",
+          "count": 5
+        },
+        {
+          "name": "Thực phẩm / Đồ uống",
+          "count": 5
+        },
+        {
+          "name": "Logistic / Vận tải",
+          "count": 5
+        },
+        {
+          "name": "Cơ khí / Tự động hóa",
+          "count": 4
+        }
+      ],
+      "salary": {
+        "median_trieu": 20,
+        "sample_size": 30
+      }
+    },
+    {
+      "skill": "AutoCAD",
+      "posting_count": 41,
+      "demand_share": 0.031,
+      "top_industries": [
+        {
+          "name": "Xây dựng",
+          "count": 21
+        },
+        {
+          "name": "Thiết kế / Kiến trúc",
+          "count": 20
+        },
+        {
+          "name": "Điện / Điện tử / Điện lạnh",
+          "count": 13
+        },
+        {
+          "name": "Cơ khí / Tự động hóa",
+          "count": 6
+        },
+        {
+          "name": "Công nghệ kỹ thuật",
+          "count": 4
+        }
+      ],
+      "salary": {
+        "median_trieu": 16.5,
+        "sample_size": 30
+      }
+    },
+    {
+      "skill": "Kỹ năng đàm phán",
+      "posting_count": 38,
+      "demand_share": 0.029,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 7
+        },
+        {
+          "name": "Y tế / Dược phẩm",
+          "count": 6
+        },
+        {
+          "name": "Xây dựng",
+          "count": 4
+        },
+        {
+          "name": "May mặc / Thời trang",
+          "count": 4
+        },
+        {
+          "name": "Nhân sự",
+          "count": 4
+        }
+      ],
+      "salary": {
+        "median_trieu": 22.3,
+        "sample_size": 26
+      }
+    },
+    {
+      "skill": "Lập Kế Hoạch",
+      "posting_count": 29,
+      "demand_share": 0.022,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 9
+        },
+        {
+          "name": "Xây dựng",
+          "count": 5
+        },
+        {
+          "name": "Tài chính",
+          "count": 4
+        },
+        {
+          "name": "Kế toán",
+          "count": 4
+        },
+        {
+          "name": "Thực phẩm / Đồ uống",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 24.5,
+        "sample_size": 18
+      }
+    },
+    {
+      "skill": "Trung thực",
+      "posting_count": 28,
+      "demand_share": 0.021,
+      "top_industries": [
+        {
+          "name": "Kế toán",
+          "count": 7
+        },
+        {
+          "name": "Tài chính",
+          "count": 6
+        },
+        {
+          "name": "Xây dựng",
+          "count": 4
+        },
+        {
+          "name": "Sản xuất",
+          "count": 3
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 12.5,
+        "sample_size": 23
+      }
+    },
+    {
+      "skill": "Cẩn thận",
+      "posting_count": 28,
+      "demand_share": 0.021,
+      "top_industries": [
+        {
+          "name": "Kế toán",
+          "count": 9
+        },
+        {
+          "name": "Tài chính",
+          "count": 5
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 4
+        },
+        {
+          "name": "Sản xuất",
+          "count": 4
+        },
+        {
+          "name": "Kiểm toán",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 12,
+        "sample_size": 21
+      }
+    },
+    {
+      "skill": "Làm việc nhóm",
+      "posting_count": 27,
+      "demand_share": 0.02,
+      "top_industries": [
+        {
+          "name": "Xây dựng",
+          "count": 7
+        },
+        {
+          "name": "Kiểm toán",
+          "count": 4
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 3
+        },
+        {
+          "name": "Thực phẩm / Đồ uống",
+          "count": 3
+        },
+        {
+          "name": "Kế toán",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 15.5,
+        "sample_size": 20
+      }
+    },
+    {
+      "skill": "thuyết phục",
+      "posting_count": 26,
+      "demand_share": 0.02,
+      "top_industries": [
+        {
+          "name": "Tài chính",
+          "count": 4
+        },
+        {
+          "name": "Xây dựng",
+          "count": 4
+        },
+        {
+          "name": "Công nghệ kỹ thuật",
+          "count": 4
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 4
+        },
+        {
+          "name": "Ngân hàng",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 22.5,
+        "sample_size": 21
+      }
+    },
+    {
+      "skill": "Xử lý tình huống",
+      "posting_count": 25,
+      "demand_share": 0.019,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 10
+        },
+        {
+          "name": "Logistic / Vận tải",
+          "count": 5
+        },
+        {
+          "name": "Thực phẩm / Đồ uống",
+          "count": 4
+        },
+        {
+          "name": "Chăm sóc sức khỏe / Làm đẹp",
+          "count": 3
+        },
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 2
+        }
+      ],
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 23
+      }
+    },
+    {
+      "skill": "Giao tiếp tốt",
+      "posting_count": 23,
+      "demand_share": 0.017,
+      "top_industries": [
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 4
+        },
+        {
+          "name": "Giáo dục / Đào tạo",
+          "count": 3
+        },
+        {
+          "name": "Tài chính",
+          "count": 3
+        },
+        {
+          "name": "Nhà hàng / Khách sạn",
+          "count": 2
+        },
+        {
+          "name": "Du lịch",
+          "count": 2
+        }
+      ],
+      "salary": {
+        "median_trieu": 20,
+        "sample_size": 19
+      }
+    },
+    {
+      "skill": "Phân tích dữ liệu",
+      "posting_count": 23,
+      "demand_share": 0.017,
+      "top_industries": [
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 7
+        },
+        {
+          "name": "Tài chính",
+          "count": 5
+        },
+        {
+          "name": "Kế toán",
+          "count": 5
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 4
+        },
+        {
+          "name": "IT - Phần mềm",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 16,
+        "sample_size": 13
+      }
+    },
+    {
+      "skill": "Kỹ năng bán hàng",
+      "posting_count": 23,
+      "demand_share": 0.017,
+      "top_industries": [
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 5
+        },
+        {
+          "name": "Công nghệ kỹ thuật",
+          "count": 4
+        },
+        {
+          "name": "Ngân hàng",
+          "count": 3
+        },
+        {
+          "name": "Tài chính",
+          "count": 3
+        },
+        {
+          "name": "Du lịch",
+          "count": 3
+        }
+      ],
+      "salary": {
+        "median_trieu": 17.5,
+        "sample_size": 21
+      }
+    },
+    {
+      "skill": "Tư vấn",
+      "posting_count": 19,
+      "demand_share": 0.014,
+      "top_industries": [
+        {
+          "name": "Chăm sóc sức khỏe / Làm đẹp",
+          "count": 6
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 5
+        },
+        {
+          "name": "Du lịch",
+          "count": 5
+        },
+        {
+          "name": "Y tế / Dược phẩm",
+          "count": 2
+        },
+        {
+          "name": "Marketing / Quảng cáo",
+          "count": 2
+        }
+      ],
+      "salary": {
+        "median_trieu": 20,
+        "sample_size": 18
+      }
+    },
+    {
+      "skill": "Kế Toán",
+      "posting_count": 19,
+      "demand_share": 0.014,
+      "top_industries": [
+        {
+          "name": "Kế toán",
+          "count": 16
+        },
+        {
+          "name": "Thương mại điện tử",
+          "count": 3
+        },
+        {
+          "name": "Bán lẻ - Hàng tiêu dùng - FMCG",
+          "count": 2
+        },
+        {
+          "name": "Kiểm toán",
+          "count": 2
+        },
+        {
+          "name": "Thuế",
+          "count": 1
+        }
+      ],
+      "salary": {
+        "median_trieu": 14,
+        "sample_size": 14
+      }
+    }
+  ],
+  "experience_distribution": [
+    {
+      "level": "1 năm",
+      "count": 400,
+      "ratio": 0.3
+    },
+    {
+      "level": "2 năm",
+      "count": 258,
+      "ratio": 0.194
+    },
+    {
+      "level": "Không yêu cầu",
+      "count": 255,
+      "ratio": 0.191
+    },
+    {
+      "level": "3 năm",
+      "count": 173,
+      "ratio": 0.13
+    },
+    {
+      "level": "Dưới 1 năm",
+      "count": 132,
+      "ratio": 0.099
+    },
+    {
+      "level": "5 năm",
+      "count": 65,
+      "ratio": 0.049
+    },
+    {
+      "level": "Trên 5 năm",
+      "count": 35,
+      "ratio": 0.026
+    },
+    {
+      "level": "4 năm",
+      "count": 14,
+      "ratio": 0.011
+    }
+  ]
+}

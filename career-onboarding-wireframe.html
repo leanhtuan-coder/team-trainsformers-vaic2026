@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Định hướng nghề nghiệp</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css" />
+<style>
+  :root{
+    --bg:#f4f2ec; --surface:#ffffff; --surface-alt:#faf9f5;
+    --text:#1f1e1c; --text-2:#6b6a64; --text-3:#8a8981;
+    --border:#e3e1d8; --border-strong:#cfcdc2;
+    --accent:#2f6fb0; --accent-bg:#e6f1fb; --accent-fg:#0c447c;
+    --warn:#ba7517; --radius:8px;
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); font-family:var(--font); color:var(--text); line-height:1.6; }
+  .page{ max-width:720px; margin:32px auto; padding:0 16px; }
+  .shell{ background:var(--surface-alt); border-radius:14px; padding:20px; position:relative; }
+  h1{ font-size:20px; font-weight:600; margin:0 0 2px; }
+  h3{ font-size:16px; font-weight:600; margin:0 0 4px; }
+  p.sub{ color:var(--text-2); font-size:14px; margin:0 0 20px; }
+  .tabs{ display:flex; gap:8px; margin-bottom:20px; }
+  .tab{ flex:1; text-align:center; padding:10px; border-radius:var(--radius); cursor:pointer;
+        font-size:13px; font-weight:500; background:var(--surface); color:var(--text-2);
+        border:1px solid var(--border); user-select:none; }
+  .tab.active{ background:var(--accent-bg); color:var(--accent-fg); border:1px solid var(--accent-bg); }
+  label.fld{ display:block; font-size:13px; color:var(--text-2); margin-bottom:6px; }
+  input, select, textarea{ width:100%; font-family:inherit; font-size:14px; color:var(--text);
+        background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+        padding:9px 11px; outline:none; }
+  input:focus, select:focus, textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+  textarea{ resize:vertical; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+  .qcol{ display:flex; flex-direction:column; gap:14px; }
+  .qnum{ color:var(--accent-fg); font-weight:600; }
+  .drop{ border:1px dashed var(--border-strong); border-radius:var(--radius); padding:14px; background:var(--surface); }
+  .drop .h{ font-size:14px; font-weight:500; margin-bottom:8px; }
+  .btn{ font-family:inherit; font-size:14px; font-weight:500; padding:9px 16px; border-radius:var(--radius);
+        cursor:pointer; background:var(--surface); border:1px solid var(--border-strong); color:var(--text); }
+  .btn:hover{ background:var(--surface-alt); }
+  .btn.primary{ background:var(--accent); border:1px solid var(--accent); color:#fff; }
+  .btn.small{ font-size:13px; padding:7px 12px; }
+  .row{ display:flex; justify-content:space-between; margin-top:22px; }
+  .row.end{ justify-content:flex-end; }
+  .screen{ display:none; }
+  .screen.on{ display:block; }
+  .overlay{ display:none; position:absolute; inset:0; background:rgba(0,0,0,.45);
+        align-items:center; justify-content:center; border-radius:14px; }
+  .overlay.on{ display:flex; }
+  .modal{ background:var(--surface); border-radius:12px; border:1px solid var(--border); padding:20px; max-width:400px; width:90%; }
+  .modal .title{ display:flex; align-items:center; gap:8px; font-weight:600; font-size:15px; margin-bottom:10px; }
+  .modal p{ font-size:14px; color:var(--text-2); margin:0 0 16px; }
+  .modal .actions{ display:flex; justify-content:flex-end; gap:8px; }
+  .center{ text-align:center; }
+  .ti{ vertical-align:-2px; }
+  .spin{ animation:sp 1s linear infinite; display:inline-block; }
+  @keyframes sp{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Định hướng nghề nghiệp</h1>
+  <p class="sub">Wireframe tương tác — 3 màn hình, chuyển đổi tự do, có popup xác nhận.</p>
+
+  <div class="shell">
+    <div class="tabs">
+      <div class="tab active" data-tab="1"><i class="ti ti-user"></i>&nbsp; 1. Về bạn</div>
+      <div class="tab" data-tab="2"><i class="ti ti-list-check"></i>&nbsp; 2. Câu hỏi</div>
+      <div class="tab" data-tab="3"><i class="ti ti-upload"></i>&nbsp; 3. Hồ sơ của bạn</div>
+    </div>
+
+    <!-- SCREEN 1 -->
+    <div class="screen on" id="screen-1">
+      <h3>Cùng làm quen nhé</h3>
+      <p class="sub">Một vài thông tin cơ bản để cá nhân hóa lộ trình nghề nghiệp của bạn.</p>
+      <div class="grid">
+        <div><label class="fld">Tuổi</label><input type="number" placeholder="18" /></div>
+        <div><label class="fld">Giới tính</label>
+          <select><option value="">Chọn</option><option>Nữ</option><option>Nam</option><option>Khác</option><option>Không muốn tiết lộ</option></select>
+        </div>
+        <div><label class="fld">Nơi ở hiện tại</label>
+          <select id="loc-current"><option value="">Chọn tỉnh/thành</option></select>
+        </div>
+        <div><label class="fld">Nơi mong muốn làm việc</label>
+          <select id="loc-prefer"><option value="">Chọn tỉnh/thành</option></select>
+        </div>
+      </div>
+      <div class="row end">
+        <button class="btn primary" onclick="goTo(2)">Tiếp tục&nbsp;<i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2 -->
+    <div class="screen" id="screen-2">
+      <h3>Chia sẻ điều khiến bạn hứng thú <i class="ti ti-sparkles" style="color:var(--accent)"></i></h3>
+      <p class="sub">Câu trả lời ngắn gọn, chân thật là tốt nhất. Không có đáp án đúng hay sai.</p>
+      <div class="qcol" id="qlist"></div>
+      <div class="row">
+        <button class="btn" onclick="goTo(1)"><i class="ti ti-arrow-left"></i>&nbsp;Quay lại</button>
+        <button class="btn primary" onclick="checkQuestions()">Tiếp tục&nbsp;<i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3 -->
+    <div class="screen" id="screen-3">
+      <h3>Cho chúng tôi biết về hồ sơ của bạn</h3>
+      <p class="sub">Không bắt buộc, nhưng càng nhiều thông tin thì lộ trình càng chính xác. Tải file lên hoặc mô tả bằng chữ.</p>
+      <div class="qcol">
+        <div class="drop">
+          <div class="h"><i class="ti ti-certificate"></i>&nbsp; Chứng chỉ</div>
+          <button class="btn small"><i class="ti ti-upload"></i>&nbsp; Tải file lên</button>
+          <textarea id="up-cert" placeholder="…hoặc liệt kê: AWS SAA, IELTS 7.0" style="margin-top:8px; min-height:52px;"></textarea>
+        </div>
+        <div class="drop">
+          <div class="h"><i class="ti ti-school"></i>&nbsp; Hồ sơ học thuật</div>
+          <button class="btn small"><i class="ti ti-upload"></i>&nbsp; Tải file lên</button>
+          <textarea id="up-profile" placeholder="…hoặc mô tả: ngành học, GPA, môn thế mạnh" style="margin-top:8px; min-height:52px;"></textarea>
+        </div>
+        <div class="drop">
+          <div class="h"><i class="ti ti-briefcase"></i>&nbsp; Trải nghiệm</div>
+          <textarea id="up-exp" placeholder="Mô tả: dự án, vị trí công việc, thực tập bạn từng làm" style="min-height:80px;"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="goTo(2)"><i class="ti ti-arrow-left"></i>&nbsp;Quay lại</button>
+        <button class="btn primary" onclick="checkUpload()">Gửi&nbsp;<i class="ti ti-check"></i></button>
+      </div>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="overlay" id="overlay"><div id="modal-slot"></div></div>
+  </div>
+</div>
+
+<script>
+var provinces = ["An Giang","Bà Rịa - Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận","Cà Mau","Cần Thơ","Cao Bằng","Đà Nẵng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định","Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","TP. Hồ Chí Minh","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái","Làm việc từ xa (Remote)","Nước ngoài"];
+function fillLoc(id){
+  var sel = document.getElementById(id);
+  provinces.forEach(function(p){
+    var o = document.createElement('option'); o.textContent = p; sel.appendChild(o);
+  });
+}
+fillLoc('loc-current'); fillLoc('loc-prefer');
+
+var questions = [
+  "Việc gì khiến bạn quên cả thời gian khi làm?",
+  "Điều gì bạn làm dễ dàng mà nhiều người thấy khó?",
+  "Công việc phải có điều gì thì bạn mới thấy đáng làm?",
+  "Bạn làm việc tốt nhất khi một mình, theo nhóm, hay dẫn dắt? Vì sao?",
+  "Khi gặp một vấn đề khó, bước đầu tiên bạn làm là gì?",
+  "Sau 5 năm nữa, bạn muốn được nhìn nhận là người như thế nào trong công việc?"
+];
+var ql = document.getElementById('qlist');
+questions.forEach(function(q,i){
+  var d = document.createElement('div');
+  d.innerHTML = '<label class="fld"><span class="qnum">Câu '+(i+1)+'.</span> '+q+'</label>'
+    +'<textarea data-q="'+(i+1)+'" placeholder="Nhập câu trả lời ngắn…" style="min-height:48px;"></textarea>';
+  ql.appendChild(d);
+});
+
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.classList.toggle('active', t.getAttribute('data-tab')==String(n));
+  });
+}
+function goTo(n){
+  [1,2,3].forEach(function(i){
+    document.getElementById('screen-'+i).classList.toggle('on', i===n);
+  });
+  setTab(n); closeModal();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){ goTo(Number(t.getAttribute('data-tab'))); });
+});
+
+function closeModal(){
+  var o = document.getElementById('overlay');
+  o.classList.remove('on'); document.getElementById('modal-slot').innerHTML='';
+}
+function showConfirm(msg, okLabel, onOk){
+  document.getElementById('modal-slot').innerHTML =
+    '<div class="modal">'
+    +'<div class="title"><i class="ti ti-alert-triangle" style="color:var(--warn); font-size:20px;"></i>Bạn còn thiếu thông tin</div>'
+    +'<p>'+msg+'</p>'
+    +'<div class="actions"><button class="btn" id="m-cancel">Hủy</button>'
+    +'<button class="btn primary" id="m-ok">'+okLabel+'</button></div></div>';
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('m-cancel').onclick = closeModal;
+  document.getElementById('m-ok').onclick = function(){ closeModal(); onOk(); };
+}
+
+function checkQuestions(){
+  var missing = [];
+  document.querySelectorAll('#qlist textarea').forEach(function(t){
+    if(!t.value.trim()) missing.push(t.getAttribute('data-q'));
+  });
+  if(missing.length){
+    showConfirm("Bạn chưa trả lời câu "+missing.join(', ')+". Bạn có chắc muốn tiếp tục không?",
+      "Vẫn tiếp tục", function(){ goTo(3); });
+  } else { goTo(3); }
+}
+function checkUpload(){
+  var blanks = [];
+  if(!document.getElementById('up-cert').value.trim()) blanks.push('Chứng chỉ');
+  if(!document.getElementById('up-profile').value.trim()) blanks.push('Hồ sơ học thuật');
+  if(!document.getElementById('up-exp').value.trim()) blanks.push('Trải nghiệm');
+  if(blanks.length){
+    showConfirm("Bạn để trống mục "+blanks.join(', ')+". Gửi ngay bây giờ sẽ cho kết quả kém chính xác hơn. Vẫn gửi chứ?",
+      "Vẫn gửi", doSubmit);
+  } else { doSubmit(); }
+}
+function doSubmit(){
+  document.getElementById('modal-slot').innerHTML =
+    '<div class="modal center">'
+    +'<i class="ti ti-loader-2 spin" style="font-size:28px; color:var(--accent);"></i>'
+    +'<p style="font-weight:600; color:var(--text); margin:12px 0 4px;">Đang xử lý hồ sơ của bạn…</p>'
+    +'<p style="margin:0;">Phân tích câu trả lời và xây dựng lộ trình nghề nghiệp.</p></div>';
+  document.getElementById('overlay').classList.add('on');
+}
+</script>
+</body>
+</html>

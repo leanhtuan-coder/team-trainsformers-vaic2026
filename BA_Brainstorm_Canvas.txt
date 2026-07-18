@@ -1,0 +1,2019 @@
+Thẻ 1
+BA BRAINSTORM CANVAS
+Khung khai phá bài toán → giải pháp cho Business Analyst
+Dùng cho: đề hackathon · sản phẩm / tính năng mới · scoping session
+Trường | Nội dung
+Trường
+Nội dung
+Tên đề / sản phẩm |  
+Tên đề / sản phẩm
+ 
+Ngày |  
+Ngày
+ 
+Người điền |  
+Người điền
+ 
+Phiên bản |  
+Phiên bản
+ 
+Cách dùng: mỗi mục có câu hỏi dẫn (chữ xám nghiêng). Trả lời ngắn gọn vào dòng kẻ hoặc bảng bên dưới. Không cần điền hết — bỏ qua mục chưa liên quan và quay lại sau. Mục có dấu ★ là bắt buộc cho một pitch tối thiểu.
+Đề bài: 
+Context: Vietnamese students mostly choose careers based on gut feeling, trends, or family expectations, leading to a glut of graduates and shortage of skilled workers, post-graduation unemployment, and a serious mismatch between training and market demand. No AI tool connects students' abilities and interests to real, real-time labor-market signals.
+Requirements: Build a guidance system that: (1) analyzes real skill demand from hiring data (job postings, required skills, salaries, trends by region and over time) to map out "which careers are rising, which skills are in short supply locally"; (2) builds a student ability–interest profile through interaction, not reduced to a single personality quiz; (3) suggests a personalized, explainable study/career path — including vocational routes, not just university. Mandatory ethical constraint: expand choices rather than box people in, don't reinforce gender bias ("women suit career A") or regional bias, and always present suggestions as reference material, respecting the student's autonomy.
+Judging criteria: Quality of skill-signal extraction from hiring data, degree of personalization and explainability of suggestions, anti-bias/opportunity-expanding design (high weight), and real usefulness as judged by students and career counselors.
+Giải pháp:2, Xây user profile. Tham khảo các khía cạnh của 1 con người toàn diện:Bảng user profile : 2 loại chứa khía cạnh của user: intersest,
+- Tính cách:
+- Tính cách ntn, bạn hay được mn đánh giá ntn
+- trải nghiệm: ckinh nghiệm công việc, nhật ký : uplaod file text,
+-
+- sở thích:
+- Bạn thích nghề nào:
+- Bạn Bạn thích chơi gì
+-
+- Thành tích học tập:
+- 12 năm học sinh giỏi
+- Điểm trung bình 12 toàn 9.0,
+- Kỹ năng:
+- chứng chỉ - evidence: toán cáp 2 9/10 diem do nguồn thằng nào
+-
+3, AI khuyên nghị Ngành phổ biến hoặc phù hợp, con đường roadmap
+Nếu không thông tin : dựa vào thị trường-> job phổ biến - xu hướng hot
+Nếu có thông tin. LLM dựa vào thị trường + user profile đưa ra job phù hợp +xu hướng
+Luôn phải ground thông tin, cơ sở nguồn ở đâu. 
+Thu thập dữ liệu User:
+Khung 
+1. Đóng khung vấn đề  ★
+Trước khi nghĩ giải pháp, phải chắc mình hiểu đúng vấn đề. Đừng nhảy vào tính năng vội.
+1.1 Vấn đề cốt lõi (Problem statement)
+Vấn đề thật là gì? Diễn đạt trong 1–2 câu, dưới góc nhìn người dùng, KHÔNG nhắc tới giải pháp.
+Mẫu: "[Đối tượng] gặp khó khăn khi [làm gì] vì [nguyên nhân], dẫn đến [hậu quả]."
+ 
+ 
+1.2 Đào gốc rễ — 5 Whys
+Hỏi "tại sao" liên tiếp để chạm nguyên nhân gốc, không dừng ở triệu chứng.
+# | Tại sao? | Câu trả lời
+#
+Tại sao?
+Câu trả lời
+Why 1 |   |  
+Why 1
+ 
+ 
+Why 2 |   |  
+Why 2
+ 
+ 
+Why 3 |   |  
+Why 3
+ 
+ 
+Why 4 |   |  
+Why 4
+ 
+ 
+Why 5 (gốc) |   |  
+Why 5 (gốc)
+ 
+ 
+1.3 Bằng chứng vấn đề tồn tại
+Có dữ liệu / trích dẫn / quan sát nào chứng minh vấn đề này có thật và đáng giải? (số liệu, khảo sát, nghiên cứu, phản hồi thực tế)
+ 
+ 
+2. Bên liên quan & Người dùng  ★
+2.1 Bản đồ bên liên quan
+Ai bị ảnh hưởng, ai quyết định, ai dùng trực tiếp? Phân theo mức ảnh hưởng để biết ưu tiên giao tiếp.
+Bên liên quan | Vai trò / quan tâm | Ảnh hưởng (Cao/TB/Thấp)
+Bên liên quan
+Vai trò / quan tâm
+Ảnh hưởng (Cao/TB/Thấp)
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+2.2 Chân dung người dùng chính (Primary persona)
+Người dùng chính là ai? Bối cảnh, mục tiêu, nỗi đau, mức độ rành công nghệ?
+ 
+ 
+ 
+Người dùng phụ / gián tiếp (nếu có)? (VD: trong EdTech thường có học sinh + giáo viên + phụ huynh)
+ 
+ 
+2.3 Brainstorm requirement
+Người dùng "thuê" sản phẩm để hoàn thành việc gì? Tập trung vào kết quả họ muốn, không phải tính năng.
+Khi ___________, tôi muốn ___________, để ___________
+Yêu cầu (bao gồm AI làm gì) | As a WHO, I want WHAT, so that WHY | Khả thi? | Rút bỏ AI thì sao? | Tính năng
+Yêu cầu (bao gồm AI làm gì)
+As a WHO, I want WHAT, so that WHY
+Khả thi?
+Rút bỏ AI thì sao?
+Tính năng
+Là học sinh, tôi muốn AI trích xuất kỹ năng, mức lương, xu hướng từ hàng chục nghìn tin tuyển dụng thô để biết kỹ năng nào đang khát ở vùng của tôi và trên cả nước. | Không thể làm thủ công 
+Là học sinh, tôi muốn AI trích xuất kỹ năng, mức lương, xu hướng từ hàng chục nghìn tin tuyển dụng thô để biết kỹ năng nào đang khát ở vùng của tôi và trên cả nước.
+Không thể làm thủ công 
+Là học sinh, tôi muốn AI xây hồ sơ năng lực–hứng thú của tôi qua hội thoại kể chuyện + mini-challenge hành vi, cập nhật dần theo nhiều phiên (không phải 1 bài quiz), để hồ sơ phản ánh con người thật của tôi chứ không phải nhãn dán một lần. | Quiz giấy làm được nhưng chính là hiện trạng đang thất bại: tự khai ≠ hành vi thật, tĩnh, không phát hiện được mâu thuẫn giữa lời khai và hành động | Hội thoại khai thác trải nghiệm + Mini-challenge hành vi
+Là học sinh, tôi muốn AI xây hồ sơ năng lực–hứng thú của tôi qua hội thoại kể chuyện + mini-challenge hành vi, cập nhật dần theo nhiều phiên (không phải 1 bài quiz), để hồ sơ phản ánh con người thật của tôi chứ không phải nhãn dán một lần.
+Quiz giấy làm được nhưng chính là hiện trạng đang thất bại: tự khai ≠ hành vi thật, tĩnh, không phát hiện được mâu thuẫn giữa lời khai và hành động
+Hội thoại khai thác trải nghiệm + Mini-challenge hành vi
+Là học sinh, tôi muốn AI ghép hồ sơ của tôi với skill graph thị trường và giải thích từng gợi ý bằng thẻ 5 ô: vì em – vì thị trường – nhiều lộ trình (cả học nghề) – mặt trái – nếu-thì, để hiểu tại sao chứ không chỉ nhận đáp án, và tự quyết định. | Không AI thì chỉ còn tra bảng nghề tĩnh: không cá nhân hóa, không giải thích theo từng em, không nối được với tín hiệu thị trường real-time
+Là học sinh, tôi muốn AI ghép hồ sơ của tôi với skill graph thị trường và giải thích từng gợi ý bằng thẻ 5 ô: vì em – vì thị trường – nhiều lộ trình (cả học nghề) – mặt trái – nếu-thì, để hiểu tại sao chứ không chỉ nhận đáp án, và tự quyết định.
+Không AI thì chỉ còn tra bảng nghề tĩnh: không cá nhân hóa, không giải thích theo từng em, không nối được với tín hiệu thị trường real-time
+mọi thẻ có nút "Không phải em / Muốn khám phá hướng khác" và hệ thống  | phải |  phản hồi bằng cách mở cụm mới, không lặp lại.  | Lựa chọn mở rộng / đây không phải tôi
+mọi thẻ có nút "Không phải em / Muốn khám phá hướng khác" và hệ thống phải phản hồi bằng cách mở cụm mới, không lặp lại. 
+Lựa chọn mở rộng / đây không phải tôi
+Là giáo viên hướng nghiệp, tôi muốn AI tổng hợp bản đồ năng lực cả lớp, cảnh báo em nào có lệch lớn giữa lời khai và hành vi, kèm dữ liệu thị trường vùng, để ưu tiên gặp riêng đúng em cần và dẫn giờ hướng nghiệp bằng số liệu. | 1 giáo viên / 500 học sinh không thể tự tổng hợp; hiện tại chỉ tư vấn được số ít em chủ động tìm đến
+Là giáo viên hướng nghiệp, tôi muốn AI tổng hợp bản đồ năng lực cả lớp, cảnh báo em nào có lệch lớn giữa lời khai và hành vi, kèm dữ liệu thị trường vùng, để ưu tiên gặp riêng đúng em cần và dẫn giờ hướng nghiệp bằng số liệu.
+1 giáo viên / 500 học sinh không thể tự tổng hợp; hiện tại chỉ tư vấn được số ít em chủ động tìm đến
+Là học sinh, tôi muốn hệ thống chống thiên vị, khuyến khích ẩn các thông tin về giới tính và lưu ý về vùng miền để rà soát real-time job market | Sẽ có thể thiên vị các cá thể chỉ nam hoặc chỉ nữ
+Là học sinh, tôi muốn hệ thống chống thiên vị, khuyến khích ẩn các thông tin về giới tính và lưu ý về vùng miền để rà soát real-time job market
+Sẽ có thể thiên vị các cá thể chỉ nam hoặc chỉ nữ
+Là học sinh, mình biết bản thân mạnh ở điểm nào, yếu ở điểm nào nhưng lại phân vân giữa 2,3,... ngành mình đã suy nghĩ. Mình sẽ nói ra các ngành mình phân vân và AI tạo mini challenge và cũng dựa trên kĩ năng đang có để đưa ra nhận định vào những ngành mình đang phân vân xem liệu có phù hợp với mình không | Ko thể giúp học sinh phân tích được liệu có hợp với mình, hợp bao nhiêu phần trăm. Nếu thật sự quá thích và muốn vào ngành đó cần cải thiện những gì
+Là học sinh, mình biết bản thân mạnh ở điểm nào, yếu ở điểm nào nhưng lại phân vân giữa 2,3,... ngành mình đã suy nghĩ. Mình sẽ nói ra các ngành mình phân vân và AI tạo mini challenge và cũng dựa trên kĩ năng đang có để đưa ra nhận định vào những ngành mình đang phân vân xem liệu có phù hợp với mình không
+Ko thể giúp học sinh phân tích được liệu có hợp với mình, hợp bao nhiêu phần trăm. Nếu thật sự quá thích và muốn vào ngành đó cần cải thiện những gì
+ 
+ Nhóm 1 — Cổng vào & hồ sơ - onboarding 
+User story (As a–I want–So that) | Khả thi? | Rút bỏ AI thì sao? | Tính năng
+User story (As a–I want–So that)
+Khả thi?
+Rút bỏ AI thì sao?
+Tính năng
+Là người dùng mới, tôi muốn khai báo mình là ai và đang ở trạng thái nào, để được dẫn đúng luồng thay vì đi chung một đường. | Vẫn chạy | Onboarding phân nhánh: |  2 màn hình chọn (giáo viên, học sinh)
+Là người dùng mới, tôi muốn khai báo mình là ai và đang ở trạng thái nào, để được dẫn đúng luồng thay vì đi chung một đường.
+Vẫn chạy
+Onboarding phân nhánh: 2 màn hình chọn (giáo viên, học sinh)
+Là học sinh, tôi muốn hệ thống hiểu tôi qua trò chuyện và thử thách nhỏ thay vì một bài quiz dán nhãn, để hồ sơ phản ánh con người thật và lớn dần theo thời gian. | phân vân | mơ hồ: thích nhiều thứ | ko bt gì  | Chỉ còn quiz tĩnh | Hồ sơ La bàn: |  (1) chat kể chuyện (2) 1-2 mini-challenge 2 phút (3) màn hình hồ sơ dạng radar + thanh "độ hiệu chỉnh la bàn x%" mời quay lại làm tiếp
+Là học sinh, tôi muốn hệ thống hiểu tôi qua trò chuyện và thử thách nhỏ thay vì một bài quiz dán nhãn, để hồ sơ phản ánh con người thật và lớn dần theo thời gian.
+phân vân
+mơ hồ: thích nhiều thứ
+ko bt gì 
+Chỉ còn quiz tĩnh
+Hồ sơ La bàn: (1) chat kể chuyện (2) 1-2 mini-challenge 2 phút (3) màn hình hồ sơ dạng radar + thanh "độ hiệu chỉnh la bàn x%" mời quay lại làm tiếp
+ Nhóm 2 — Ba chế độ theo trạng thái xuất phát
+User story (As a–I want–So that) | Khả thi? | Rút bỏ AI thì sao? | Tính năng
+User story (As a–I want–So that)
+Khả thi?
+Rút bỏ AI thì sao?
+Tính năng
+Là học sinh  | đang phân vân |  (Ⓐ), tôi muốn đặt các hướng lên cùng một bàn cân được cá nhân hóa cho tôi, để quyết định thay vì tiếp tục lưỡng lự. | so sánh generic tra Google được, nhưng cột "độ khớp với em kèm bằng chứng" và dữ liệu vùng real-time thì không | Chế độ Cân Đo: |  nhập/chọn 2-3 hướng (vd Tài chính vs CNTT) → bảng so sánh 4 hàng:  | độ khớp với em |  (kèm bằng chứng từ hồ sơ),  | thị trường |  (cầu + lương + đà tăng theo vùng),  | đường học |  (ĐH/nghề/chứng chỉ, chi phí, thời gian),  | mặt trái mỗi hướng | . Cuối bảng luôn có ô  | "Còn một hướng em chưa nghĩ tới..."
+Là học sinh đang phân vân (Ⓐ), tôi muốn đặt các hướng lên cùng một bàn cân được cá nhân hóa cho tôi, để quyết định thay vì tiếp tục lưỡng lự.
+so sánh generic tra Google được, nhưng cột "độ khớp với em kèm bằng chứng" và dữ liệu vùng real-time thì không
+Chế độ Cân Đo: nhập/chọn 2-3 hướng (vd Tài chính vs CNTT) → bảng so sánh 4 hàng: độ khớp với em (kèm bằng chứng từ hồ sơ), thị trường (cầu + lương + đà tăng theo vùng), đường học (ĐH/nghề/chứng chỉ, chi phí, thời gian), mặt trái mỗi hướng. Cuối bảng luôn có ô "Còn một hướng em chưa nghĩ tới..."
+Là học sinh  | có sở thích mơ hồ |  (Ⓑ), tôi muốn thấy sở thích dẫn đến nghề thật, để "thích vẽ" không chết ở "thích vẽ". | bình-cao — làm 5-7 sở thích phổ biến chạy mượt cho demoBản đồ tĩnh vẽ tay được cho 10 sở thích, nhưng không nối được với tin tuyển dụng thật và không cá nhân hóa theo hồ sơ | Chế độ Lần Theo Sở Thích: |  chọn/gõ sở thích tự do → bản đồ tỏa nhánh: sở thích → cụm kỹ năng → 4-6 nghề thật đang tuyển (mỗi nghề gắn nhãn: cần học thêm gì, thị trường vùng em thế nào)
+Là học sinh có sở thích mơ hồ (Ⓑ), tôi muốn thấy sở thích dẫn đến nghề thật, để "thích vẽ" không chết ở "thích vẽ".
+bình-cao — làm 5-7 sở thích phổ biến chạy mượt cho demoBản đồ tĩnh vẽ tay được cho 10 sở thích, nhưng không nối được với tin tuyển dụng thật và không cá nhân hóa theo hồ sơ
+Chế độ Lần Theo Sở Thích: chọn/gõ sở thích tự do → bản đồ tỏa nhánh: sở thích → cụm kỹ năng → 4-6 nghề thật đang tuyển (mỗi nghề gắn nhãn: cần học thêm gì, thị trường vùng em thế nào)
+Là học sinh  | chưa biết bắt đầu từ đâu |  (Ⓒ), tôi muốn một hành trình khám phá ngắn và không phán xét, để có bức phác thảo đầu tiên về mình. | Không AI thì thành bài test | Chế độ Khám Phá: |  hành trình 10-15 phút = 3 chặng (kể chuyện → 2 challenge → phản chiếu "đây là điều thầy la bàn thấy ở em, đúng không?") → kết thúc bằng hồ sơ sơ khởi + 3 thẻ gợi ý đầu tiên
+Là học sinh chưa biết bắt đầu từ đâu (Ⓒ), tôi muốn một hành trình khám phá ngắn và không phán xét, để có bức phác thảo đầu tiên về mình.
+Không AI thì thành bài test
+Chế độ Khám Phá: hành trình 10-15 phút = 3 chặng (kể chuyện → 2 challenge → phản chiếu "đây là điều thầy la bàn thấy ở em, đúng không?") → kết thúc bằng hồ sơ sơ khởi + 3 thẻ gợi ý đầu tiên
+Nhóm 3 — Đầu ra & sự tôn trọng người dùng
+User story (As a–I want–So that) | Khả thi? | Rút bỏ AI thì sao? | Tính năng
+User story (As a–I want–So that)
+Khả thi?
+Rút bỏ AI thì sao?
+Tính năng
+Là học sinh, tôi muốn mỗi gợi ý giải thích được  | tại sao là tôi | , để tin và tự quyết, không nhận đáp án từ trên trời. | Chỉ còn mô tả nghề chép từ danh mục: không bằng chứng cá nhân, không số liệu vùng, không giải thích | Thẻ La Bàn |  (đầu ra chuẩn của cả 3 chế độ): thẻ nghề 5 ô —  | Vì em / Vì thị trường / Nhiều đường đến (luôn có lộ trình nghề) / Mặt trái / Nếu–thì
+Là học sinh, tôi muốn mỗi gợi ý giải thích được tại sao là tôi, để tin và tự quyết, không nhận đáp án từ trên trời.
+Chỉ còn mô tả nghề chép từ danh mục: không bằng chứng cá nhân, không số liệu vùng, không giải thích
+Thẻ La Bàn (đầu ra chuẩn của cả 3 chế độ): thẻ nghề 5 ô — Vì em / Vì thị trường / Nhiều đường đến (luôn có lộ trình nghề) / Mặt trái / Nếu–thì
+Là học sinh, tôi muốn được từ chối gợi ý và được gợi mở thứ mình chưa từng nghĩ tới, để lựa chọn  | mở rộng |  chứ không bị đóng khung. | Tư vấn tĩnh | Nút "Không phải tôi" |  trên mọi thẻ (bấm → hệ   thống mở cụm nghề khác, không lặp lại) + mục  | "Chân trời mới" | : 1-2 thẻ nghề em chưa từng chạm tới nhưng khoảng cách kỹ năng gần
+Là học sinh, tôi muốn được từ chối gợi ý và được gợi mở thứ mình chưa từng nghĩ tới, để lựa chọn mở rộng chứ không bị đóng khung.
+Tư vấn tĩnh
+Nút "Không phải tôi" trên mọi thẻ (bấm → hệ   thống mở cụm nghề khác, không lặp lại) + mục "Chân trời mới": 1-2 thẻ nghề em chưa từng chạm tới nhưng khoảng cách kỹ năng gần
+Là học sinh, tôi muốn gợi ý dựa trên năng lực–hứng thú của tôi chứ không dựa trên tôi là ai, để không bị "con gái thì nên...", "ở quê thì chỉ...". | Cam kết công bằng nhìn thấy được: |  (1) giới tính/quê quán không tham gia tính gợi ý — quê chỉ dùng để  | hiển thị |  dữ liệu vùng kèm toggle "vùng em / toàn quốc / remote"; (2) màn hình "Vì sao em thấy gợi ý này" cho mọi thẻ; (3) hình mẫu nghề luân phiên phá định kiến
+Là học sinh, tôi muốn gợi ý dựa trên năng lực–hứng thú của tôi chứ không dựa trên tôi là ai, để không bị "con gái thì nên...", "ở quê thì chỉ...".
+Cam kết công bằng nhìn thấy được: (1) giới tính/quê quán không tham gia tính gợi ý — quê chỉ dùng để hiển thị dữ liệu vùng kèm toggle "vùng em / toàn quốc / remote"; (2) màn hình "Vì sao em thấy gợi ý này" cho mọi thẻ; (3) hình mẫu nghề luân phiên phá định kiến
+Nhóm 4 — Giáo viên
+User story (As a–I want–So that) | Khả thi? | Rút bỏ AI thì sao? | Tính năng
+User story (As a–I want–So that)
+Khả thi?
+Rút bỏ AI thì sao?
+Tính năng
+Là giáo viên hướng nghiệp, tôi muốn thấy bức tranh cả lớp và em nào cần gặp riêng, để 1 người vẫn chăm được 500 học sinh. | Dashboard lớp học: |  bản đồ năng lực–hứng thú toàn lớp + danh sách "cần trò chuyện" (em có lệch lớn giữa lời khai và hành vi, em bấm "Không phải em" liên tục) + dữ liệu thị trường vùng để dẫn giờ sinh hoạt
+Là giáo viên hướng nghiệp, tôi muốn thấy bức tranh cả lớp và em nào cần gặp riêng, để 1 người vẫn chăm được 500 học sinh.
+Dashboard lớp học: bản đồ năng lực–hứng thú toàn lớp + danh sách "cần trò chuyện" (em có lệch lớn giữa lời khai và hành vi, em bấm "Không phải em" liên tục) + dữ liệu thị trường vùng để dẫn giờ sinh hoạt
+Là giáo viên, tôi muốn xem được vì sao máy gợi ý điều đó cho một em, để tôi là người đồng hành cuối cùng, không bị máy qua mặt. | Nhật ký gợi ý (audit view): |  với mỗi em, giáo viên xem được chuỗi bằng chứng → gợi ý; giáo viên có thể ghi chú đè lên
+Là giáo viên, tôi muốn xem được vì sao máy gợi ý điều đó cho một em, để tôi là người đồng hành cuối cùng, không bị máy qua mặt.
+Nhật ký gợi ý (audit view): với mỗi em, giáo viên xem được chuỗi bằng chứng → gợi ý; giáo viên có thể ghi chú đè lên
+TRỤC 1 — Kiến thức học thuật
+Đo cái gì: Toán, Logic, English — học lực và khả năng vận dụng.
+Nguồn data: Upload bảng điểm + Adaptive Quiz.
+Cơ chế: Khách quan, có đáp án đúng-sai.
+AI làm gì:
+Sinh câu hỏi adaptive — độ khó tự điều chỉnh theo câu trả lời trước (dừng khi ước lượng năng lực đủ ổn định).
+Chấm đúng-sai tự động.
+Phân tích lỗi (error analysis) — không chỉ cho điểm mà chỉ ra sai ở đâu, chẩn đoán lỗ hổng kiến thức cụ thể.
+Cho ra: Điểm từng mảng + danh sách lỗ hổng. Độ tin cậy: cao.
+TRỤC 2 — Năng lực
+Đo cái gì: Problem Solving, Communication, Leadership.
+Nguồn data: (a) AI đưa tình huống → HS trả lời; (b) game/hoạt động hàng tuần; (c) câu chuyện tự kể (nguồn tin cậy cao nhất).
+Cơ chế: Rubric 4 mức + trích bằng chứng (theo pattern 3 tầng ATC21S: construct → chỉ báo → hành vi).
+AI làm gì:
+Đưa tình huống mở, sinh câu đào sâu thích ứng theo câu HS vừa trả lời.
+Với câu chuyện tự kể: phân loại (chuyện chứa construct nào) → đào sâu đúng chỗ mờ → trích bằng chứng gán vào chỉ báo.
+Chấm theo rubric, bắt buộc trích dẫn câu HS làm minh chứng (chống chấm mò).
+Với hoạt động nhóm: đếm tần suất chỉ báo trong log/transcript.
+Tự khai độ tin cậy; gắn cờ bài cần GV xem lại.
+Cho ra: Mức 1–4 + minh chứng. Lưu ý: Leadership chỉ đo được disposition (nhận thức), không đo được lãnh đạo thật qua câu trả lời — gọi đúng tên.
+TRỤC 3 — Personal Fit
+Đo cái gì: Sở thích (RIASEC) + tính cách (Big Five).
+Nguồn data: Bảng hỏi chuẩn hóa (bản đã dịch-validate cho VN, không tự chế) + câu hỏi interest dạng chọn cặp.
+Cơ chế: Self-report. KHÔNG có cao/thấp — chỉ là khác biệt.
+AI làm gì:
+KHÔNG chấm. AI ở đây diễn giải và ghép nối.
+Dùng profile RIASEC/Big Five làm lăng kính giải thích Trục 1+2 và gợi ý hướng nghề.
+Đối chiếu tự nhận (self-report) với hành vi thực (từ Trục 2) — nếu lệch thì giữ cả hai, đánh dấu "cần xem thêm", không ghi đè.
+Cho ra: Hồ sơ xu hướng (nhãn/tag, không thanh điểm).
+LỚP BỐI CẢNH — khi HS chia sẻ chủ động
+Đo cái gì: Không đo/chấm. Là lớp phủ điều chỉnh cách đọc 3 trục.
+AI làm gì:
+Phân loại chia sẻ thành 4 loại: góc nhìn → trích bằng chứng (vào Trục 2/3); tính cách tự nhận → đối chiếu Trục 3; hoàn cảnh → thành context điều chỉnh diễn giải; biến cố nhạy cảm → RA KHỎI hệ đánh giá, chuyển tông hỗ trợ.
+Nguyên tắc: hoàn cảnh đổi cách đọc điểm, không đổi điểm.
+TẦNG DIỄN GIẢI — ghép 3 trục
+AI làm gì:
+Ghép 3 trục bằng ngôn ngữ, KHÔNG cộng thành một điểm.
+Chạy gap analysis: so hồ sơ hiện tại với nghề HS mong muốn → tìm khoảng cách → đề xuất hoạt động thu hẹp (không phán "hợp/không hợp").
+Luôn mở nhiều nhánh + nhánh mở rộng; ghép "kim thị trường" (hiring data) khi gợi ý nghề.
+Ngôn ngữ luôn "để tới đó, em cần…", không bao giờ "em thiếu…".
+5 câu có điều hg sở thích | bảng điểm: điểm các môn tự nhiên, điểm các môn xã hội | Additional: free text | định hướng table  | yêu cầu tính năng dev: | thu thập data thị trường: dùng 1 phg thức, phân tích xu hướng ngành nghề + skill cần có + lương + vùng + DL  | => file markdown  | thu thập dữ liệu user => entity ; UI onb: cấp 1 | câu hỏi fixed cứng: 5 câu: vùng  > upload (định dạng file + nội dung) > full test: thiếu source | AI rẽ nhánh response: map,  | định hướng (mù tịt): nên học thêm, trải nghiệm thêm để làm rõ bản thân ??? | 1 rp về xu hướng ngành nghề 
+5 câu có điều hg sở thích
+bảng điểm: điểm các môn tự nhiên, điểm các môn xã hội
+Additional: free text
+định hướng table 
+yêu cầu tính năng dev:
+thu thập data thị trường: dùng 1 phg thức, phân tích xu hướng ngành nghề + skill cần có + lương + vùng + DL 
+=> file markdown 
+thu thập dữ liệu user => entity ; UI onb: cấp 1
+câu hỏi fixed cứng: 5 câu: vùng  > upload (định dạng file + nội dung) > full test: thiếu source
+AI rẽ nhánh response: map, 
+định hướng (mù tịt): nên học thêm, trải nghiệm thêm để làm rõ bản thân ???
+1 rp về xu hướng ngành nghề 
+3. Bối cảnh & Ràng buộc
+Ràng buộc định hình giải pháp. Bỏ sót ràng buộc = pitch bị bác ngay vòng đầu.
+Loại ràng buộc | Chi tiết
+Loại ràng buộc
+Chi tiết
+Kỹ thuật / hạ tầng |  
+Kỹ thuật / hạ tầng
+ 
+Dữ liệu (nguồn, chất lượng, quyền) |  
+Dữ liệu (nguồn, chất lượng, quyền)
+ 
+Pháp lý / đạo đức / quyền riêng tư |  
+Pháp lý / đạo đức / quyền riêng tư
+ 
+Thời gian / nguồn lực / ngân sách |  
+Thời gian / nguồn lực / ngân sách
+ 
+Ngôn ngữ / văn hóa / địa phương |  
+Ngôn ngữ / văn hóa / địa phương
+ 
+Ràng buộc bắt buộc từ đề bài |  
+Ràng buộc bắt buộc từ đề bài
+ 
+Giả định (assumption) nào mình đang ngầm tin và cần kiểm chứng?
+Giả định sai là rủi ro lớn nhất của mọi dự án.
+ 
+ 
+4. Phát ý giải pháp
+4.1 Vai trò của AI / công nghệ lõi
+Kiểm tra AI-native: nếu bỏ AI ra mà sản phẩm vẫn chạy gần như cũ → đó là wrapper, không phải AI-native.
+Khâu trong sản phẩm | AI làm gì ở đây? | Bỏ AI ra thì sao?
+Khâu trong sản phẩm
+AI làm gì ở đây?
+Bỏ AI ra thì sao?
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+5. Phạm vi (Scope)  ★
+Ranh giới rõ ràng giữ dự án khả thi. Cột "Không làm" quan trọng ngang cột "Có làm".
+✅ Trong phạm vi (MVP) | ❌ Ngoài phạm vi (lần này)
+✅ Trong phạm vi (MVP)
+❌ Ngoài phạm vi (lần này)
+  |  
+ 
+ 
+  |  
+ 
+ 
+  |  
+ 
+ 
+  |  
+ 
+ 
+  |  
+ 
+ 
+5.1 MoSCoW
+Mức | Hạng mục
+Mức
+Hạng mục
+Must (bắt buộc) |  
+Must (bắt buộc)
+ 
+Should (nên có) |  
+Should (nên có)
+ 
+Could (có thì tốt) |  
+Could (có thì tốt)
+ 
+Won't (không, lần này) |  
+Won't (không, lần này)
+ 
+6. Yêu cầu & Tiêu chí chấp nhận
+Chuyển ý tưởng thành yêu cầu kiểm được. Đây là thế mạnh nghề BA — viết cho rõ, đo được.
+6.1 User stories
+Là [vai trò], tôi muốn [chức năng], để [giá trị].  — viết cho từng chức năng chính
+ 
+ 
+ 
+ 
+6.2 Tiêu chí chấp nhận (Gherkin)
+Given / When / Then — mô tả hành vi kiểm được, không mơ hồ.
+Given (bối cảnh) ...
+ 
+When (hành động) ...
+ 
+Then (kết quả mong đợi) ...
+ 
+6.3 Yêu cầu phi chức năng
+Hiệu năng, bảo mật, khả năng chạy offline, độ chính xác, chi phí... — thứ hay quyết định thắng/thua ở demo.
+ 
+ 
+ 
+7. Rủi ro & Đạo đức
+Rủi ro | Mức (C/TB/T) | Cách giảm thiểu
+Rủi ro
+Mức (C/TB/T)
+Cách giảm thiểu
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+Rủi ro đạo đức / thiên kiến / quyền riêng tư cụ thể? Cơ chế kiểm soát kiểm được là gì?
+VD: "cùng profile, đổi giới tính → output bất biến" là một tiêu chí kiểm được.
+ 
+ 
+ 
+8. Thước đo thành công
+Làm sao biết giải pháp có hiệu quả? Gắn với vấn đề gốc ở mục 1, không phải chỉ số phù phiếm.
+Chỉ số | Baseline hiện tại | Mục tiêu
+Chỉ số
+Baseline hiện tại
+Mục tiêu
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+9. Kiểm chứng & Bước tiếp theo
+Cách rẻ nhất / nhanh nhất để kiểm chứng giả định quan trọng nhất trước khi xây full?
+ 
+ 
+Việc cần làm ngay
+Việc | Người phụ trách | Hạn
+Việc
+Người phụ trách
+Hạn
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+  |   |  
+ 
+ 
+ 
+Ghi chú tự do
+ 
+Thành phần OECD (bản gốc) | File OECD | File VJE | Đủ để đo chưa
+Thành phần OECD (bản gốc)
+File OECD
+File VJE
+Đủ để đo chưa
+Core foundations | Có nêu tên + liệt kê (literacy, numeracy, data/digital, health, SE skills) | Gộp mờ vào "năng lực nền tảng" | Tên có, chi tiết thiếu
+Core foundations
+Có nêu tên + liệt kê (literacy, numeracy, data/digital, health, SE skills)
+Gộp mờ vào "năng lực nền tảng"
+Tên có, chi tiết thiếu
+Knowledge | Chỉ nói khái niệm | Chi tiết hơn: 4 lớp |  (chuyên ngành, liên ngành, epistemic, procedural) | VJE bù được phần này
+Knowledge
+Chỉ nói khái niệm
+Chi tiết hơn: 4 lớp (chuyên ngành, liên ngành, epistemic, procedural)
+VJE bù được phần này
+Skills | Chỉ nói khái niệm | Chi tiết hơn: 3 loại |  (cognitive/meta, social-emotional, physical/practical) | VJE bù được
+Skills
+Chỉ nói khái niệm
+Chi tiết hơn: 3 loại (cognitive/meta, social-emotional, physical/practical)
+VJE bù được
+Attitudes & Values | Chỉ nói khái niệm | Có mô tả định hướng | Khái niệm có, phân loại con thiếu
+Attitudes & Values
+Chỉ nói khái niệm
+Có mô tả định hướng
+Khái niệm có, phân loại con thiếu
+Transformative competencies | Nêu 3: creating value, responsibility, reconciling tensions | Nêu lại 3 | Có tên, thiếu định nghĩa sâu
+Transformative competencies
+Nêu 3: creating value, responsibility, reconciling tensions
+Nêu lại 3
+Có tên, thiếu định nghĩa sâu
+AAR cycle | Nêu 3 pha | Gần như bỏ qua | Thiếu nghiêm trọng
+AAR cycle
+Nêu 3 pha
+Gần như bỏ qua
+Thiếu nghiêm trọng
+Student agency / Co-agency | Có mô tả, phân biệt agency≠autonomy | Có nhắc agency | Có nhưng nông
+Student agency / Co-agency
+Có mô tả, phân biệt agency≠autonomy
+Có nhắc agency
+Có nhưng nông
+Well-being | Có (11 factors Better Life Index + mapping SDGs) | Chỉ nhắc "hạnh phúc" | File OECD mạnh phần này
+Well-being
+Có (11 factors Better Life Index + mapping SDGs)
+Chỉ nhắc "hạnh phúc"
+File OECD mạnh phần này
+ 
+  
+ 
+ 
+ 
+Reference
+Dataset
+https://www.kaggle.com/datasets/nguyenchitinh/vietnam-jobs-datasethttps://www.kaggle.com/datasets/quocnguyenx43/vietnamese-job-description-datasethttps://github.com/SonPhatTranDeveloper/IT-Job-Posting
+Business plan
+Đường cầu | P=a−bQ | Doanh thu | TR=aQ−bQ^2 | Doanh thu cận biên | MR=a−2bQ | Tổng chi phí | TC=FC+cQ+dQ^2 | Chi phí cận biên | MC=c+2dQ | Điều kiện tối đa hóa lợi nhuận | MR=MC | Điều kiện hoà vốn: TR = 0 | Note: | FC (ngân sách MVP) | VC- hệ số c: |  Marginal Variable Cost ban đầu. |   | VC- hệ số d: |  chi phí tăng do scale, vd token, server quá tải, cần GPU mới, chi phí vận hành tăng, OCR, Speech-to-Text, Text-to-Speech… => giả định + hệ số c đã biết để ước lg hệ số d
+Đường cầu
+P=a−bQ
+Doanh thu
+TR=aQ−bQ^2
+Doanh thu cận biên
+MR=a−2bQ
+Tổng chi phí
+TC=FC+cQ+dQ^2
+Chi phí cận biên
+MC=c+2dQ
+Điều kiện tối đa hóa lợi nhuận
+MR=MC
+Điều kiện hoà vốn: TR = 0
+Note:
+FC (ngân sách MVP)
+VC- hệ số c: Marginal Variable Cost ban đầu.
+ VC- hệ số d: chi phí tăng do scale, vd token, server quá tải, cần GPU mới, chi phí vận hành tăng, OCR, Speech-to-Text, Text-to-Speech… => giả định + hệ số c đã biết để ước lg hệ số d
+Đề toán
+Sách tổng hợp sample test: https://www.oecd.org/content/dam/oecd/en/publications/reports/2009/02/take-the-test_g1gha797/9789264050815-en.pdf
+DVD
+This is the feedback for CMA106Q01 in English.
+For the first item in this unit, students see a table containing three statements about DVD sales in the United Kingdom for the years 2008 through 2014, and they have to decide whether each statement is supported by the information shown in the graph. Note that the information from the introduction about how to interpret the data is repeated in the right panel, and that an additional paragraph was added to let students know about the line that was added to the graph. Also, the hover points are only active for the seven data points shown. That is, students cannot place the cursor anywhere along the line to get data, it is only available at the seven data points shown.
+The first statement is supported by the data. Students can verify this statement in two ways: 1) compute the percent decline in DVD sales from 2008 to 2014 [i.e., (252.9 – 124.9) ÷ 252.9], an actual decline of 50.61%, which supports the statement of about a 50% decline in sales; or 2) compute the ratio of DVDs sold in 2014 to 2008 (i.e., 124.9 ÷ 252.9) to see that the number of DVDs sold in 2014 is 49.39% of the number sold in 2008, which again is “about 50%” as specified in the statement.
+The second statement is not supported by the data. Students need to look at the difference in the number of DVDs sold at each data point to see that that is not a true statement. However, four of the six differences show a very similar difference (between 18 and 19 million fewer DVDs sold), but between 2009 and 2010, the difference is 24.5 million, and between 2011 and 2012, the difference is 29.8 million fewer DVDs sold.
+The third statement is supported by the data. Students can interpret that a linear model means a constant rate of change, which in this case because of the negative slope, implies that DVD sales are declining by the same average amount each year.
+For this item, obtaining full credit is of moderate difficulty (Level 4) while it is relatively easy to obtain partial credit (Level 1a).
+Unit Name – Item # | DVD Sales – CMA106Q01
+Unit Name – Item #
+DVD Sales – CMA106Q01
+Content Area | Uncertainty and Data
+Content Area
+Uncertainty and Data
+Process | Interpret/Evaluate
+Process
+Interpret/Evaluate
+Context | Societal
+Context
+Societal
+Item Format | Complex Multiple Choice - Computer Scored
+Item Format
+Complex Multiple Choice - Computer Scored
+Answer | Full Credit (from top row to bottom row): Yes, No, Yes - Partial Credit: any two selections correct
+Answer
+Full Credit (from top row to bottom row): Yes, No, Yes - Partial Credit: any two selections correct
+Estimated Difficulty | Level 4 (full credit) - Level 1a (partial credit)
+Estimated Difficulty
+Level 4 (full credit) - Level 1a (partial credit)
+For the second item in this unit, students are given the equation of the linear model and asked to use the model to estimate in what year the DVD sales first would fall below one million, a data point that is not shown on the graph. Note that students could again hover the cursor over the data points, but only at the seven data points shown. Using the given model, students can setup and solve an inequality such as 254 – 22n < 1, which will lead to a solution of n > 11.5. However, since n represents years after 2008, students also have to convert this value into a year. In this scenario, 11 corresponds to the end of 2019, and 12 corresponds to the end of 2020, so the solution (11.5) from using the model implies that DVD sales would first drop below one million during the year 2020.
+A full-credit response to this item is the year 2020. However, if a student responds with 11.5 (failing to correctly convert this number to 2020) or responds with 2019 (assuming they correctly calculated 11.5 but then incorrectly converted this to 2019 instead of 2020), then partial credit is given. Obtaining partial (Level 5) or full credit (Level 6) on this item is difficult.
+Unit Name – Item # | DVD Sales – CMA106Q02
+Unit Name – Item #
+DVD Sales – CMA106Q02
+Content Area | Change and Relationships
+Content Area
+Change and Relationships
+Process | Formulate
+Process
+Formulate
+Context | Societal
+Context
+Societal
+Item Format | Open Response - Computer Scored
+Item Format
+Open Response - Computer Scored
+Answer | Full Credit: 2020 - Partial Credit: 2019 or 11.5
+Answer
+Full Credit: 2020 - Partial Credit: 2019 or 11.5
+Estimated Difficulty | Level 6 (full credit) - Level 5 (partial credit)
+Estimated Difficulty
+Level 6 (full credit) - Level 5 (partial credit)
+For the third item in this unit, students are shown a larger data set that shows DVD sales in the United Kingdom from 1998 through 2014. However, in this item, the independent variable for these data points is the actual year instead of the number of years after 2008. The data for the years 2008 through 2014 are the same data that are used in the first two items of this unit. Also, the 17 data points in this graph are hover points that display the year and the DVD sales for that year.
+Students are given a table with the data set divided into smaller ranges of years, and they have to identify what type of sales trend (increase or decrease) and what type of mathematical model (linear or non-linear) best represent the data for the years specified. Since students had already been working with the data from 2008 through 2014 in the first two items of this unit, those answers were pre-populated in the table. Note that for the mathematical model, the goal was for students to be able to differentiate between data that can be reasonably-well modeled using a linear model and data that cannot be reasonably-well modeled using a linear model. Therefore, the general option of “non-linear” is used as opposed to specific types of non-linear models that would better fit the data for the years 1998 through 2004.
+For this item it is moderately difficult (Level 3) to make all four correct selections. Partial credit was given for making both correct selections for any one range of years. Obtaining partial credit for this item was relatively easy (Level 1a). No credit is given if only one correct selection is made in each data range.
+Unit Name – Item # | DVD Sales – CMA106Q03
+Unit Name – Item #
+DVD Sales – CMA106Q03
+Content Area | Change and Relationships
+Content Area
+Change and Relationships
+Process | Interpret/Evaluate
+Process
+Interpret/Evaluate
+Context | Societal
+Context
+Societal
+Item Format | Complex Multiple Choice - Computer Scored
+Item Format
+Complex Multiple Choice - Computer Scored
+Answer | Full Credit | : | 1998-2004: increase, non-linear | 2005-2007: increase, linear | Partial Credit | : | Correct selections only for 1998-2004 | or | Correct selections only for 2005-2007 | or | Any three selections correct
+Answer
+Full Credit:
+1998-2004: increase, non-linear
+2005-2007: increase, linear
+Partial Credit:
+Correct selections only for 1998-2004
+or
+Correct selections only for 2005-2007
+or
+Any three selections correct
+Estimated Difficulty | Level 3 (full credit) - Level 1a (partial credit)
+Estimated Difficulty
+Level 3 (full credit) - Level 1a (partial credit)
+Car purchase
+This is the feedback for CMA104Q01 in English.
+For this item, students need to enter the car price and fuel consumption for each car into the cost estimator to determine which of the four cars will cost the least in the first year. Instructions for using the tool were available in the left panel. If students clicked on the “How to Use the Cost Estimator” banner, then a box with the instructions would open. Fuel consumption was defined for the students in case they were not familiar with the term, even though an understanding of this concept was not required for responding to this item.
+This is an easier item intended to be reflective of a real-life situation a person might find themselves in when preparing to make a large purchase, so they might look online for information to assist them in making their decision. After using the tool, students see that Car B (at 13 785.60 zeds) will cost the least to purchase and drive/maintain in the first year, even though it is not the car with the lowest price, nor is it the car with the lowest rate of fuel consumption. The order of the cars from most to least expensive to drive during the first year is Car D, Car A, Car C, then Car B.
+Unit Name – Item # | Car Purchase – CMA104Q01
+Unit Name – Item #
+Car Purchase – CMA104Q01
+Content Area | Quantity
+Content Area
+Quantity
+Process | Formulate
+Process
+Formulate
+Context | Personal
+Context
+Personal
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | Car B
+Answer
+Car B
+Estimated Difficulty | Level 2
+Estimated Difficulty
+Level 2
+This is the feedback for CMA104Q02 in English.
+The second item in this unit explores non-linear behavior (specifically, exponential decay) to determine the approximate value of car D after three years of ownership. While the scenario of a person buying a new car is continued, this item intentionally focuses on a different car so as not to suggest what the correct answer is to the previous item, which students could return to. Using the given information that a car in excellent condition loses 5% of its value each year, car D would be worth about 9002.44 zeds after three years, so the correct answer to this item is 9000.
+Students had to decide on a process to employ to determine how much the car would be worth after three years. While previous experience having studied exponential decay could be beneficial to students for this item, it is not necessary. That is, some students may have recognized this as exponential decay and applied a formula such as v = 10 500(0.95)3, while students who had not formally studied this topic still had enough information available to them to solve this using a more iterative process [e.g., 10 500 – (10 500 * 0.05) = 9975; 9975 – (9975 * 0.05) = 9476.25; etc.]. The crucial piece for students that used some type of iterative approach was understanding that because the value of the car changed every year, each computation uses a new starting amount.
+Unit Name – Item # | Car Purchase – CMA104Q02
+Unit Name – Item #
+Car Purchase – CMA104Q02
+Content Area | Change and Relationships
+Content Area
+Change and Relationships
+Process | Employ
+Process
+Employ
+Context | Personal
+Context
+Personal
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | 9000
+Answer
+9000
+Estimated Difficulty | Level 6
+Estimated Difficulty
+Level 6
+Moving Truck: 
+This is the feedback for CMA118Q01 in English.
+For the first item in the unit, students are told that the family is going to rent truck A, and they are asked to determine the greatest number of medium-size boxes that can fit inside truck A. In the right panel, the tables from the introduction are repeated but with only the dimensions for truck A and the dimensions of the medium-size boxes shown. This is an easy item for students, particularly since all the dimensions of the medium box are the same, so students do not have to consider different ways of arranging the boxes inside the truck.
+Using the information in the tables, students could determine that 32 boxes [i.e., (4 ÷ 0.5) * (2 ÷ 0.5)] could fit on the “floor” of the truck in an 8-by-4 array, which is one layer of boxes. The truck is tall enough to stack the boxes in 4 layers (i.e., 2 ÷ 0.5), so the total number of medium-size boxes that can fit in truck A is 8 * 4 * 4 = 128. The alternative response options were generated from various ways of incorrectly using surface area and/or volume of the truck and/or the box.
+Unit Name – Item # | Moving Truck – CMA118Q01
+Unit Name – Item #
+Moving Truck – CMA118Q01
+Content Area | Space and Shape
+Content Area
+Space and Shape
+Process | Employ
+Process
+Employ
+Context | Personal
+Context
+Personal
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | 128
+Answer
+128
+Estimated Difficulty | Level 2
+Estimated Difficulty
+Level 2
+This is the feedback for CMA118Q02 in English.
+For the second item in this unit, the dimensions of the large box have been added to the table, and students are presented with a claim about how many large boxes might be able to fit inside truck A that is based on a comparison of the volume of the medium boxes to the volume of the large boxes. Students then have to analyze four statements related to the claim to identify which statement is true. This is a very difficult item as some of the statements are true with respect to the dimensions of the boxes or the volumes, but they do not actually support the claim that was made with regards to the truck. The correct choice is actually that the claim is not correct, which may have also added to the difficulty of this item.
+The first statement is true with respect to the heights of the two box sizes (i.e., 0.5 ÷ 0.75 = 2/3) but this fact is not related to the dimensions of the truck. The second statement is true with respect to the volumes of the boxes since the volume of a medium box is two-thirds the volume of a large box [i.e., (0.53) ÷ (0.5 * 0.5 * 0.75) = 2/3], but again the dimensions of the truck are not considered in this statement. The fourth statement is also true with respect to the height of the two box sizes (i.e., 0.75 ÷ 0.5 = 1.5) but once again these dimensions are not considered with respect to the truck.
+The third statement is the correct choice. The number of large boxes that can be packed in truck A can vary depending on how the boxes are arranged. In some arrangements, the number of large boxes is fewer than 2/3 the number of medium boxes, while in other arrangements it is more than 2/3 the number of medium boxes, so her claim is not correct.
+Unit Name – Item # | Moving Truck – CMA118Q02
+Unit Name – Item #
+Moving Truck – CMA118Q02
+Content Area | Space and Shape
+Content Area
+Space and Shape
+Process | Reasoning
+Process
+Reasoning
+Context | Personal
+Context
+Personal
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | She is not correct, because none of the interior storage dimensions of truck A are multiples of 0.75, the height of a large box.
+Answer
+She is not correct, because none of the interior storage dimensions of truck A are multiples of 0.75, the height of a large box.
+Estimated Difficulty | Level 6
+Estimated Difficulty
+Level 6
+Solar system: 
+This is the feedback for CMA123Q01 in English.
+This is the first item in the unit Solar System. There is no introduction screen for this unit. For this task, students need to determine which three planets have the average distances, in Astronomical Units (au), between them that are shown in the model. To do this, students need to use the table in the stimulus that gives each planet’s average distance from the Sun, in au. The correct answer, from left to right, is Jupiter, Saturn, Uranus.
+To respond to the question, students have to drag-and-drop the planets into the model (see below for an image of the planets placed in the model). There is no introduction or practice screen before this item but instructions for how to respond and change a response are given explicitly in the question stem. A full-credit response was given for correctly placing all three planets, and partial credit was given for correctly placing any two planets. This is a moderately difficult item with both full and partial credit being at Level 3 on the proficiency scale.
+Below is an image of what the question stem and response area look like after the student has dragged-and-dropped the planets into their respective locations in the model.
+Unit Name – Item # | Solar System – CMA123Q01
+Unit Name – Item #
+Solar System – CMA123Q01
+Content Area | Quantity
+Content Area
+Quantity
+Process | Interpret/Evaluate
+Process
+Interpret/Evaluate
+Context | Scientific
+Context
+Scientific
+Item Format | Complex Multiple Choice - Computer Scored
+Item Format
+Complex Multiple Choice - Computer Scored
+Answer | Full Credit: All three planets are correctly placed (from left to right: Jupiter, Saturn, Uranus) | Partial Credit: Any two planets are correctly placed (other planet is incorrect or missing)
+Answer
+Full Credit: All three planets are correctly placed (from left to right: Jupiter, Saturn, Uranus)
+Partial Credit: Any two planets are correctly placed (other planet is incorrect or missing)
+Estimated Difficulty | Level 3 (full credit) | Level 3 (partial credit)
+Estimated Difficulty
+Level 3 (full credit)
+Level 3 (partial credit)
+This is the feedback for CMA123Q02 in English.
+For the second item in this unit, students have to determine approximately how many million kilometres the planet Neptune is from the Sun, a process that requires converting Astronomical Units to millions of kilometres. From the stimulus, students are given the conversion that 1 au is approximately 150 million kilometres, and they can read from the table that Neptune has an average distance from the sun of 30.05 au. To determine Neptune’s approximate distance in million kilometres, students need to multiply 30.05 times 150. This gives a result of 4,507.5, which rounds to 4500 (million km). This is a Level 2 (easier) item for students that only requires employing a process for converting units based on the given information.
+Unit Name – Item # | Solar System – CMA123Q02
+Unit Name – Item #
+Solar System – CMA123Q02
+Content Area | Quantity
+Content Area
+Quantity
+Process | Employ
+Process
+Employ
+Context | Scientific
+Context
+Scientific
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | 4500 million km
+Answer
+4500 million km
+Estimated Difficulty | Level 2
+Estimated Difficulty
+Level 2
+Triangular Pattern: 
+This is the feedback for CMA150Q01 in English.
+This is the first item in the unit Triangular Pattern and there is no introduction screen. For this unit, students are presented with a series of items related to a drawing a person has made of rows using alternating red and blue triangles. The stimulus shows the first four rows of the pattern, and this same image is repeated in the stimulus of all three items in the unit.
+For the first item, students are asked to compute the percentage of blue triangles shown in the first four rows of the pattern. There are six blue triangles and 16 total triangles, so the percentage of blue triangles is 37.5% (6 ÷ 16 = 0.375). This is an easy item (Level 1a) and is intended to get students thinking about the pattern by employing a simple algorithm with all information shown.
+Unit Name – Item # | Triangular Pattern – CMA150Q01
+Unit Name – Item #
+Triangular Pattern – CMA150Q01
+Content Area | Quantity
+Content Area
+Quantity
+Process | Employ
+Process
+Employ
+Context | Scientific
+Context
+Scientific
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | 37.5%
+Answer
+37.5%
+Estimated Difficulty | Level 1a
+Estimated Difficulty
+Level 1a
+This is the feedback for CMA150Q02 in English.
+The second item in the unit builds off the first item by again asking students to compute the percentage of blue triangles, but this time it is based on five rows of the pattern. Since the fifth row is not shown, students have to extend the pattern by one row to determine new values for the number of blue triangles and the total number of triangles. With five rows, the percentage of blue triangles is 40.0% (10 blue triangles ÷ 25 total triangles).
+This item is intended to be easy and to get students thinking about extending the pattern beyond what is shown, but not extending the pattern so that it requires generalising. This is a Level 2 item, so it is slightly more difficult than the first item in the unit, possibly because it requires working with a part of the pattern that is not shown but is still an overall easy item for students.
+Unit Name – Item # | Triangular Pattern – CMA150Q02
+Unit Name – Item #
+Triangular Pattern – CMA150Q02
+Content Area | Change and relationships
+Content Area
+Change and relationships
+Process | Formulate
+Process
+Formulate
+Context | Scientific
+Context
+Scientific
+Item Format | Simple Multiple Choice - Computer Scored
+Item Format
+Simple Multiple Choice - Computer Scored
+Answer | 40.0%
+Answer
+40.0%
+Estimated Difficulty | Level 2
+Estimated Difficulty
+Level 2
+This is the feedback for CMA150Q03 in English.
+This is the final item in this unit, and it builds off the previous two items to now generalise with the pattern. The task for the students is to evaluate a claim that the percentage of blue triangles in the pattern will always be less than 50% as more rows are added. Students have to select either “Yes” or “No” to indicate if the claim is or is not true, but then they also have to provide an explanation to support their selection. This is a reasoning item that requires students to analyse the pattern to recognise a relationship between the number of red and the number of blue triangles in each row, and then use that relationship to support their selection.
+The correct selection is “Yes,” that the claim is true, and an acceptable explanation recognises that the number of red triangles in each row will always be greater than the number of blue triangles in each row. Note that students can phrase their response in terms of either the number of blue triangles being fewer or the number of red triangles being greater, as long as there is some language indicating that this relationship is true for every row. Partial-credit responses to this item generally either focus on just the first row, which contains only a red triangle, or do not clearly communicate that the relationship between the number of each color triangle applies to every row.
+This is a human-coded item (the coding rubric is shown below) that is difficult (Level 5) for students to provide a full-credit response. There is partial credit available, but that is still moderately difficult (Level 4) for students. Note that the coding rubric does not contain an exhaustive list of responses at any credit level. However, the sample responses in the rubric are representative of how students typically respond to this item.
+Unit Name – Item # | Triangular Pattern – CMA150Q03
+Unit Name – Item #
+Triangular Pattern – CMA150Q03
+Content Area | Change and relationships
+Content Area
+Change and relationships
+Process | Reasoning
+Process
+Reasoning
+Context | Scientific
+Context
+Scientific
+Item Format | Open Response - Human Coded
+Item Format
+Open Response - Human Coded
+Answer | Refer to rubric below
+Answer
+Refer to rubric below
+Estimated Difficulty | Level 5 (full credit) | Level 4 (partial credit)
+Estimated Difficulty
+Level 5 (full credit)
+Level 4 (partial credit)
+Full Credit
+Code 2: Selects Yes and provides an acceptable explanation for why there will always be more red (or fewer blue) triangles. [An acceptable explanation must state “in each row” (or use similar wording for that concept).]
+He is correct because there is always one more red triangle than blue triangle in each row. [Selection of “Yes” is implied here.]
+[Yes] There will always be one less blue triangle in each row.
+[Yes] There is one more red triangle than blue in each row. [Benefit of the doubt given for not specifying “always” in the response since it is already stated in the question stem.]
+[Yes] Because red triangles are on the outside of each row and inside it alternates red and blue triangles. [Acceptable explanation that establishes there are more red than blue in each row.]
+Partial Credit
+Code 1: Selects Yes and explanation is partially correct but incomplete.
+[Yes] Because the first row has only a red triangle.
+[Yes] There are no blue triangles in the first row.
+[Yes] There is one more red triangle than blue triangle. [Response does not specify “in each row”. Compare to Code 2, dot point 3.]
+[Yes] Because red triangles are on the outside of each row and the blue triangles stay inside. [Explanation is incomplete because the red triangles in the interior are not addressed. Compare to Code 2, dot point 4.]
+NoCredit
+Code 0: Other responses, including selecting Yes but giving an incorrect explanation or without giving an explanation OR selecting No with or without an explanation.
+[Yes] red = 62.5% and blue = 37.5%. [Percentage of each colour triangle in the first four rows.]
+[Yes]
+Code 9: Missing 
+Points: 
+This is the feedback for CMA156Q01 in English.
+This is the unit Points and it is another single-item unit with no introduction screen. For this item, students are presented with a newspaper headline about a local basketball team, which notes that the team won every game this season, and that they averaged a 19-point margin of victory this season. The definition of margin of victory is also given in the stimulus in cases students are not familiar with the term. The question asks is if it is possible that the team never actually won a game by 19 points given that the average margin of victory for the season is 19 points. This is an abstract reasoning item that requires students to evaluate a conjecture based on their conceptual understanding of an average (i.e., an arithmetic mean). They have to select either “Yes” or “No” and provide an explanation to support their selection.
+The correct selection is “Yes” that it is possible that the team never actually won a game by 19 points, even though 19 is the average margin of victory. Students can respond by recognising that the mean does not have to be a member of the data set, or they can provide an example data set that has a mean of 19 but which does not contain 19 in the data set. Note that for this latter approach, students can also provide a counterexample based on a value other than 19 because it still represents an appropriate line of reasoning in this context. For example, the arithmetic mean of the data set 6, 9, and 15 is 10, even though 10 is not a member of the data set. Partial-credit responses address the idea that some values in the data set must be greater and some values in the data set must be less than the mean, but do not explicitly mention that the mean does not have to be a member of the data set.
+This is also a human-coded item (the coding rubric is shown below) that is very difficult for students to provide a full-credit response to (Level 6 on the proficiency scale). There is partial credit available, but that is also difficult (Level 5 on the scale). The abstract nature of this task may have contributed to the difficulty. That is, students do not have numerical values they can manipulate to know what really happened, so they are forced to reason based on their understanding of a concept in order to devise a way to explain this with respect to the context. Note that the coding rubric does not contain an exhaustive list of responses at any credit level. However, the sample responses in the rubric are representative of how students typically respond to this item.
+Unit Name – Item # | Points – CMA156Q01
+Unit Name – Item #
+Points – CMA156Q01
+Content Area | Points
+Content Area
+Points
+Process | Reasoning
+Process
+Reasoning
+Context | Societal
+Context
+Societal
+Item Format | Open Response - Human Coded
+Item Format
+Open Response - Human Coded
+Answer | Refer to rubric below
+Answer
+Refer to rubric below
+Estimated Difficulty | Level 6 (full credit) | Level 5 (partial credit)
+Estimated Difficulty
+Level 6 (full credit)
+Level 5 (partial credit)
+Full Credit
+Code 2: Selects Yes and explanation states or shows that the average does not have to be a member of the data set.
+It is possible because the average does not actually have to be one of the values in your data set. [Selection of “Yes” is implied here.]
+[Yes] If the margins of victory create an average of 19, there doesn't necessarily have to be a 19-point margin of victory in any of them. [Full credit for, “…there doesn't necessarily have to be a 19-point margin of victory in any of them”.]
+[Yes] If one difference was 16 points and another was 22 points, then the average difference would be 19 points, but 19 was not one of the differences.
+[Yes] The mean of the numbers 2, 4, and 9 is 5 but 5 is not one of the numbers.
+Partial Credit
+Code 1: Selects Yes and explanation is partially correct but incomplete.
+[Yes] It is an average difference, so some games were won by more than 19 points and some games were won by fewer than 19 points. [Incomplete; does not explicitly state that 19 does not need to be one of the values. For a response like this to receive partial credit, winning by both more and by less than 19 points must be explicitly stated in the response.]
+NoCredit
+Code 0: Other responses, including selecting Yes but giving an incorrect explanation or without giving an explanation OR selecting No with or without an explanation.
+[No] They need to have won at least one game by 19 points.
+[Yes]
+[Yes] Because the average is all of their margins of victory for the season added together then divided by the number of games they played that season. [Unacceptable explanation that only describes how to compute a mean.]
+[Yes] Because it is just an average. [No reason given for why an average means it is possible they never actually won a game by 19 points.]
+[Yes] It is an average difference, so some games were won by more than 19 points. [Unacceptable because winning by less than 19 points was not also explicitly stated in the response.]
+Code 9: Missing 
+Spinners:
+This is the feedback for CMA159Q01 in English.
+This is the first item in the unit Spinners. There is no introduction screen before this item. For this task, students are presented with two spinners that a class are using and asked to determine if a person’s claim is correct that there is a greater chance of the arrow stopping on a blue section in Spinner A than there is of the arrow stopping on a blue section in Spinner B.
+This is not an interactive item; students were expected to use the given information to reason about the claim. A description of each spinner is given in the right panel of the screen, which notes that Spinner A is divided into two equal-size sections, one that is blue and one that is red, and that Spinner B is divided into four equal-size sections, two that are blue and two that are red. There is also a note that if the arrow lands on a line between sections, then that spin should not be counted, and the arrow should be spun again. Even though this item is not interactive (the scenario is of a class doing an experiment using these spinners) this note was included for the benefit of the PISA test takers to eliminate responses based on the probability being affected by spins where the arrow lands on a line.
+From this given information, students could infer that the amount of blue in each spinner is the same, so the probability of the arrow stopping on a blue section is the same in each spinner, and the person’s claim is not correct. This is a human-coded item (the coding guide is shown below) that is of moderate difficulty, even with partial credit available, which is not surprising since the partial-credit explanations are the same as the full-credit explanations but with an incorrect selection. Note that the coding guide does not contain an exhaustive list of responses at any credit level. However, the sample responses in the guide are representative of how students typically respond to this item.
+Unit Name – Item # | Spinners – CMA159Q01td>
+Unit Name – Item #
+Spinners – CMA159Q01td>
+Content Area | Uncertainty and Data
+Content Area
+Uncertainty and Data
+Process | Reasoning
+Process
+Reasoning
+Context | Personal
+Context
+Personal
+Item Format | Open Response - Human Coded
+Item Format
+Open Response - Human Coded
+Answer | Refer to rubric below
+Answer
+Refer to rubric below
+Estimated Difficulty | Level 3 (full credit) - Level 3 (partial credit)
+Estimated Difficulty
+Level 3 (full credit) - Level 3 (partial credit)
+Full Credit
+Code2: Selects No and explanation recognizes that in each spinner the probability of the arrow stopping on blue is the same OR that the area that is blue is the same.
+[No] The probability of stopping on blue is the same in each spinner.
+[No] In each spinner half the circle is blue.
+He is not correct because there is the same amount of blue in each spinner. [Selection of “No” is implied here.]
+[No] It is equal. [“It’ is a prompt bounce that refers to the probability.]
+[No] Because 1 ⁄ 2 = 2 ⁄ 4 He is not correct because the probability is the same for each spinner.
+He is not correct because the probability is the same for each spinner.
+[No] There is an equal probability of it stopping on red or blue in each spinner. [Acceptable response because it specifies “in each spinner.” Comparing the probability of stopping on blue to the probability of stopping on red is acceptable only if both spinners are explicitly mentioned.]
+Partial Credit
+Code 1: Selects Yes but provides an acceptable explanation in support of No.
+[Yes] The probability of stopping on blue is the same in each spinner.
+[Yes] Because 1 ⁄ 2 = 2 ⁄ 4
+No Credit
+Code 0: Other responses, including selecting Yes or No but giving an incorrect explanation or without giving an explanation.
+[No] There is an equal probability of it stopping on red or blue. [Response does not explicitly mention both spinners.]
+[No].
+[Yes] Because the blue area in spinner A is greater than in Spinner B.
+Code 9: Missing 
+This is the feedback for CMA159Q02 in English.
+In the second item in this unit, students are asked to compare the percentage of times the arrow stops in each section versus the theoretical probability of 1/6, as the number of spins increases. In the image above, data were generated for each of the seven possible numbers of spins for illustrative purposes, but this is not necessarily how students will use the simulator for this item or the results they will see. Regardless of how students use the simulator, the central concept here is that as the number of spins increases, the percentage of times that the arrow stops on each colour gets much closer to the theoretical probability. That is, 1/6 ≈ 16.67, and with many spins, the percentage of times that the arrow stops on each colour is generally between 16% and 17%.
+This is also a human-coded item that is more difficult than the first item. The partial-credit level had an estimated difficulty similar to the estimated difficulty of a full-credit response, even though the most common partial-credit response was just to compare the experimental percentages to each other instead of to the theoretical probability. Note that the sample responses (i.e., the dot points) in the coding guide are not an exhaustive list of ways to respond to this item.
+Unit Name – Item # | Spinners – CMA159Q02
+Unit Name – Item #
+Spinners – CMA159Q02
+Content Area | Uncertainty and Data
+Content Area
+Uncertainty and Data
+Process | Interpret/Evaluate
+Process
+Interpret/Evaluate
+Context | Scientific
+Context
+Scientific
+Item Format | Open Response - Human Coded
+Item Format
+Open Response - Human Coded
+Answer | Refer to rubric below
+Answer
+Refer to rubric below
+Estimated Difficulty | Level 5 (full credit) - Level 5 (partial credit)
+Estimated Difficulty
+Level 5 (full credit) - Level 5 (partial credit)
+Full Credit
+Code2: Explanation addresses the idea that as the number of spins increases, the percentage more closely approximates the theoretical probability.
+The percentages get closer and closer to ⅙ for each colour.
+With 10 000 spins the percentages are all about 16-17%, which is close to the theoretical probability of 16.667%. [Accept values for the theoretical probability from 0.16 to 0.17 (from 16% to 17%).]
+As the number of spins increases the percentage for each colour gets closer to the theoretical probability.
+Partial Credit
+Code 1: Explanation addresses the idea that as the number of spins increases, the percentage for each colour is approximately the same OR provides an acceptable explanation based on an incorrect theoretical probability.
+The percentages get closer to each other as the number of spins increases.
+They are all around 16% or 17%. [“They” is a prompt bounce referring to the percentage of times the arrow stops on each colour. This response is missing a comparison of those values to the theoretical probability.]
+The percentages get closer and closer to ⅕ for each colour.
+No Credit
+Code 0: Other responses, including selecting Yes or No but giving an incorrect explanation or without giving an explanation.
+Because ⅙ is about 16.67%.
+Code 9: Missing 
+This is the feedback for CMA159Q03 in English.
+This is the last item in this unit, which presents a new spinner that has four sections that are each a different size. Students are asked to use the simulator to determine the angle measure of the yellow and the purple sections of this spinner. Two of the angle measures are included in the table already. This is done to reduce the amount of time students will have to spend responding to the item, as well as to provide some guidance to students. That is, students that may not know how to respond to this item, can generate some data and use the two known angle measures to explore how the data can be used to determine an angle measure.
+This screenshot shows all trials being run with 10 000 spins. Again, this is just illustrative and not necessarily what students will do or see. However, as the second item in this unit shows, with a large number of spins the experimental percentages will very closely approximate the theoretical probability of the arrow stopping in any particular section, and that idea applies here to determine the angle measures. That is, the experimental percentages from a large number of spins are very close to the actual percentage of the circle that each colour occupies.
+For example, from the screenshot above, the percentage of times that the arrow stopped on yellow is about 40% each time, and for purple it is about 20% each time. Using these percentages and the fact that a full circle has 360 degrees, the angle measures can be computed: 40% of 360 is 144 degrees, and 20% of 360 is 72 degrees. Since there will be variation in the data that students generate, and variation in the percentage they choose to use to compute each angle measure, there is a tolerance of ± 4 degrees in the response for each angle. Note that with the tolerances, the angle measures will not necessarily add to 360 because each response is considered independently. For example, a student can respond with 142 degrees for yellow and 70 degrees for purple – responses that are both within their respective acceptable ranges – and still receive full credit, even though that would result in a circle that measures 356 degrees (142 + 70 + 126 + 18).
+This item was difficult (Level 5), even with having two angle measures given that students can use to help them infer a process for using the data here. Partial-credit responses still require having much the same level of understanding as a full-credit response, so for this item it is also relatively difficult to receive partial credit (Level 4).
+Unit Name – Item # | Spinners – CMA159Q03
+Unit Name – Item #
+Spinners – CMA159Q03
+Content Area | Space and Shape
+Content Area
+Space and Shape
+Process | Interpret/Evaluate
+Process
+Interpret/Evaluate
+Context | Scientific
+Context
+Scientific
+Item Format | Open Response - Computer Scored
+Item Format
+Open Response - Computer Scored
+Answer | Full Credit | : | Yellow = 144° [accept answers from 140 through 148] | Purple = 72° [accept answers from 68 through 76] | Partial Credit | : | Acceptable value for yellow only | or | Acceptable value for purple only | or | Reverses responses: | Yellow = from 68 through 76, Purple = from 140 through 148
+Answer
+Full Credit:
+Yellow = 144° [accept answers from 140 through 148]
+Purple = 72° [accept answers from 68 through 76]
+Partial Credit:
+Acceptable value for yellow only
+or
+Acceptable value for purple only
+or
+Reverses responses:
+Yellow = from 68 through 76, Purple = from 140 through 148
+Estimated Difficulty | Level 6
+Estimated Difficulty
+Level 6
+formula sheet
+link research
+https://www.oecd.org/content/dam/oecd/en/about/programmes/edu/pisa/pisa-test/CY8_TST_PISA2022_MS_Released_MAT_Items_FINAL_IH.pdf
+nhãn outcome
+PISA level | Band nội bộ
+PISA level
+Band nội bộ
+L1a, L1b, L1c | dễ
+L1a, L1b, L1c
+dễ
+L2, L3 | vừa
+L2, L3
+vừa
+L4, L5, L6 | khó
+L4, L5, L6
+khó
+Có rule rồi:
+quantitative_procedure: dễ + khó (2 câu)
+data_interpretation: vừa + vừa + khó (3 câu)
+mathematical_modeling: dễ + khó (2 câu)
+mathematical_reasoning: vừa + khó + khó (3 câu)
+đề logic
+Nguồn: https://cpen.vn/bo-de-thi-thu-tu-duy-logic-va-ptsl-dgnl-dhqg-tp-hcm-v-act/ 
+Câu | Dạng | Năng lực logic đo | Kiểu suy luận
+Câu
+Dạng
+Năng lực logic đo
+Kiểu suy luận
+1–4 | Xếp lịch có ràng buộc |  (ordering) | Suy diễn từ điều kiện, loại trừ | Deductive constraint satisfaction
+1–4
+Xếp lịch có ràng buộc (ordering)
+Suy diễn từ điều kiện, loại trừ
+Deductive constraint satisfaction
+5–8 | Xếp vòng tròn có ràng buộc |  (spatial) | Suy luận không gian, quan hệ vị trí | Spatial/relational reasoning
+5–8
+Xếp vòng tròn có ràng buộc (spatial)
+Suy luận không gian, quan hệ vị trí
+Spatial/relational reasoning
+9–12 | Đọc bảng số liệu + suy luận |  (quantitative) | Tính toán + suy luận từ dữ liệu | Quantitative reasoning
+9–12
+Đọc bảng số liệu + suy luận (quantitative)
+Tính toán + suy luận từ dữ liệu
+Quantitative reasoning
+Logic/Rule chấm → nhãn
+Đây là cơ chế tôi đề xuất, thiết kế để neo vào skill nghề và ra nhãn map được:
+Bước 1 — Chấm thô theo dạng, có trọng số độ khó:
+1b, 2d, 3a, 4c, 5d, 6d, 7d, 8c, 9a, 10c, 11a, 12a, 
+Dạng câu | Trọng số | Lý do
+Dạng câu
+Trọng số
+Lý do
+Loại trừ đáp án vi phạm (câu 1, 5) | 1.0 | Cơ bản
+Loại trừ đáp án vi phạm (câu 1, 5)
+1.0
+Cơ bản
+Suy luận trực tiếp 1 tầng (câu 2, 6) | 1.3 | Trung bình
+Suy luận trực tiếp 1 tầng (câu 2, 6)
+1.3
+Trung bình
+Conditional "nếu...thì" (câu 3, 4, 7, 8) | 1.7 | Khó, xét nhiều case
+Conditional "nếu...thì" (câu 3, 4, 7, 8)
+1.7
+Khó, xét nhiều case
+Suy luận định lượng từ bảng (9, 11, 12) | 1.5 | Bắc cầu logic + số
+Suy luận định lượng từ bảng (9, 11, 12)
+1.5
+Bắc cầu logic + số
+Tính toán thuần (câu 10) | 1.0 | Đo Trục Toán, không phải logic
+Tính toán thuần (câu 10)
+1.0
+Đo Trục Toán, không phải logic
+Điểm chuẩn hóa = Σ(đúng × trọng số) / Σ(trọng số tối đa), ra thang 0–1.
+Bước 2 — Quy đổi ra level 1–5 (đề xuất ngưỡng, cần calibrate khi có dữ liệu pilot thật):
+Điểm chuẩn hóa | Level | Diễn giải
+Điểm chuẩn hóa
+Level
+Diễn giải
+< 0.35 | 1 | Chỉ làm được loại cơ bản
+< 0.35
+1
+Chỉ làm được loại cơ bản
+0.35–0.55 | 2 | Suy luận 1 tầng ổn
+0.35–0.55
+2
+Suy luận 1 tầng ổn
+0.55–0.75 | 3 | Xử lý được ràng buộc đa điều kiện
+0.55–0.75
+3
+Xử lý được ràng buộc đa điều kiện
+0.75–0.90 | 4 | Conditional reasoning tốt
+0.75–0.90
+4
+Conditional reasoning tốt
+> 0.90 | 5 | Suy luận trừu tượng nhiều tầng vững
+> 0.90
+5
+Suy luận trừu tượng nhiều tầng vững
+Bước 3 — Confidence: đề này ~12 câu là đủ để confidence ≈ 0.7 cho nhãn tổng. Nhưng chia theo sub-skill thì mỗi sub-skill chỉ 3–4 câu → confidence thấp hơn (~0.5). Nên: trả 1 nhãn tổng confidence cao + 2–3 nhãn sub-skill confidence thấp (đánh dấu để test bù nếu cần).
+Nhãn trả ra
+Với bộ đề logic này, tôi đề xuất trả các nhãn sau (label_type = aptitude, thuộc trục tiềm năng):
+đề tiếng anh
+https://learnenglish.britishcouncil.org/test-your-english?destination=/online-english-level-test-access#/
+Level check format
+There are 30 multiple-choice questions. Each question has two parts:
+A: level check question
+B: where you tell us how sure you are about your answer to A - certain, fairly sure or not sure.
+You must complete both parts to progress to the next question.
+A1=1, A2=2, B1=3, B2=4, C1=5, C2=6 
+prbl solving
+https://www.studocu.vn/vn/document/truong-dai-hoc-duy-tan/lap-trinh-net/quiz-5-problem-solving/93363586?sid=9e02390b-25d7-457f-a7cd-ca8277fc02b51784300564
+Phần I – Kỹ năng giải quyết vấn đề (10 câu)
+1. Quá trình giải quyết vấn đề bao gồm xác
+định và phân tích vấn đề, thiết lập và thực
+hiện các mục tiêu, giám sát và đánh giá kế hoạch.
+A. Đúng
+B. Sai
+2. Hiểu về vấn đề có nghĩa là:
+A. Kiểm tra xem liệu vấn đề
+đã xảy ra chưa
+B. Tìm ra vấn đề 
+C. Viết ra các bước để
+giải quyết vấn đề
+D. Không có đáp án nào đúng
+3. Rất quan trọng để tìm ra nguyên nhân của vấn đề để
+______________
+A. chúng ta không lặp lại vấn đề đó một
+lần nữa
+B. chúng ta biết được chúng ta sẽ
+phàn nàn người nào hay việc gì
+C. vấn đề xảy ra ít hơn
+D. mọi người thích chúng ta hơn
+4. Lý do tốt nhất khi làm việc cùng với những người kh
+ác để giải quyết vấn đề là gì?
+A. Bạn có thể đổ lỗi cho người khác khi gi
+ải pháp không thành công
+B. Nhóm có thể đưa ra một giải ph
+áp tốt mà bạn sẽ không tự mình nghĩ ra
+C. Làm việc trong một nhóm luôn vui hơn so v
+ới làm việc một mình
+D. Không ai có gì tốt hơn để làm
+5. Tại sao có kế hoạch cho việc đưa ra gi
+ải pháp của một vấn đề là điều quan trọng?
+A. Mọi người sẽ biết được họ ph
+ải làm gì để giải quyết vấn đề
+B. Mọi người sẽ làm bất cứ đi
+ều gì họ muốn
+C. Người lãnh đạo sẽ được ghi nhận trong
+việc giải quyết vấn đề
+D. Sẽ không có ai có bất kỳ phàn nàn
+gì
+6. Khi nghĩ ra giải pháp để giải quyết vấn đề, bạn phải cân n
+hắc đến tất cả các khả
+năng có thể xảy ra, bao gồm cả những lựa chọn “không phải là giải pháp thật tốt”
+A. Đúng
+B. Sai
+7. Khi nào thì vấn đề biến thành mâu thuẫn
+A. Khi nó cần hơn 2 ngày để gi
+ải quyết
+B. Khi mọi người có liên quan bất đồng ý
+kiến và không đi đến việc đưa ra một giải pháp
+chung
+C. Khi bạn không thể nghĩ ra được
+bất kỳ giải pháp nào
+D. Tất cả những điều trên
+8. Kỹ năng giải quyết vấn đề là gì
+?
+A. Kỹ năng giúp bạn xác định nguồn gốc củ
+a một vấn đề và tìm ra giải ph
+áp hiệu quả.
+B. Kỹ năng tìm ra giải pháp cho một v
+ấn đề
+C. Kỹ năng được sử dụng trong mọi loại công vi
+ệc
+D. Không có đáp án đúng
+9. Trong quá trình tham gia hoạt động “Brainstormin
+g” (động não), các thành viên nên
+đặt câu hỏi về những ý kiến mà họ không đồng tình.
+A. Đúng
+B. Sai
+10. Một trong những cách để xem xét
+tất cả các khả năng được lựa chọn là là liệt kê ra
+một danh sách "ưu và nhược điểm" của tất cả các k
+hả năng đó.
+A. Đúng
+B. Sai
+https://repository.isls.org/bitstream/1/4434/1/416-423.pdf 
+Cách dùng nhanh
+Mỗi năng lực gồm nhiều chỉ báo. AI chấm từng chỉ báo theo 4 mức dưới đây, bắt buộc trích một câu/hành vi thật của HS làm minh chứng cho mỗi mức đã gán. Không có minh chứng → không gán mức, đánh dấu “chưa đủ dữ liệu”.
+Mức năng lực = MODE (mức xuất hiện nhiều nhất qua các bằng chứng) của các chỉ báo, rồi lấy trung bình làm tròn xuống. Độ tin cậy phủ quyết điểm: dữ liệu mỏng thì giữ mức thấp + ghi “cần thêm bằng chứng”.
+Nguồn dữ liệu: (a) tình huống AI đưa → HS trả lời; (b) game/hoạt động tuần; (c) câu chuyện tự kể — trọng số cao nhất vì là việc thật.
+A. PROBLEM SOLVING
+Tương ứng nhánh Cognitive process skills của khung ATC21S: điều tiết nhiệm vụ (task regulation) và xây dựng tri thức (learning & knowledge building). 9 chỉ báo gốc gộp thành 6 chỉ báo chấm để gọn cho HS phổ thông.
+A1. Task regulation — Điều tiết nhiệm vụ
+Chỉ báo | Mức 1 – Chưa đạt | Mức 2 – Hình thành | Mức 3 – Đạt | Mức 4 – Vượt trội
+Chỉ báo
+Mức 1 – Chưa đạt
+Mức 2 – Hình thành
+Mức 3 – Đạt
+Mức 4 – Vượt trội
+Phân tích vấn đề(problem analysis) | Không tách được vấn đề; nói chung chung | Nhận ra vấn đề nhưng chưa chia nhỏ | Chia vấn đề thành các phần dễ xử lý hơn | Chia nhỏ có hệ thống, thấy phần cốt lõi
+Phân tích vấn đề(problem analysis)
+Không tách được vấn đề; nói chung chung
+Nhận ra vấn đề nhưng chưa chia nhỏ
+Chia vấn đề thành các phần dễ xử lý hơn
+Chia nhỏ có hệ thống, thấy phần cốt lõi
+Đặt mục tiêu(goal setting) | Không nêu mục tiêu rõ | Mục tiêu mơ hồ, khó đo | Đặt mục tiêu rõ, khả thi | Mục tiêu + mục tiêu con dẫn dắt cả tiến trình
+Đặt mục tiêu(goal setting)
+Không nêu mục tiêu rõ
+Mục tiêu mơ hồ, khó đo
+Đặt mục tiêu rõ, khả thi
+Mục tiêu + mục tiêu con dẫn dắt cả tiến trình
+Quản lý nguồn lực(resource mgmt) | Không nhắc đến nguồn lực/thời gian | Nhắc nhưng chưa phân bổ | Biết dùng nguồn lực sẵn có hợp lý | Phân bổ, đánh giá và điều chỉnh nguồn lực
+Quản lý nguồn lực(resource mgmt)
+Không nhắc đến nguồn lực/thời gian
+Nhắc nhưng chưa phân bổ
+Biết dùng nguồn lực sẵn có hợp lý
+Phân bổ, đánh giá và điều chỉnh nguồn lực
+Linh hoạt(flexibility) | Bám một cách làm, bế tắc thì dừng | Đổi cách khi bị nhắc | Tự đổi hướng khi cách đầu không hiệu quả | Chủ động tạo nhiều phương án, coi mơ hồ là cơ hội
+Linh hoạt(flexibility)
+Bám một cách làm, bế tắc thì dừng
+Đổi cách khi bị nhắc
+Tự đổi hướng khi cách đầu không hiệu quả
+Chủ động tạo nhiều phương án, coi mơ hồ là cơ hội
+Thu thập thông tin(info collection) | Không tìm thêm thông tin | Tìm nhưng lệch/thiếu liên quan | Tìm đúng thông tin cần | Chọn lọc thông tin theo mức liên quan, phạm vi, thời gian
+Thu thập thông tin(info collection)
+Không tìm thêm thông tin
+Tìm nhưng lệch/thiếu liên quan
+Tìm đúng thông tin cần
+Chọn lọc thông tin theo mức liên quan, phạm vi, thời gian
+Tính hệ thống(systematicity) | Làm ngẫu hứng, không có trình tự | Có trình tự nhưng rời rạc | Làm có kế hoạch, có bước | Có phương pháp, giám sát kết quả và điều chỉnh
+Tính hệ thống(systematicity)
+Làm ngẫu hứng, không có trình tự
+Có trình tự nhưng rời rạc
+Làm có kế hoạch, có bước
+Có phương pháp, giám sát kết quả và điều chỉnh
+A2. Learning & knowledge building — Xây dựng tri thức
+Chỉ báo | Mức 1 – Chưa đạt | Mức 2 – Hình thành | Mức 3 – Đạt | Mức 4 – Vượt trội
+Chỉ báo
+Mức 1 – Chưa đạt
+Mức 2 – Hình thành
+Mức 3 – Đạt
+Mức 4 – Vượt trội
+Quan hệ(relationships) | Không thấy liên hệ giữa các yếu tố | Thấy liên hệ đơn giản, rời rạc | Nối được các yếu tố của vấn đề | Dựng được cấu trúc quan hệ bên trong vấn đề
+Quan hệ(relationships)
+Không thấy liên hệ giữa các yếu tố
+Thấy liên hệ đơn giản, rời rạc
+Nối được các yếu tố của vấn đề
+Dựng được cấu trúc quan hệ bên trong vấn đề
+Quy tắc “nếu…thì”(rules) | Không nhận ra nhân-quả | Nhận ra nhân-quả đơn lẻ | Lập được quy tắc “nếu…thì” | Dùng nhiều quy tắc để suy luận nhiều bước
+Quy tắc “nếu…thì”(rules)
+Không nhận ra nhân-quả
+Nhận ra nhân-quả đơn lẻ
+Lập được quy tắc “nếu…thì”
+Dùng nhiều quy tắc để suy luận nhiều bước
+Giả thuyết “thử xem”(hypothesis) | Không đặt giả thuyết | Đoán nhưng không kiểm chứng | Đặt giả thuyết “nếu thử… thì” và kiểm | Đặt–kiểm–phản tư, rút bài học điều chỉnh
+Giả thuyết “thử xem”(hypothesis)
+Không đặt giả thuyết
+Đoán nhưng không kiểm chứng
+Đặt giả thuyết “nếu thử… thì” và kiểm
+Đặt–kiểm–phản tư, rút bài học điều chỉnh
+Ví dụ minh chứng (mức 3, chỉ báo linh hoạt): “Ban đầu em định làm poster, nhưng lớp không có máy in màu nên em chuyển sang làm video điện thoại.” — HS tự đổi phương án khi gặp giới hạn.
+Tình huống — "Gian hàng hội chợ trường"
+Lớp em được giao mở một gian hàng gây quỹ trong hội chợ trường, diễn ra sau 2 tuần nữa. Cả lớp 40 bạn nhưng chỉ có một bàn nhỏ, ngân sách 500 nghìn, và mỗi bạn rảnh vào những giờ khác nhau. Một số bạn muốn bán đồ ăn, một số muốn làm trò chơi, vài bạn thấy "kiểu gì cũng được".
+Hãy trả lời theo 4 ý (viết 5–8 câu, hoặc kể bằng giọng của em):
+Nếu là em, em sẽ bắt đầu từ đâu để cả lớp không rối? Em chia việc này thành những phần nào?
+Với ngân sách và thời gian có hạn, em quyết định làm gì và vì sao chọn cái đó thay vì cái khác?
+Nếu đến sát ngày mà kế hoạch đầu không chạy được (ví dụ đồ ăn hỏng, ít người đăng ký), em xoay xở thế nào?
+Các bạn trong lớp có ý kiến khác nhau — em làm gì để cả nhóm cùng đi tới quyết định?
+interest
+Bảng hỏi Mini-IPIP hoàn chỉnh. https://www.onetcenter.org/dl_files/IP_Manual.pdf 
+Entity
+1. user_profile     
+user_id
+age
+gender
+location
+work_location_prefer
+created_at
+updated_at
+2. User_quick_test
+3. user_competency    
+user_id
+math_skill
+english_skill
+logic_skill
+problem_solving_labels 
+personal_fit_labels 
+updated_at 
+4. math_skill
+skill id
+value
+5. english_skill
+6. logic_skill
+7. problem_solving_labels 
+8. personal_fit_labels 
+9 career_log (log lại lịch sử từng lần trả career phù hợp cho hs)
+1. user_profile — nhân khẩu, không vào matching
+user_id | age | gender | location | work_location_prefer | created_at | updated_at
+user_id
+age
+gender
+location
+work_location_prefer
+created_at
+updated_at
+u_minh | 17 | male | Phú Thọ | Hà Nội | 2026-07-01 | 2026-07-18
+u_minh
+17
+male
+Phú Thọ
+Hà Nội
+2026-07-01
+2026-07-18
+2a. quick_test_response — mỗi câu trả lời một dòng (giống skill_detail):
+response_id | user_id | question_id | dimension | answer_value | source_type | answered_at
+response_id
+user_id
+question_id
+dimension
+answer_value
+source_type
+answered_at
+qr_01 | u_minh | c1 | work_object | data | onboard | 2026-07-01
+qr_01
+u_minh
+c1
+work_object
+data
+onboard
+2026-07-01
+qr_02 | u_minh | c2 | team_role | logic | onboard | 2026-07-01
+qr_02
+u_minh
+c2
+team_role
+logic
+onboard
+2026-07-01
+...
+...
+qr_15 | u_minh | c1_variant | work_object | data | refresh | 2026-08-01
+qr_15
+u_minh
+c1_variant
+work_object
+data
+refresh
+2026-08-01
+(Lần refresh 08-01 chỉ hỏi lại chiều work_object bằng câu biến thể → thêm 1 dòng, không đụng 10 dòng cũ.)
+dimension là mấu chốt: mỗi câu gắn với một chiều đo (work_object, team_role, values, risk_tolerance...), không phải số thứ tự câu. Nhờ vậy câu biến thể (c1_variant) vẫn biết nó đo cùng chiều với c1 — chạm đúng chỗ cần update.
+2b. user_quick_test — kết quả tổng, tính lại từ response (giống bảng skill):
+quick_test_id | user_id | top_groups | confidence | computed_at
+quick_test_id
+user_id
+top_groups
+confidence
+computed_at
+qt_01 | u_minh | [1,3,4] | 0.35 | 2026-07-01
+qt_01
+u_minh
+[1,3,4]
+0.35
+2026-07-01
+qt_02 | u_minh | [1,3,2] | 0.38 | 2026-08-01
+qt_02
+u_minh
+[1,3,2]
+0.38
+2026-08-01
+Cách test định kỳ "hỏi vài câu chạm" chạy trên cấu trúc này
+Đúng ý bạn — và giờ nó chạy sạch:
+Hệ thống quyết định refresh chiều work_object (ví dụ vì nghi ngờ sở thích đổi) → hỏi 1 câu biến thể.
+User trả lời → thêm 1 dòng vào quick_test_response (qr_15), gắn dimension: work_object, source_type: refresh.
+Tính lại top_groups: lấy giá trị mới nhất của mỗi chiều (work_object dùng qr_15, các chiều khác dùng câu gốc cũ) → ra kết quả tổng hợp.
+Ghi 1 dòng mới vào user_quick_test (qt_02) với top_groups mới.
+Không câu nào bị khuyết, không phải đè, lịch sử giữ nguyên. "Hỏi vài câu chạm" = thêm vài dòng response ở đúng dimension, rồi tính lại tổng.
+3. user_competency — chỉ mục, mỗi cột trỏ tới các nhãn
+user_id | math_skill | english_skill | logic_skill | problem_solving_labels | personal_fit_labels | updated_at
+user_id
+math_skill
+english_skill
+logic_skill
+problem_solving_labels
+personal_fit_labels
+updated_at
+u_minh | [ml_01, ml_02] | [el_01] | [ll_01] | [ps_01] | [pf_01] | 2026-07-18
+u_minh
+[ml_01, ml_02]
+[el_01]
+[ll_01]
+[ps_01]
+[pf_01]
+2026-07-18
+(Các giá trị là id trỏ tới bảng 4–8 bên dưới.)
+4. math_skill — nhãn Toán của user
+skill_row_id | user_id | skill_id | value | score_raw | confidence | status | measured_at
+skill_row_id
+user_id
+skill_id
+value
+score_raw
+confidence
+status
+measured_at
+ml_01 | u_minh | data_interpretation | 4 | 0.78 | 0.70 | assessed | 2026-07-16
+ml_01
+u_minh
+data_interpretation
+4
+0.78
+0.70
+assessed
+2026-07-16
+ml_02 | u_minh | mathematical_modeling | 3 | 0.55 | 0.45 | low_confidence | 2026-07-10
+ml_02
+u_minh
+mathematical_modeling
+3
+0.55
+0.45
+low_confidence
+2026-07-10
+5. english_skill — dùng thang CEFR
+skill_row_id | user_id | skill_id | value | confidence | status | measured_at
+skill_row_id
+user_id
+skill_id
+value
+confidence
+status
+measured_at
+el_01 | u_minh | english_overall | B1 | 0.70 | assessed | 2026-07-05
+el_01
+u_minh
+english_overall
+B1
+0.70
+assessed
+2026-07-05
+6. logic_skill
+skill_row_id | user_id | skill_id | value | score_raw | confidence | status | measured_at
+skill_row_id
+user_id
+skill_id
+value
+score_raw
+confidence
+status
+measured_at
+ll_01 | u_minh | logical_reasoning | 3 | 0.64 | 0.50 | low_confidence | 2026-07-12
+ll_01
+u_minh
+logical_reasoning
+3
+0.64
+0.50
+low_confidence
+2026-07-12
+7. problem_solving_labels — thang rubric 4 mức
+skill_row_id | user_id | skill_id | value | confidence | status | measured_at
+skill_row_id
+user_id
+skill_id
+value
+confidence
+status
+measured_at
+ps_01 | u_minh | problem_solving | 3 | 0.50 | low_confidence | 2026-07-14
+ps_01
+u_minh
+problem_solving
+3
+0.50
+low_confidence
+2026-07-14
+8. personal_fit_labels — Big Five, chỉ soft-signal
+skill_row_id | user_id | skill_id | value | use_policy | confidence | measured_at
+skill_row_id
+user_id
+skill_id
+value
+use_policy
+confidence
+measured_at
+pf_01 | u_minh | personality_big_five | {O:3.5,C:4.0,E:2.5,A:4.2,N:2.0} | soft_signal_only | 0.50 | 2026-07-08
+pf_01
+u_minh
+personality_big_five
+{O:3.5,C:4.0,E:2.5,A:4.2,N:2.0}
+soft_signal_only
+0.50
+2026-07-08
+9. career_log — log lịch sử nghề phù hợp, chỉ ghi khi kết quả đổi
+log_id | user_id | top_careers | trigger | logged_at
+log_id
+user_id
+top_careers
+trigger
+logged_at
+cl_01 | u_minh | ["Phân tích dữ liệu", "Kế toán", "Kỹ sư"] | onboard | 2026-07-01
+cl_01
+u_minh
+["Phân tích dữ liệu", "Kế toán", "Kỹ sư"]
+onboard
+2026-07-01
+cl_02 | u_minh | ["Phân tích dữ liệu", "Data Analyst", "Tài chính"] | data_interpretation lên L4 | 2026-07-16
+cl_02
+u_minh
+["Phân tích dữ liệu", "Data Analyst", "Tài chính"]
+data_interpretation lên L4
+2026-07-16
+10. skill_detail — vết từng câu trả lời mỗi lần làm bài
+detail_id | user_id | attempt_id | item_id | skill_id | difficulty_band | result | is_anchored | source_type | answered_at
+detail_id
+user_id
+attempt_id
+item_id
+skill_id
+difficulty_band
+result
+is_anchored
+source_type
+answered_at
+sd_01 | u_minh | at_01 | pisa_dvd_q01 | data_interpretation | kho | 1.0 | true | deep_test | 2026-07-16
+sd_01
+u_minh
+at_01
+pisa_dvd_q01
+data_interpretation
+kho
+1.0
+true
+deep_test
+2026-07-16
+sd_02 | u_minh | at_01 | pisa_solar_q01 | data_interpretation | vua | 1.0 | true | deep_test | 2026-07-16
+sd_02
+u_minh
+at_01
+pisa_solar_q01
+data_interpretation
+vua
+1.0
+true
+deep_test
+2026-07-16
+sd_03 | u_minh | at_05 | gen_di_0417 | data_interpretation | vua | 1.0 | false | daily_quiz | 2026-07-18
+sd_03
+u_minh
+at_05
+gen_di_0417
+data_interpretation
+vua
+1.0
+false
+daily_quiz
+2026-07-18
+Quick test
+Ký hiệu nhóm: (1) IT & Số · (2) Kinh doanh/Marketing · (3) Tài chính/Kế toán · (4) Kỹ thuật/Sản xuất · (5) Y tế · (6) Dịch vụ/Giáo dục · (7) Vận hành nhà máy · (9) Nghệ thuật.
+Ver1.0
+Tuổi
+Giới tính
+Vùng
+Vùng muốn làm việc
+Sở thích (Interest) 
+Năng lực (Aptitude) 
+Giá trị (Value) 
+Môi trường & tương tác (Environment) 
+Tính cách hành vi (Trait) 
+Khát vọng & bản sắc (Aspiration) 
+Hồ sơ học thuật (Bảng điểm, ngành học, trường )
+Chứng chỉ 
+Trải nghiệm 
+Câu | Trục (tiêu chí) | Mục tiêu bóc tách | Tín hiệu RIASEC chính
+Câu
+Trục (tiêu chí)
+Mục tiêu bóc tách
+Tín hiệu RIASEC chính
+Q1 — Việc gì khiến bạn quên cả thời gian? | Sở thích (Interest) | Nhóm hứng thú tự nhiên, không "gồng" | R / I / A / S — nhóm trội nhất
+Q1 — Việc gì khiến bạn quên cả thời gian?
+Sở thích (Interest)
+Nhóm hứng thú tự nhiên, không "gồng"
+R / I / A / S — nhóm trội nhất
+Q2 — Điều gì bạn làm dễ mà người khác thấy khó? | Năng lực (Aptitude) | Điểm mạnh bẩm sinh, tách khỏi sở thích | Bất kỳ nhóm nào — nhưng là năng lực  | thật
+Q2 — Điều gì bạn làm dễ mà người khác thấy khó?
+Năng lực (Aptitude)
+Điểm mạnh bẩm sinh, tách khỏi sở thích
+Bất kỳ nhóm nào — nhưng là năng lực thật
+Q3 — Công việc phải có gì bạn mới thấy đáng làm? | Giá trị (Value) | Động lực cốt lõi → quyết định độ bền với nghề | S (giúp người) / A (sáng tạo) / E (thành đạt) / C (ổn định)
+Q3 — Công việc phải có gì bạn mới thấy đáng làm?
+Giá trị (Value)
+Động lực cốt lõi → quyết định độ bền với nghề
+S (giúp người) / A (sáng tạo) / E (thành đạt) / C (ổn định)
+Q4 — Bạn làm tốt nhất khi một mình / nhóm / dẫn dắt? | Môi trường & tương tác (Environment) | Bối cảnh làm việc phù hợp | I·R (độc lập) vs S (hợp tác) vs E (dẫn dắt)
+Q4 — Bạn làm tốt nhất khi một mình / nhóm / dẫn dắt?
+Môi trường & tương tác (Environment)
+Bối cảnh làm việc phù hợp
+I·R (độc lập) vs S (hợp tác) vs E (dẫn dắt)
+Q5 — Gặp vấn đề khó, bước đầu tiên bạn làm gì? | Tính cách hành vi (Trait) | Phong cách xử lý, phản xạ tự nhiên | I (phân tích) / S (hỏi) / R (thử ngay) / C (lập kế hoạch)
+Q5 — Gặp vấn đề khó, bước đầu tiên bạn làm gì?
+Tính cách hành vi (Trait)
+Phong cách xử lý, phản xạ tự nhiên
+I (phân tích) / S (hỏi) / R (thử ngay) / C (lập kế hoạch)
+Q6 — 5 năm nữa muốn được nhìn nhận là ai? | Khát vọng & bản sắc (Aspiration) | Định hướng dài hạn, ghép chân dung tổng thể | E (ảnh hưởng) / I (chuyên gia) / A (dấu ấn) / S (cống hiến)
+Q6 — 5 năm nữa muốn được nhìn nhận là ai?
+Khát vọng & bản sắc (Aspiration)
+Định hướng dài hạn, ghép chân dung tổng thể
+E (ảnh hưởng) / I (chuyên gia) / A (dấu ấn) / S (cống hiến)
+Q1 — Sở thích tự nhiên
+Việc gì khiến bạn quên cả thời gian khi làm? → Nhận diện nhóm RIASEC trội nhất, không bị "gồng"
+Q2 — Năng lực thật
+Điều gì bạn làm dễ dàng mà nhiều người thấy khó? → Tách điểm mạnh bẩm sinh khỏi sở thích (2 thứ này hay bị nhầm)
+Q3 — Giá trị cốt lõi
+Một công việc phải có điều gì thì bạn mới thấy đáng làm? (ví dụ: giúp được người khác, được sáng tạo, thu nhập cao, ổn định...) → Xác định động lực — quyết định độ bền với nghề
+Q4 — Môi trường & cách tương tác
+Bạn làm việc tốt nhất trong hoàn cảnh nào: một mình tập trung, phối hợp nhóm, hay đứng ra dẫn dắt? Mô tả ngắn. → Tách I/R (độc lập) vs S (hợp tác) vs E (dẫn dắt)
+Q5 — Cách xử lý vấn đề
+Khi gặp một vấn đề khó, bước đầu tiên bạn làm là gì? (ví dụ: tự phân tích, hỏi người khác, thử làm ngay, lập kế hoạch...) → Bóc tính cách hành vi: I (phân tích) / S (hỏi) / R (thử) / C (kế hoạch)
+Q6 — Hình dung tương lai
+Sau 5 năm nữa, bạn muốn được người khác nhìn nhận mình là người như thế nào trong công việc? → Khát vọng & bản sắc — ghép chân dung tổng thể
+Ver0.9
+Câu 1. Đối tượng làm việc nào khiến bạn thấy cuốn hút nhất?
+Máy móc, thiết bị, xây dựng thứ gì đó bằng tay → +(4) +(7)
+Con số, dữ liệu, phân tích → +(3) +(1)
+Con người: giúp đỡ, chăm sóc, dạy dỗ → +(5) +(6)
+Ý tưởng, sáng tạo, cái đẹp → +(9) +(2)
+Câu 2. Trong một dự án nhóm, bạn thường là người…?
+Đứng ra dẫn dắt, thuyết phục mọi người → +(2)
+Lên kế hoạch, sắp xếp cho chạy trơn tru → +(3)
+Kết nối, hòa giải, chăm lo cảm xúc nhóm → +(6) +(5)
+Giải quyết phần khó nhất về kỹ thuật/logic → +(1) +(4)
+Câu 3. Bạn thấy thỏa mãn nhất khi…?
+Sửa được một thứ hỏng / làm ra sản phẩm chạy được → +(4) +(1)
+Tìm ra quy luật ẩn trong mớ thông tin → +(3) +(1)
+Thấy người khác tiến bộ/khỏe hơn nhờ mình → +(5) +(6)
+Tạo ra thứ chưa ai làm, được công nhận → +(9) +(2)
+Câu 4. Môn học hoặc hoạt động bạn thấy dễ chịu nhất?
+Toán, Lý, Tin → +(1) +(4) +(3)
+Văn, Ngoại ngữ, Sử → +(6) +(2)
+Sinh, Hóa → +(5)
+Mỹ thuật, Âm nhạc, sáng tạo → +(9)
+Câu 5. Bạn thích "xây" thứ nào hơn? (tách IT ↔ Kỹ thuật)
+Thứ vô hình: phần mềm, hệ thống, quy trình → +(1)
+Thứ sờ được: máy móc, công trình, sản phẩm vật lý → +(4) +(7)
+Thứ thuộc về con người: trải nghiệm, bài giảng, dịch vụ → +(6)
+Thứ thuộc về cái đẹp: hình ảnh, âm thanh, tác phẩm → +(9)
+Câu 6. Việc nào bạn thấy mình làm tốt hơn hẳn bạn bè cùng lớp? (chọn tối đa 2 — tín hiệu năng lực tự khai)
+Giải bài logic/toán khó → +(1) +(3) +(4)
+Viết, thuyết trình, thuyết phục → +(2) +(6)
+Nhớ chi tiết, làm cẩn thận không sai sót → +(3) +(5)
+Vẽ, thiết kế, cảm nhận thẩm mỹ → +(9)
+Làm tay chân, lắp ráp, sửa chữa → +(4) +(7)
+Câu 7. Với một bảng dữ liệu, bạn thích làm gì hơn? (tách Kế toán ↔ IT-data ↔ Marketing)
+Kiểm tra cho khớp, đúng quy tắc, không sai sót → +(3)
+Tìm insight, dự đoán xu hướng từ nó → +(1) +(2)
+Trình bày cho người khác hiểu, kể thành câu chuyện → +(2) +(6)
+Câu 8. Môi trường làm việc bạn muốn?
+Ngoài hiện trường, vận động, không ngồi bàn nhiều → +(4) +(7)
+Văn phòng, ổn định, quy trình rõ ràng → +(3)
+Tiếp xúc nhiều người, năng động → +(6) +(2)
+Tự do, linh hoạt, tự đặt nhịp → +(9) +(1)
+Câu 9. Con đường nào nghe hấp dẫn hơn với bạn? (trục ổn định ↔ rủi ro — dùng soft-ranking)
+Nghề ổn định, rõ lộ trình, ít biến động → +(3) +(6) +(5)
+Nghề mới, thay đổi nhanh, nhiều cơ hội đột phá → +(1) +(2)
+Tự làm chủ, tự do nhưng tự chịu rủi ro → +(9) +(2)
+Câu 10. Điều gì khiến bạn thấy ngán nhất ở một công việc? (câu phản chứng — có điểm trừ)
+Ngồi yên một chỗ, lặp đi lặp lại → −(3) −(7) +(2) +(4) +(6)
+Giao tiếp/thuyết phục người lạ liên tục → −(2) −(6) +(1) +(3) +(4)
+Làm việc mơ hồ, không có đáp án đúng → −(9) −(2) +(3) +(4)
+Áp lực deadline/cạnh tranh cao → −(2) −(5) +(3) +(6)
+Cơ chế chấm
+Cộng/trừ điểm tất cả lựa chọn qua 10 câu → mỗi nhóm ra một tổng. Lấy top 3 hiển thị.
+Cờ mâu thuẫn: nếu câu 1–8 đẩy mạnh một nhóm nhưng câu 10 (phản chứng) trừ đúng nhóm đó → hạ confidence nhóm đó, ghi chú "tín hiệu chưa nhất quán, nên làm test để rõ hơn".
+Entity
+Lưu thông tin vào bảng Bảng User_quick_test không chỉ ghi một lần rồi xong. Nó nên được cập nhật, nhưng với nhịp và cách khác skill:
+Có sinh câu tương đồng để đánh giá lại → có, nhưng là hỏi lại sở thích bằng bối cảnh mới (không đúng/sai), không phải câu năng lực.
+Nhịp update → thưa (định kỳ vài tuần, hoặc khi phát hiện mâu thuẫn với dữ liệu năng lực), không phải hàng ngày — vì sở thích đổi chậm, hỏi quá dày gây nhiễu.
+Lưu → nên để nhiều record (Cách B) với source_type, để giữ lịch sử dịch chuyển sở thích, thay vì ghi đè một dòng.
+Điểm hay nhất để tận dụng: mini-game hàng ngày nên chủ yếu update các bảng skill (3 trục), còn quick test chỉ chạm tới khi có tín hiệu mâu thuẫn hoặc tới kỳ refresh. Như vậy mini-game hàng ngày âm thầm mài sắc năng lực, còn định hướng nghề chỉ được hỏi lại khi thực sự cần — đúng nhịp tự nhiên của hai loại dữ liệu.
+User_quick_test
+├── quick_test_id     (PK)
+├── user_id           (FK)
+├── answers           (JSONB - câu trả lời lần đó)
+├── top_groups        (JSONB - kết quả nhóm ngành)
+├── confidence
+├── source_type       (onboard | periodic_refresh | conflict_triggered)
+├── taken_at
+User story
+ONB
+RULE TÍNH KẾT QUẢ
+B1: LLM chấm trực tiếp 
+Gửi câu trả lời cho LLM, mỗi câu phân tích trả ra I / E / A / S / C / R kèm lý do. LLM hiểu ngữ cảnh tốt hơn keyword. 
+Bước 2 — Trọng số theo nguồn dữ liệu
+Không phải nguồn nào cũng đáng tin như nhau. Gán trọng số:
+Nguồn | Trọng số | Lý do
+Nguồn
+Trọng số
+Lý do
+Trải nghiệm/dự án thực tế | 1.5 | Bằng chứng va chạm thật, cao nhất
+Trải nghiệm/dự án thực tế
+1.5
+Bằng chứng va chạm thật, cao nhất
+Hồ sơ học thuật / chứng chỉ | 1.3 | Đã được kiểm chứng
+Hồ sơ học thuật / chứng chỉ
+1.3
+Đã được kiểm chứng
+Câu trả lời hành vi (Q4, Q5) | 1.2 | Khó "diễn", đáng tin
+Câu trả lời hành vi (Q4, Q5)
+1.2
+Khó "diễn", đáng tin
+Câu tự khai sở thích/giá trị (Q1, Q2, Q3, Q6) | 1.0 | Chủ quan, dễ lý tưởng hóa
+Câu tự khai sở thích/giá trị (Q1, Q2, Q3, Q6)
+1.0
+Chủ quan, dễ lý tưởng hóa
+BƯỚC 3: 
+Bước 3 — Công thức tổng hợp
+Với mỗi nhóm X ∈ {R, I, A, S, E, C}:
+raw_X = Σ (điểm_signal_i × trọng_số_nguồn_i)   // với mọi signal thuộc nhóm X
+Sau đó chuẩn hóa về thang 0–10 để so sánh công bằng (vì tổng trọng số mỗi nhóm khác nhau):
+score_X = (raw_X / max(raw_R..raw_C)) × 10
+Bước 4 — Suy ra Holland Code
+Lấy 3 nhóm điểm cao nhất, xếp theo thứ tự giảm dần → ghép chữ cái.
+Ví dụ trên: I(10) > S(7.7) > E(5.9) → Holland Code = "ISE"
+Bước 5 — Xử lý các trường hợp đặc biệt
+Trường hợp | Điều kiện | Cách xử lý
+Trường hợp
+Điều kiện
+Cách xử lý
+Điểm sát nhau | Chênh top 3 và top 4 < 0.5 | Ghi cả 2 mã (VD "ISE / ISA"), giảm confidence, gợi hỏi thêm
+Điểm sát nhau
+Chênh top 3 và top 4 < 0.5
+Ghi cả 2 mã (VD "ISE / ISA"), giảm confidence, gợi hỏi thêm
+Dữ liệu quá ít | < 3 câu trả lời | Không xuất Holland Code, chỉ đưa xu hướng sơ bộ, gợi ý làm thêm bài test
+Dữ liệu quá ít
+< 3 câu trả lời
+Không xuất Holland Code, chỉ đưa xu hướng sơ bộ, gợi ý làm thêm bài test
+Mâu thuẫn tự khai vs hồ sơ | Nhóm trội của tự khai ≠ của hồ sơ | tính theo trọng số, lấy kết qua cao hơn
+Mâu thuẫn tự khai vs hồ sơ
+Nhóm trội của tự khai ≠ của hồ sơ
+tính theo trọng số, lấy kết qua cao hơn
+Cặp bị hòa | Câu phân biệt (chọn 1 trong 2)
+Cặp bị hòa
+Câu phân biệt (chọn 1 trong 2)
+I vs A | "Bạn thích  | tìm ra câu trả lời đúng |  hơn hay  | tạo ra thứ chưa từng có |  hơn?"
+I vs A
+"Bạn thích tìm ra câu trả lời đúng hơn hay tạo ra thứ chưa từng có hơn?"
+S vs E | "Trong nhóm, bạn thích  | hỗ trợ mọi người cùng tiến |  hay  | đứng ra dẫn dắt định hướng | ?"
+S vs E
+"Trong nhóm, bạn thích hỗ trợ mọi người cùng tiến hay đứng ra dẫn dắt định hướng?"
+R vs C | "Bạn thích  | làm việc với máy móc/vật thật |  hay  | làm việc với số liệu/quy trình | ?"
+R vs C
+"Bạn thích làm việc với máy móc/vật thật hay làm việc với số liệu/quy trình?"
+E vs C | "Bạn thích  | thuyết phục & tạo cơ hội mới |  hay  | vận hành mọi thứ trơn tru theo chuẩn | ?"
+E vs C
+"Bạn thích thuyết phục & tạo cơ hội mới hay vận hành mọi thứ trơn tru theo chuẩn?"
+I vs C | "Bạn thích  | khám phá cái chưa biết |  hay  | hoàn thiện cái đã có cho chuẩn xác | ?"
+I vs C
+"Bạn thích khám phá cái chưa biết hay hoàn thiện cái đã có cho chuẩn xác?"
+Bước 6 — Confidence score
+Để user biết độ tin cậy:
+confidence = (completeness × 0.4) + (evidence_ratio × 0.4) + (consistency × 0.2)
+completeness: % câu đã trả lời có nghĩa
+evidence_ratio: có upload hồ sơ hay chỉ tự khai
+consistency: mức nhất quán giữa các nguồn (mâu thuẫn nhiều → thấp)
+1.2 Trả Repsonse: 
+Cần trả ra các thông tin sau: 
+# | Khối | Lấy từ field | Điều kiện hiện
+#
+Khối
+Lấy từ field
+Điều kiện hiện
+1 | Tiêu đề + tóm tắt | portrait.summary | Luôn
+1
+Tiêu đề + tóm tắt
+portrait.summary
+Luôn
+2 | Holland Code + biểu đồ 6 nhóm | holland_code | ,  | scores | Khi  | status = complete
+2
+Holland Code + biểu đồ 6 nhóm
+holland_code, scores
+Khi status = complete
+3 | Điểm mạnh | portrait.strengths | Luôn
+3
+Điểm mạnh
+portrait.strengths
+Luôn
+4 | Giá trị + môi trường | portrait.core_value | ,  | environment | Luôn
+4
+Giá trị + môi trường
+portrait.core_value, environment
+Luôn
+5 | Nghề gợi ý | careers[] | Khi có ≥1 nghề
+5
+Nghề gợi ý
+careers[]
+Khi có ≥1 nghề
+6 | Điểm khám phá | conflicts[] | Khi có mâu thuẫn
+6
+Điểm khám phá
+conflicts[]
+Khi có mâu thuẫn
+7 | Độ tin cậy | confidence | Luôn
+7
+Độ tin cậy
+confidence
+Luôn
+8 | Bước tiếp theo | next_step | Luôn, gợi ý bổ sung kĩ năng
+8
+Bước tiếp theo
+next_step
+Luôn, gợi ý bổ sung kĩ năng
+9 | Câu hỏi thêm | follow_up_question | Khi cần tie-break/thiếu data
+9
+Câu hỏi thêm
+follow_up_question
+Khi cần tie-break/thiếu data
+Ví dụ:
+Tiêu đề tóm tắt: 
+Chân dung nghề nghiệp
+Bạn là người tư duy phân tích, thích tự chủ và coi trọng ý nghĩa công việc hơn danh vọng.
+Nhóm: ISE | I:10.0 ██████████ · S:7.7 ████████ · E:5.9 ██████ ...
+Điểm mạnh: Phân tích gốc rễ vấn đề · Hỗ trợ người khác · Nền tảng công nghệ
+Nghề: Data Analyst ⭐⭐⭐⭐⭐ (80%) · Business Analyst ⭐⭐⭐⭐ (75%) ...
+Tin cậy: 85% (Cao) · 👉 Bổ sung SQL → readiness ~90% 
+Dưới đây là bộ user stories chi tiết cho toàn luồng onboarding, viết theo format Jira wiki markup với Gherkin AC — bao gồm cả edge case đã brainstorm. Tôi tổ chức thành 4 epic theo thứ tự luồng.
+EPIC 1: Onboarding & Chẩn đoán RIASEC
+US-01 — Trả lời 6 câu hỏi định hướng
+Là user, tôi muốn trả lời 6 câu hỏi ngắn dạng free text, để hệ thống hiểu sở thích, năng lực và giá trị nghề nghiệp của tôi.
+Mô tả: 6 câu phủ 6 trục — Q1 Sở thích, Q2 Năng lực, Q3 Giá trị, Q4 Môi trường, Q5 Hành vi, Q6 Khát vọng. Bổ sung Q7 đo trục R (kỹ thuật) vốn hay bị thiếu.
+Scenario: Trả lời đầy đủ và hợp lệ
+  Given user đang ở màn hình câu hỏi định hướng
+  When user nhập câu trả lời có nghĩa cho từng câu
+  Then hệ thống lưu câu trả lời
+  And chuyển sang câu tiếp theo
+Scenario: Trả lời vô nghĩa hoặc quá ngắn
+  Given user đang trả lời một câu
+  When câu trả lời là "abc" / "123" / "không biết" / dưới 3 ký tự
+  Then hệ thống KHÔNG tính điểm câu đó
+  And gợi ý user trả lời lại kèm 1 ví dụ minh họa
+US-02 — Upload hồ sơ học thuật / chứng chỉ / trải nghiệm
+Là user, tôi muốn tải lên bảng điểm, chứng chỉ hoặc CV, để kết quả định hướng chính xác hơn nhờ bằng chứng thực tế.
+Mô tả: Upload là tùy chọn. Hệ thống trích xuất thực thể và phân vào 3 rổ — Rổ A (hoạt động/vai trò), Rổ B (lĩnh vực/chuyên môn), Rổ C (kỹ năng nền, không tính RIASEC).
+gherkin
+Scenario: Upload file hợp lệ
+  Given user ở bước upload hồ sơ
+  When user tải lên file PDF/DOCX/ảnh hợp lệ
+  Then hệ thống trích xuất ngành học, chứng chỉ, vai trò/dự án
+  And phân loại thực thể vào khung RIASEC
+Scenario: File lỗi hoặc sai định dạng
+  Given user tải lên file
+  When file corrupt / ảnh quá mờ / sai định dạng (video, nhạc)
+  Then hệ thống báo lỗi rõ ràng kèm định dạng chấp nhận
+  And cho phép upload lại
+  And KHÔNG chặn luồng onboarding
+Scenario: File không liên quan nghề nghiệp
+  Given user tải lên một file (vd hóa đơn)
+  When trích xuất không tìm thấy thông tin nghề nghiệp
+  Then hệ thống thông báo không tìm thấy dữ liệu phù hợp
+  And đề nghị upload đúng loại hồ sơ
+Scenario: User bỏ qua upload
+  Given user ở bước upload
+  When user chọn "Bỏ qua"
+  Then luồng tiếp tục với dữ liệu chỉ từ câu tự khai
+  And đánh dấu evidence_ratio = 0 để giảm confidence sau
+US-03 — Chấm điểm RIASEC & sinh Holland Code
+Là hệ thống, tôi cần chấm điểm RIASEC từ câu trả lời + hồ sơ theo trọng số, để sinh ra Holland Code chính xác và giải thích được.
+Mô tả: LLM chấm thô từng nguồn (0–10 + lý do) → nhân trọng số nguồn (Trải nghiệm ×1.5, Hồ sơ ×1.3, Câu hành vi ×1.2, Tự khai ×1.0) → chuẩn hóa 0–10 → lấy 3 nhóm cao nhất.
+gherkin
+Scenario: Chấm điểm và sinh mã chuẩn
+  Given có đủ câu trả lời và/hoặc hồ sơ
+  When hệ thống chấm điểm từng nguồn qua LLM (kèm lý do)
+  And nhân trọng số theo nguồn rồi chuẩn hóa về 0–10
+  Then lấy 3 nhóm điểm cao nhất xếp giảm dần thành Holland Code
+  And mỗi điểm số phải kèm evidence, không có evidence thì không cho điểm
+Scenario: Nguồn kỹ năng nền không tính RIASEC
+  Given hồ sơ chứa chứng chỉ như IELTS/MOS/tin học VP
+  When hệ thống phân loại thực thể
+  Then các chứng chỉ này vào Rổ C
+  And KHÔNG cộng điểm RIASEC, chỉ dùng cho readiness/skill sau này
+EPIC 2: Xử lý các trường hợp đặc biệt khi chẩn đoán
+US-04 — Xử lý dữ liệu quá ít
+Là user với ít dữ liệu, tôi muốn được thông báo minh bạch thay vì nhận kết quả sai, để không bị định hướng nhầm.
+gherkin
+Scenario: Dưới 3 câu trả lời có nghĩa
+  Given user mới trả lời dưới 3 câu có nghĩa
+  When hệ thống tổng hợp kết quả
+  Then KHÔNG xuất Holland Code
+  And chỉ hiển thị xu hướng sơ bộ
+  And gợi ý user hoàn thành thêm câu hỏi
+  And status = "insufficient_data"
+Scenario: Thiếu một phần (3–5 câu)
+  Given user trả lời 3–5/6 câu có nghĩa
+  When hệ thống tổng hợp
+  Then hiển thị chân dung sơ bộ với confidence thấp
+  And nêu rõ trục còn thiếu và hỏi lại đúng câu đó
+  And status = "need_more_info"
+US-05 — Xử lý điểm sát nhau (tie-breaker)
+Là user có nhiều nhóm điểm ngang nhau, tôi muốn trả lời thêm câu phân biệt, để có Holland Code dứt khoát.
+Mô tả: Câu phân biệt dạng chọn A/B từ ngân hàng có sẵn theo cặp nhóm hòa. Không dùng free text vì mục tiêu là phá hòa.
+gherkin
+Scenario: Top 3 và Top 4 sát nhau
+  Given chênh lệch điểm Top3 và Top4 < 0.5
+  When hệ thống chuẩn bị xuất mã
+  Then hiển thị cả 2 mã khả dĩ (vd "ISE / ISA")
+  And giảm confidence
+  And hỏi 1 câu phân biệt dạng chọn A/B cho đúng cặp nhóm đang hòa
+  And status = "need_tiebreaker"
+Scenario: User trả lời câu phân biệt
+  Given user chọn một phương án A/B
+  When hệ thống nhận lựa chọn
+  Then cộng điểm cho nhóm được chọn
+  And tính lại và chốt Holland Code nếu đã đủ tách
+Scenario: Profile phẳng (6 nhóm chênh < 1.5)
+  Given cả 6 nhóm chênh nhau dưới 1.5
+  When hệ thống chuẩn bị xuất mã
+  Then hỏi câu RANK top 3 (kéo-thả), cộng điểm theo thứ hạng 4/2.5/1
+  And chỉ kiểm tra Top 3 có tách nhau và tách khỏi Top 4
+  And nếu sau tối đa 2 câu vẫn phẳng → kết luận "profile đa năng", không ép mã
+US-06 — Xử lý mâu thuẫn tự khai vs hồ sơ
+Là user có nguyện vọng khác với hồ sơ, tôi muốn được nêu cả hai như điểm khám phá, để không bị phủ định mong muốn.
+gherkin
+Scenario: Nhóm trội tự khai khác nhóm trội hồ sơ
+  Given nhóm trội từ tự khai ≠ nhóm trội từ hồ sơ
+  When hệ thống tổng hợp điểm
+  Then kết quả nghiêng theo hồ sơ (do trọng số cao hơn, tự động thắng)
+  And nêu cả hai hướng như "điểm đáng khám phá"
+  And gợi ý nghề giao thoa kết hợp cả hai
+  And KHÔNG phủ định nguyện vọng của user
+US-07 — Hiển thị kết quả & độ tin cậy
+Là user, tôi muốn xem chân dung nghề nghiệp kèm độ tin cậy, để biết mức độ đáng tin của kết quả.
+Mô tả: confidence = completeness×0.4 + evidence_ratio×0.4 + consistency×0.2.
+gherkin
+Scenario: Hiển thị response đầy đủ
+  Given kết quả ở trạng thái "complete"
+  When hệ thống render kết quả
+  Then hiển thị Holland Code, điểm 6 nhóm, chân dung, điểm mạnh (kèm evidence)
+  And hiển thị confidence với mức High/Medium/Low
+  And luôn có mục "bước tiếp theo"
+Scenario: Confidence thấp do chỉ có tự khai
+  Given user không upload hồ sơ (evidence_ratio = 0)
+  When hệ thống tính confidence
+  Then giọng điệu chuyển sang "kết quả sơ bộ"
+  And ẩn cột readiness/gap của nghề (chưa có bằng chứng)
+  And gợi ý upload hồ sơ để hoàn thiện
+EPIC 3: Chọn ngành & Đo Fit
+US-08 — Chọn ngành muốn theo đuổi
+Là user, tôi muốn chọn ngành từ gợi ý hoặc nhập ngành bất kỳ, để bắt đầu xây lộ trình.
+gherkin
+Scenario: Chọn ngành từ gợi ý
+  Given hệ thống đã có Holland Code của user
+  When hiển thị các ngành gợi ý khớp mã
+  And user chọn một ngành trong danh sách
+  Then chuyển sang bước đo Fit
+Scenario: Nhập ngành ngoài gợi ý
+  Given user muốn ngành không có trong gợi ý
+  When user nhập tên ngành tự do
+  Then hệ thống nhận diện và tiếp tục đo Fit
+  And nếu không nhận diện được → gợi ý ngành gần đúng để xác nhận
+US-09 — Đo mức phù hợp (Fit) với ngành đã chọn
+Là user, tôi muốn biết mình phù hợp với ngành đến đâu, để đánh giá thực tế trước khi đầu tư.
+Mô tả: Đối chiếu năng lực hiện có (hồ sơ + RIASEC) với yêu cầu ngành lấy từ RAG. Fit quyết định độ dài lộ trình và giọng điệu.
+gherkin
+Scenario: Đo Fit và phân loại gap
+  Given user đã chọn ngành
+  When hệ thống lấy skill map của ngành từ RAG
+  And đối chiếu với năng lực hiện có
+  Then trả ra Fit score
+  And phân nhóm kỹ năng "đã có" và "còn thiếu"
+Scenario: Fit cực thấp (ngành trái Holland Code)
+  Given ngành user chọn trái ngược nhóm trội
+  When hệ thống tính Fit rất thấp
+  Then cảnh báo trung thực về độ khó và thời gian
+  And hỏi lại user có chắc muốn theo hướng này không
+  And KHÔNG cản nếu user vẫn quyết định tiếp tục
+EPIC 4: Test kỹ năng, Gap & Lộ trình
+US-10 — Làm test kỹ năng khi thiếu thông tin
+Là user, tôi muốn làm bài test kỹ năng khi hồ sơ chưa đủ, để bản đồ gap phản ánh đúng năng lực thật thay vì phỏng đoán.
+Mô tả: Test gen theo skill map ngành (RAG), trong khung cố định — mỗi câu map 1 kỹ năng, có đáp án + thang chấm. AI chỉ diễn đạt câu hỏi, RAG quyết phạm vi.
+gherkin
+Scenario: Quyết định có cần test hay không
+  Given user đã chọn ngành
+  When hệ thống kiểm tra độ đủ của bằng chứng năng lực
+  Then nếu hồ sơ đủ và khớp ngành → test là TÙY CHỌN
+  And nếu hồ sơ đủ nhưng ngành lạ → yêu cầu test kỹ năng nền ngành đó trước
+  And nếu ít/không hồ sơ → test BẮT BUỘC trước khi tính gap
+Scenario: Sinh và chấm test trong khung kiểm soát
+  Given hệ thống cần tạo test cho ngành
+  When AI gen test từ skill map (RAG)
+  Then mỗi câu phải map đúng 1 kỹ năng trong skill map, không hỏi ngoài
+  And mỗi câu có đáp án đúng và thang chấm rõ ràng
+  And số câu cố định theo cấu hình (vd 10–15 câu)
+Scenario: Lưu kết quả test
+  Given user hoàn thành test
+  When hệ thống chấm điểm
+  Then lưu kết quả để không phải test lại lần sau
+  And cập nhật vào hồ sơ năng lực của user
+US-11 — Xem bản đồ Gap
+Là user, tôi muốn thấy rõ mình đã có gì và còn thiếu gì so với ngành, để biết khoảng cách cần lấp.
+gherkin
+Scenario: Sinh bản đồ gap dựa trên bằng chứng
+  Given đã có đủ dữ liệu năng lực (hồ sơ và/hoặc test)
+  When hệ thống đối chiếu với yêu cầu ngành
+  Then liệt kê kỹ năng "đã đạt" và "còn thiếu" theo cấp độ
+  And mỗi mục gap dựa trên bằng chứng, không phỏng đoán suông
+US-12 — Nhận lộ trình phát triển
+Là user, tôi muốn nhận lộ trình học từ gap, để biết cần làm gì tiếp theo với mốc rõ ràng.
+Mô tả: Lộ trình sinh từ gap + RAG nguồn đáng tin (job description thật, khung năng lực chuẩn). Độ dài theo Fit.
+gherkin
+Scenario: Sinh lộ trình từ gap
+  Given đã có bản đồ gap
+  When hệ thống xây lộ trình từ RAG nguồn đáng tin
+  Then mỗi bước có mốc thời gian và tiêu chí đo được
+  And kèm nguồn học/chứng chỉ gợi ý cho từng bước
+Scenario: Điều chỉnh lộ trình theo Fit
+  Given đã tính Fit score
+  When sinh lộ trình
+  Then Fit cao → lộ trình ngắn, thiên về tinh chỉnh
+  And Fit thấp → lộ trình dài hơn, kèm nhắc đây là chuyển hướng lớn
+Scenario: Nguồn RAG chống lỗi thời
+  Given hệ thống lấy dữ liệu ngành từ RAG
+  When nguồn có dấu hiệu cũ (nhất là ngành tech/AI)
+  Then ưu tiên nguồn cập nhật gần nhất
+  And chuẩn hóa về cấu trúc kỹ năng → cấp độ → nguồn học trước khi đưa vào lộ trình

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Build
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+.vercel
+.idea/
+.vscode/
+*.pem
+*.lnk
+*.docx
+
+# Data (dữ liệu crawl có thể nặng, không cần lên git)
+data/raw/*.json
+!data/raw/.gitkeep
+
+# Hồ sơ học sinh — dữ liệu cá nhân, TUYỆT ĐỐI không commit
+data/profiles/
+
+# API keys — NEVER commit
+**/secrets/
+*.key
