@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { m } from "framer-motion";
 import { LogoMark } from "@/components/ui/Compass";
 import { loadPortalRef, type PortalRef } from "@/lib/profile";
+import { EASE_OUT_EXPO } from "@/lib/animation";
+import { ScrollProgress } from "@/components/ui/motion";
 
 const LINKS = [
   { label: "Tổng quan", href: "#tong-quan" },
@@ -20,7 +23,12 @@ export function Navbar({ onStart }: { onStart: () => void }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200/70 bg-white/80 backdrop-blur">
+    <m.header
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+      className="sticky top-0 z-40 border-b border-gray-200/70 bg-white/80 backdrop-blur"
+    >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
         <a href="#tong-quan" className="flex items-center gap-2.5">
           <LogoMark />
@@ -52,16 +60,19 @@ export function Navbar({ onStart }: { onStart: () => void }) {
               Hồ sơ của tôi
             </Link>
           ) : (
-            <button
+            <m.button
               type="button"
               onClick={onStart}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
             >
               Bắt đầu miễn phí →
-            </button>
+            </m.button>
           )}
         </div>
       </div>
-    </header>
+      <ScrollProgress />
+    </m.header>
   );
 }
