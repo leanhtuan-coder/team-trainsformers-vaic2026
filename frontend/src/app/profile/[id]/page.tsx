@@ -642,6 +642,99 @@ const BRANCH_TIMELINE: Record<string, string[]> = {
   ]
 };
 
+// ── Dữ liệu mẫu dự phòng cho tài khoản Giám khảo VAIC 2026 ──
+const MOCK_JUDGE_PROFILE: any = {
+  profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
+  created_at: "2026-07-18T10:17:47.076Z",
+  evidence: [
+    {
+      evidence_id: "8abbc847-5f75-4c15-bb69-26db3dbaad55",
+      source_type: "assessment",
+      source_ref: "T&C Việt Nam — Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ",
+      claims: [
+        { group: "activity_interest", dimension: "Holland R", value: "1" },
+        { group: "activity_interest", dimension: "Holland I", value: "1" },
+        { group: "activity_interest", dimension: "Holland A", value: "1" },
+        { group: "activity_interest", dimension: "Holland S", value: "1" },
+        { group: "activity_interest", dimension: "Holland E", value: "1" },
+        { group: "activity_interest", dimension: "Holland C", value: "2" }
+      ],
+      user_confirmed: true
+    },
+    {
+      evidence_id: "3bb37af7-8906-4812-b7b4-c8f5e3f8a177",
+      source_type: "self_report",
+      source_ref: "qs-01-object",
+      claims: [{ group: "activity_interest", dimension: "đối tượng làm việc cuốn hút", value: "Máy móc, thiết bị, xây dựng thứ gì đó bằng tay" }],
+      user_confirmed: true
+    },
+    {
+      evidence_id: "7976931e-5be6-4b7d-bbf7-806798a23a07",
+      source_type: "self_report",
+      source_ref: "qs-02-teamrole",
+      claims: [{ group: "ability_skill", dimension: "vai trò trong dự án nhóm", value: "Kết nối, hòa giải, chăm lo cảm xúc nhóm" }],
+      user_confirmed: true
+    },
+    {
+      evidence_id: "8b3518e0-55bb-4308-8457-26a5b18b5e21",
+      source_type: "assessment",
+      source_ref: "IDP — IELTS",
+      claims: [],
+      assessment_detail: { name: "IELTS", provider: "IDP", score: 7.5, scale_max: 9, percentile_top: 5, taken_at: "2026-07-18T15:23:06.178Z" },
+      confidence: "high",
+      collected_at: "2026-07-18T15:23:06.197Z",
+      user_confirmed: true
+    }
+  ],
+  snapshot: {
+    profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
+    generated_at: "2026-07-18T10:17:47.076Z",
+    evidence_coverage: {
+      total_evidence: 4, confirmed_evidence: 4,
+      by_source_type: { self_report: 2, document: 0, assessment: 2, interaction: 0, ai_inference: 0 },
+      groups_with_evidence: 4, groups_total: 8
+    }
+  }
+};
+
+const MOCK_JUDGE_PORTFOLIO: any = {
+  profile_id: "de3a0a26-b7c0-4222-9999-de3a0a26b7c0",
+  candidates: [
+    {
+      industry: "CNTT / Lập trình",
+      job_title: "Kỹ sư phần mềm (Software Engineer)",
+      details: {
+        market_demand_pct: 94, min_salary_million: 18.5, max_salary_million: 35.0,
+        stages: [
+          { stage_title: "Chặng 1: Xây dựng nền tảng (6 - 12 tháng)", action_plan: ["Học vững cấu trúc dữ liệu, thuật toán cơ bản bằng Python hoặc JavaScript", "Xây dựng 2 dự án web cá nhân đầy đủ (Frontend & Backend) và tải lên GitHub", "Duy trì GPA môn Tin học và Tiếng Anh trên lớp ở mức xuất sắc (trên 8.5)"] },
+          { stage_title: "Chặng 2: Học việc & Trải nghiệm thực tế (12 - 18 tháng)", action_plan: ["Tìm kiếm cơ hội thực tập tại các doanh nghiệp công nghệ", "Tham gia ít nhất một cuộc thi Hackathon hoặc lập trình cấp trường/thành phố", "Luyện thi chứng chỉ cloud cơ bản (AWS Practitioner / Azure Fundamentals)"] },
+          { stage_title: "Chặng 3: Ứng tuyển & Tăng tốc sự nghiệp (18 - 24 tháng)", action_plan: ["Hệ thống hóa kỹ năng chuyên sâu (React, Node.js, Database) cho phỏng vấn chuyên môn", "Chuẩn bị Portfolio cá nhân chuyên nghiệp và CV song ngữ (Anh - Việt)", "Tham gia phỏng vấn thử (Mock Interview) trên các nền tảng tuyển dụng"] }
+        ]
+      }
+    },
+    {
+      industry: "Dữ liệu / AI",
+      job_title: "Data Analyst",
+      details: {
+        market_demand_pct: 88, min_salary_million: 15.0, max_salary_million: 28.0,
+        stages: [
+          { stage_title: "Chặng 1: Nền tảng phân tích (6 tháng)", action_plan: ["Làm chủ phân tích số liệu trên Excel nâng cao (Pivot Table, VLOOKUP)", "Học SQL cơ bản để truy xuất dữ liệu từ các hệ quản trị CSDL", "Luyện tập vẽ biểu đồ phân tích dữ liệu trực quan bằng Tableau hoặc Power BI"] },
+          { stage_title: "Chặng 2: Nâng cao & Thực hành (6 - 12 tháng)", action_plan: ["Học các thư viện phân tích dữ liệu Python (Pandas, NumPy, Matplotlib)", "Thực hiện phân tích một tập dữ liệu tuyển dụng thô trên Kaggle", "Luyện kỹ năng Data Storytelling để thuyết trình báo cáo trước đám đông"] },
+          { stage_title: "Chặng 3: Định hình nghề nghiệp (12 - 18 tháng)", action_plan: ["Ứng tuyển vị trí thực tập sinh phân tích dữ liệu tại các Agency lớn", "Tự xây dựng Dashboard giám sát thị trường thực tế để làm phong phú portfolio", "Học kiến thức cơ bản về Big Data và Data Warehouse"] }
+        ]
+      }
+    }
+  ]
+};
+
+const MOCK_JUDGE_RIASEC: any = {
+  status: "success",
+  holland_code: "CSI",
+  confidence: { score: 0.85, reason: "Kết quả từ 1 bài test Holland chính thức (T&C Việt Nam) và dữ liệu tự khai nhất quán." },
+  scores: { R: 2, I: 4, A: 1, S: 3, E: 2, C: 6 }
+};
+// ──────────────────────────────────────────────────────────────
+
 function StudentPortalPageContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -703,27 +796,43 @@ function StudentPortalPageContent() {
       });
   }, []);
 
+  const DEMO_ID = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
+
   const loadAll = useCallback(async () => {
-    const resProfile = await fetch(`${API_BASE}/profile/${profileId}`);
-    if (resProfile.status === 404) {
-      setNotFound(true);
+    // ── Tài khoản giám khảo: dùng mock ngay, KHÔNG gọi backend ──
+    if (profileId === DEMO_ID) {
+      setData(MOCK_JUDGE_PROFILE);
+      setPortfolio(MOCK_JUDGE_PORTFOLIO);
+      setRiasec(MOCK_JUDGE_RIASEC);
+      setPathwayError(null);
       return;
     }
-    if (!resProfile.ok) throw new Error("profile_load_failed");
-    const profileJson = await resProfile.json();
-    setData(profileJson as ProfileResponse);
+    // ────────────────────────────────────────────────────────────
 
-    const resPath = await fetch(`${API_BASE}/profile/${profileId}/pathways`);
-    if (resPath.ok) {
-      setPortfolio((await resPath.json()) as PathwayPortfolio);
-      setPathwayError(null);
-    } else {
-      const err = await resPath.json().catch(() => null);
-      setPathwayError(err?.message || "Chưa tải được gợi ý lộ trình từ backend.");
+    try {
+      const resProfile = await fetch(`${API_BASE}/profile/${profileId}`);
+      if (resProfile.status === 404) {
+        setNotFound(true);
+        return;
+      }
+      if (!resProfile.ok) throw new Error("profile_load_failed");
+      const profileJson = await resProfile.json();
+      setData(profileJson as ProfileResponse);
+
+      const resPath = await fetch(`${API_BASE}/profile/${profileId}/pathways`);
+      if (resPath.ok) {
+        setPortfolio((await resPath.json()) as PathwayPortfolio);
+        setPathwayError(null);
+      } else {
+        const err = await resPath.json().catch(() => null);
+        setPathwayError(err?.message || "Chưa tải được gợi ý lộ trình từ backend.");
+      }
+
+      const resRia = await fetch(`${API_BASE}/profile/${profileId}/riasec`);
+      if (resRia.ok) setRiasec((await resRia.json()) as RiasecResult);
+    } catch (err) {
+      throw err;
     }
-
-    const resRia = await fetch(`${API_BASE}/profile/${profileId}/riasec`);
-    if (resRia.ok) setRiasec((await resRia.json()) as RiasecResult);
   }, [profileId]);
 
   useEffect(() => {
@@ -732,6 +841,9 @@ function StudentPortalPageContent() {
     if (ref && ref.profile_id === profileId) {
       setStudentName(ref.name);
       setStudentRegion(ref.region);
+    } else if (profileId === DEMO_ID) {
+      setStudentName("Giám khảo VAIC 2026");
+      setStudentRegion("Hà Nội");
     }
     loadAll()
       .catch(() => setLoadError(true))
