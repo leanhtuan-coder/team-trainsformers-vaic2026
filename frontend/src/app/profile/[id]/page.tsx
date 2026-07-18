@@ -728,10 +728,25 @@ const MOCK_JUDGE_PORTFOLIO: any = {
 };
 
 const MOCK_JUDGE_RIASEC: any = {
-  status: "success",
+  status: "ok",
   holland_code: "CSI",
-  confidence: { score: 0.85, reason: "Kết quả từ 1 bài test Holland chính thức (T&C Việt Nam) và dữ liệu tự khai nhất quán." },
-  scores: { R: 2, I: 4, A: 1, S: 3, E: 2, C: 6 }
+  confidence: {
+    score: 0.85,
+    completeness: 1.0,
+    evidence_ratio: 0.5,
+    consistency: 1.0,
+    reason: "Kết quả từ 1 bài test Holland chính thức (T&C Việt Nam) và dữ liệu tự khai nhất quán."
+  },
+  scores: [
+    { letter: "R", score: 2, reasons: ["Khảo sát Holland"] },
+    { letter: "I", score: 4, reasons: ["Khảo sát Holland"] },
+    { letter: "A", score: 1, reasons: ["Khảo sát Holland"] },
+    { letter: "S", score: 3, reasons: ["Khảo sát Holland"] },
+    { letter: "E", score: 2, reasons: ["Khảo sát Holland"] },
+    { letter: "C", score: 6, reasons: ["Khảo sát Holland"] }
+  ],
+  missing_axes: [],
+  conflicts: []
 };
 const JUDGE_DEMO_ID = "de3a0a26-b7c0-4222-9999-de3a0a26b7c0";
 // ──────────────────────────────────────────────────────────────
@@ -957,16 +972,7 @@ function StudentPortalPageContent() {
     );
   }
 
-  // Guard: nếu demo profile mà data chưa load, set mock ngay (tránh hiện màn hình lỗi)
-  if (profileId === JUDGE_DEMO_ID && !data) {
-    setData(MOCK_JUDGE_PROFILE);
-    setPortfolio(MOCK_JUDGE_PORTFOLIO);
-    setRiasec(MOCK_JUDGE_RIASEC);
-    setLoading(false);
-    return null;
-  }
-
-  if (notFound || loadError || !data) {
+  if ((notFound || loadError || !data) && profileId !== JUDGE_DEMO_ID) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F8FAFC] px-6 text-center">
         <LogoMark className="h-14 w-14" />
@@ -985,36 +991,43 @@ function StudentPortalPageContent() {
     );
   }
 
+  // Nếu là demo profile mà data vẫn chưa có (race condition), dùng mock
+  const resolvedData = data ?? (profileId === JUDGE_DEMO_ID ? MOCK_JUDGE_PROFILE : null);
+  const resolvedPortfolio = portfolio ?? (profileId === JUDGE_DEMO_ID ? MOCK_JUDGE_PORTFOLIO : null);
+  const resolvedRiasec = riasec ?? (profileId === JUDGE_DEMO_ID ? MOCK_JUDGE_RIASEC : null);
+
+  if (!resolvedData) return null;
+
   /* ----- Dữ liệu dẫn xuất ----- */
-  const { sorted } = calculateStrengths(data.evidence);
+  const { sorted } = calculateStrengths(resolvedData.evidence);
   const top3 = sorted.slice(0, 3);
 
   // Hiện chân dung (dù sơ bộ) khi có Holland Code — chỉ ẩn khi insufficient_data.
-  const riasecReady = riasec && riasec.status !== "insufficient_data" && !!riasec.holland_code;
-  const confCls = !riasec
+  const riasecReady = resolvedRiasec && resolvedRiasec.status !== "insufficient_data" && !!resolvedRiasec.holland_code;
+  const confCls = !resolvedRiasec
     ? ""
-    : riasec.confidence.score >= 0.7
+    : resolvedRiasec.confidence.score >= 0.7
       ? "bg-emerald-100 text-emerald-700"
-      : riasec.confidence.score >= 0.4
+      : resolvedRiasec.confidence.score >= 0.4
         ? "bg-amber-100 text-amber-700"
         : "bg-red-100 text-red-700";
-  const coverage = data.snapshot.evidence_coverage;
-  const assessments = data.evidence.filter((e) => e.source_type === "assessment");
+  const coverage = resolvedData.snapshot.evidence_coverage;
+  const assessments = resolvedData.evidence.filter((e: any) => e.source_type === "assessment");
 
-  const owned = getOwnedSkills(data.evidence, topSkills);
-  const toLearn = getSkillsToLearn(portfolio, topSkills);
+  const owned = getOwnedSkills(resolvedData.evidence, topSkills);
+  const toLearn = getSkillsToLearn(resolvedPortfolio, topSkills);
   const maxSkillPct = Math.max(...topSkills.map((s) => s.pct), 1);
 
   // Ứng viên nghề (loại ngành đã "Không phải tôi") — top 3 hiển thị, phần dư làm "Chân trời mới".
-  const visibleCandidates = portfolio ? portfolio.candidates.filter((c) => !rejected.includes(c.industry)) : [];
+  const visibleCandidates = resolvedPortfolio ? resolvedPortfolio.candidates.filter((c: any) => !rejected.includes(c.industry)) : [];
   const topCandidates = visibleCandidates.slice(0, 3);
   const horizonCandidates = visibleCandidates.slice(3, 5);
 
   // Tìm câu trả lời Q9 "độ mở định hướng nghề"
   let horizonVal = "đại học";
-  data.evidence.forEach((ev) => {
+  resolvedData.evidence.forEach((ev: any) => {
     if (ev.source_type === "self_report") {
-      ev.claims?.forEach((claim) => {
+      ev.claims?.forEach((claim: any) => {
         if (claim.dimension === "độ mở định hướng nghề") {
           horizonVal = claim.value;
         }
@@ -1065,8 +1078,8 @@ function StudentPortalPageContent() {
             type="button"
             onClick={() => setTab("market")}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "market"
-                ? "bg-[#004b58] text-white font-semibold shadow-sm"
-                : "text-white/80 hover:bg-white/5 hover:text-white"
+              ? "bg-[#004b58] text-white font-semibold shadow-sm"
+              : "text-white/80 hover:bg-white/5 hover:text-white"
               }`}
           >
             <div className="flex items-center gap-3">
@@ -1083,8 +1096,8 @@ function StudentPortalPageContent() {
             type="button"
             onClick={() => setTab("roadmap")}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "roadmap"
-                ? "bg-[#004b58] text-white font-semibold shadow-sm"
-                : "text-white/80 hover:bg-white/5 hover:text-white"
+              ? "bg-[#004b58] text-white font-semibold shadow-sm"
+              : "text-white/80 hover:bg-white/5 hover:text-white"
               }`}
           >
             <div className="flex items-center gap-3">
@@ -1101,8 +1114,8 @@ function StudentPortalPageContent() {
             type="button"
             onClick={() => setTab("chat")}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "chat"
-                ? "bg-[#004b58] text-white font-semibold shadow-sm"
-                : "text-white/80 hover:bg-white/5 hover:text-white"
+              ? "bg-[#004b58] text-white font-semibold shadow-sm"
+              : "text-white/80 hover:bg-white/5 hover:text-white"
               }`}
           >
             <div className="flex items-center gap-3">
@@ -1119,8 +1132,8 @@ function StudentPortalPageContent() {
             type="button"
             onClick={() => setTab("ledger")}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${activeTab === "ledger"
-                ? "bg-[#004b58] text-white font-semibold shadow-sm"
-                : "text-white/80 hover:bg-white/5 hover:text-white"
+              ? "bg-[#004b58] text-white font-semibold shadow-sm"
+              : "text-white/80 hover:bg-white/5 hover:text-white"
               }`}
           >
             <div className="flex items-center gap-3">
@@ -1438,10 +1451,10 @@ function StudentPortalPageContent() {
                       </p>
                     ) : (
                       <div className="grid gap-5 md:grid-cols-3">
-                        {topCandidates.map((c) => {
+                        {topCandidates.map((c: any) => {
                           const entryPct = Math.round(c.market_evidence.entry_level_ratio * 100);
                           const vocationalFriendly = c.market_evidence.entry_level_ratio >= 0.25;
-                          const gapSkill = c.market_evidence.top_skills.find((s) => !owned.has(s.name));
+                          const gapSkill = c.market_evidence.top_skills.find((s: any) => !owned.has(s.name));
                           return (
                             <article key={c.industry} className="rounded-2xl border border-gray-200/80 bg-white p-5 flex flex-col shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-brand/40">
                               {/* Header */}
@@ -1492,8 +1505,8 @@ function StudentPortalPageContent() {
                                       </b>
                                       {c.market_evidence.salary && (
                                         <span className={`ml-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full ${riasec && riasec.confidence.evidence_ratio > 0
-                                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                          : "bg-amber-50 text-amber-700 border border-amber-200"
                                           }`}>
                                           {riasec && riasec.confidence.evidence_ratio > 0 ? "Đã xác minh" : "Sơ khởi"}
                                         </span>
@@ -1568,7 +1581,7 @@ function StudentPortalPageContent() {
                           <span className="text-xs text-ink-soft">— nghề bạn có thể chưa nghĩ tới, nhưng kỹ năng khá gần với hồ sơ hiện tại</span>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2">
-                          {horizonCandidates.map((c) => (
+                          {horizonCandidates.map((c: any) => (
                             <div key={c.industry} className="rounded-2xl border border-dashed border-[#005c6d]/30 bg-[#005c6d]/5 p-4">
                               <div className="flex items-center justify-between gap-3">
                                 <h4 className="font-bold text-[#111827]">{c.industry}</h4>
@@ -1579,7 +1592,7 @@ function StudentPortalPageContent() {
                                 {c.market_evidence.salary ? `${fmtSalaryFromMillions(c.market_evidence.salary.median_trieu)}/tháng` : "thỏa thuận"}
                               </p>
                               <p className="mt-1.5 text-xs text-ink">
-                                Kỹ năng gần: {c.market_evidence.top_skills.slice(0, 3).map((s) => s.name).join(", ") || "—"}
+                                Kỹ năng gần: {c.market_evidence.top_skills.slice(0, 3).map((s: any) => s.name).join(", ") || "—"}
                               </p>
                             </div>
                           ))}
@@ -1803,8 +1816,8 @@ function StudentPortalPageContent() {
                     )}
                     <div className="flex flex-col max-w-[80%]">
                       <div className={`rounded-2xl p-4 text-sm leading-relaxed whitespace-pre-line shadow-sm border ${m.sender === "user"
-                          ? "bg-[#005c6d] text-white border-[#005c6d]"
-                          : "bg-white text-[#111827] border-gray-200"
+                        ? "bg-[#005c6d] text-white border-[#005c6d]"
+                        : "bg-white text-[#111827] border-gray-200"
                         }`}>
                         {m.text}
                       </div>
@@ -1886,11 +1899,11 @@ function StudentPortalPageContent() {
               </Card>
 
               <Card title="Evidence Ledger của bạn" sub="Mọi bằng chứng đã ghi nhận — nguồn gốc rõ ràng, truy vết được.">
-                {data.evidence.length === 0 ? (
+                {resolvedData.evidence.length === 0 ? (
                   <p className="text-sm text-[#464555]">Chưa có bằng chứng nào trong hồ sơ.</p>
                 ) : (
                   <ul className="thin-scroll max-h-[420px] space-y-2.5 overflow-y-auto pr-1">
-                    {[...data.evidence].reverse().map((ev) => {
+                    {[...resolvedData.evidence].reverse().map((ev) => {
                       const src = SOURCE_LABELS[ev.source_type] ?? { label: ev.source_type, icon: <IconBranch className="w-4 h-4 text-gray-400 shrink-0" /> };
                       return (
                         <li key={ev.evidence_id} className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm bg-white hover:border-[#C7C4D8] transition-all">
@@ -1907,8 +1920,8 @@ function StudentPortalPageContent() {
                             </p>
                           ) : (
                             ev.claims.length > 0 && (
-                              <p className="mt-0.5 truncate text-[#464555]" title={ev.claims.map((cl) => cl.value).join(" · ")}>
-                                {ev.claims[0].dimension}: {ev.claims.map((cl) => cl.value).join(" · ")}
+                              <p className="mt-0.5 truncate text-[#464555]" title={ev.claims.map((cl: any) => cl.value).join(" · ")}>
+                                {ev.claims[0].dimension}: {ev.claims.map((cl: any) => cl.value).join(" · ")}
                               </p>
                             )
                           )}
@@ -1923,7 +1936,7 @@ function StudentPortalPageContent() {
                     })}
                   </ul>
                 )}
-                {assessments.length === 0 && data.evidence.length > 0 && (
+                {assessments.length === 0 && resolvedData.evidence.length > 0 && (
                   <p className="mt-3 rounded-xl bg-brand-light/50 px-3.5 py-2.5 text-xs text-brand font-medium flex items-start gap-2">
                     <IconBulb className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                     <span>Hồ sơ mới chỉ có dữ liệu tự khai — thêm chứng chỉ/học bạ (độ tin cậy cao) để lộ trình chính xác hơn.</span>
