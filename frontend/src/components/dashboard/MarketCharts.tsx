@@ -41,6 +41,7 @@ function mapApiToMarketData(apiData: any): DynamicMarketData {
 
   const meta = {
     totalJobs: totalJobs,
+    analyzedJobs: totalAnalyzed,
     careerGroups: apiData.industry_insights ? apiData.industry_insights.length : 63,
     provinces: provincesCount,
     avgMatch: 92,
