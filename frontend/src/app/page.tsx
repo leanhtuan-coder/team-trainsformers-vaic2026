@@ -5,6 +5,7 @@
 // Khảo sát xong KHÔNG mở dashboard tại chỗ — redirect sang Student Portal /profile/[id].
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
@@ -96,34 +97,50 @@ export default function HomePage() {
     <MotionProvider>
       <Navbar onStart={openChat} />
       <main>
-        <Hero onStart={openChat} totalJobs={stats?.totalJobs} topSkill={stats?.topSkill} />
+        {/* Wrapper watermark — bọc Hero + Dashboard */}
+        <div className="relative">
+          {/* Nội dung */}
+          <Hero onStart={openChat} totalJobs={stats?.totalJobs} topSkill={stats?.topSkill} />
 
-        {/* Dashboard thị trường CHUNG (công khai) — dữ liệu thật từ GET /api/market/snapshot */}
-        <section
-          id="dashboard"
-          aria-labelledby="dashboard-heading"
-          className="scroll-mt-20 px-4 pb-20 md:px-6"
-        >
-          <div className="mx-auto max-w-6xl">
-            <Reveal className="mb-7 text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
-                Dữ liệu thị trường · Tương tác trực tiếp
-              </p>
-              <h2 id="dashboard-heading" className="mt-3 text-3xl font-extrabold text-ink md:text-4xl">
-                Khám phá thị trường việc làm hôm nay
-              </h2>
-              <p className="mx-auto mt-3 max-w-xl text-ink-soft">
-                Lọc theo vùng và khối ngành — tổng hợp từ tin tuyển dụng thật trên toàn quốc.
-              </p>
-            </Reveal>
-            <Reveal
-              variant={scaleIn}
-              className="relative rounded-3xl border border-gray-200 bg-white p-4 shadow-2xl shadow-brand-deep/10 md:p-6"
-            >
-              <MarketCharts onStart={openChat} />
-            </Reveal>
+          {/* Dashboard thị trường CHUNG (công khai) — dữ liệu thật từ GET /api/market/snapshot */}
+          <section
+            id="dashboard"
+            aria-labelledby="dashboard-heading"
+            className="scroll-mt-20 px-4 pb-20 md:px-6"
+          >
+            <div className="mx-auto max-w-6xl">
+              <Reveal className="mb-7 text-center">
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
+                  Dữ liệu thị trường · Tương tác trực tiếp
+                </p>
+                <h2 id="dashboard-heading" className="mt-3 text-3xl font-extrabold text-ink md:text-4xl">
+                  Khám phá thị trường việc làm hôm nay
+                </h2>
+                <p className="mx-auto mt-3 max-w-xl text-ink-soft">
+                  Lọc theo vùng và khối ngành — tổng hợp từ tin tuyển dụng thật trên toàn quốc.
+                </p>
+              </Reveal>
+              <Reveal
+                variant={scaleIn}
+                className="relative rounded-3xl border border-gray-200 bg-white p-4 shadow-2xl shadow-brand-deep/10 md:p-6"
+              >
+                <MarketCharts onStart={openChat} />
+              </Reveal>
+            </div>
+          </section>
+
+          {/* Watermark logo — nằm trên nội dung nhưng mờ + không cản click */}
+          <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center overflow-hidden" aria-hidden="true">
+            <Image
+              src="/logo.png"
+              alt=""
+              width={1400}
+              height={1400}
+              priority
+              className="select-none opacity-[0.06] w-[90vw] max-w-[1400px] h-auto"
+            />
           </div>
-        </section>
+        </div>
 
         <TrustStat stats={stats} />
         <Problem />
