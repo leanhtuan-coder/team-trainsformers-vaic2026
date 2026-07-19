@@ -99,7 +99,7 @@ export function recommend(p: Omit<UserProfile, "recommendations" | "completedAt"
       why: "Bạn hướng về con người và tạo tác động — giáo dục cần đúng kiểu người như bạn.",
       skills: ["Kỹ năng giảng dạy", "Thiết kế bài giảng", "Giao tiếp"],
       path: p.studyHorizon === "đại học" ? "Đại học Sư phạm ~4 năm" : "Chứng chỉ nghiệp vụ + trợ giảng trung tâm",
-      evidence: ["Giáo dục: lương trung vị 18,5 triệu", "Nhu cầu ổn định"],
+      evidence: ["Giáo dục: lương trung bình 18,5 triệu", "Nhu cầu ổn định"],
     });
   }
   if (p.workStyle === "machine" || p.workStyle === "hands") {
@@ -130,7 +130,7 @@ export function recommend(p: Omit<UserProfile, "recommendations" | "completedAt"
       why: "Phương án an toàn, nhu cầu luôn có — hợp người cẩn thận, thích con số.",
       skills: ["Excel", "Nguyên lý kế toán", "Thuế cơ bản"],
       path: p.studyHorizon === "đại học" ? "Đại học Kế toán ~4 năm" : "Cao đẳng ~2 năm + chứng chỉ",
-      evidence: ["Kinh doanh/Kế toán: 20% tin tuyển dụng", "Lương trung vị ~20 triệu"],
+      evidence: ["Kinh doanh/Kế toán: 20% tin tuyển dụng", "Lương trung bình ~20 triệu"],
     });
   }
   return recs.slice(0, 3);

@@ -6,7 +6,8 @@
   "scripts": {
     "ingest": "tsx src/ingest_jobs.ts",
     "summarize:market": "node src/summarize_market_signal.mjs",
-    "analyze:roles": "node src/analyze_role_insights.mjs"
+    "analyze:roles": "node src/analyze_role_insights.mjs",
+    "gen:demo": "tsx src/gen_market_demo_data.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

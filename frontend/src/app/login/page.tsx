@@ -120,7 +120,7 @@ export default function LoginPage() {
           <p className="mt-2 text-sm text-center text-gray-500">
             Chưa có tài khoản?{" "}
             <Link href="/register" className="text-[#005c6d] font-semibold hover:underline">
-              Đăng ký miễn phí
+              Đăng ký ngay
             </Link>
           </p>
         </div>

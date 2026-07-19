@@ -1,13 +1,16 @@
 "use client";
 
 // Biểu đồ bong bóng động (bubble race) việc làm 2000–2025 — thuần SVG/CSS, không chart lib.
-// Mỗi bong bóng = một nhóm ngành. Trục X = quy mô lao động (thang log), trục Y = tăng trưởng so với
-// năm trước, kích thước = quy mô lao động, màu = khu vực. Số năm hiển thị lớn mờ phía sau (watermark),
-// animation chạy qua từng năm, mỗi năm 1 giây.
+// Mỗi bong bóng = một nhóm ngành. Trục X = quy mô lao động (thang log), trục Y = thay đổi số lao động
+// so với năm trước (đơn vị lao động, âm/dương), kích thước = quy mô lao động, màu = khu vực.
+// Số năm hiển thị lớn mờ phía sau (watermark), animation chạy qua từng năm, mỗi năm 1 giây.
+// Bấm một bong bóng: tách riêng nó (các bong bóng khác blur + mất màu) và có tuỳ chọn hiện
+// đường đi của nó qua các năm (trail kiểu Gapminder, vẽ tới vị trí hiện tại của animation).
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { JOBS_SERIES, JOBS_YEARS } from "@/lib/jobsTimeSeries";
+import { JOBS_SERIES, JOBS_YEARS, JOBS_HISTORICAL_END } from "@/lib/jobsTimeSeries";
 import { fmtInt } from "@/lib/format";
+import { IconX } from "@/components/ui/icons";
 
 const VIEW_W = 760;
 const VIEW_H = 480;
@@ -37,7 +40,7 @@ interface PreparedSeries {
   cx: number[]; // toạ độ x theo từng năm (đã scale)
   cy: number[]; // toạ độ y theo từng năm
   r: number[]; // bán kính theo từng năm
-  growth: number[]; // % tăng trưởng theo năm
+  delta: number[]; // thay đổi số lao động so với năm trước (âm/dương)
 }
 
 function usePrefersReducedMotion(): boolean {
@@ -56,12 +59,12 @@ export function JobsBubbleRace() {
   const N = JOBS_YEARS.length;
   const reducedMotion = usePrefersReducedMotion();
 
-  const { series, xTicks, yTicks, y0Line } = useMemo(() => {
+  const { series, xTicks, yTicks } = useMemo(() => {
     const allValues = JOBS_SERIES.flatMap((s) => s.values);
     const vMin = Math.min(...allValues);
     const vMax = Math.max(...allValues);
 
-    // Trục X log để trải đều dải 15 → 24.000 nghìn lao động.
+    // Trục X log để trải đều dải 15 → 24.000 lao động.
     const logMin = Math.log10(vMin * 0.85);
     const logMax = Math.log10(vMax * 1.12);
     const xScale = (v: number) => PLOT_X0 + ((Math.log10(v) - logMin) / (logMax - logMin)) * (PLOT_X1 - PLOT_X0);
@@ -71,47 +74,52 @@ export function JobsBubbleRace() {
     const rootMax = Math.sqrt(vMax);
     const rScale = (v: number) => R_MIN + ((Math.sqrt(v) - rootMin) / (rootMax - rootMin)) * (R_MAX - R_MIN);
 
-    // Tăng trưởng YoY cho mọi ngành/năm để lấy miền trục Y cố định.
-    const growthOf = (values: number[]) =>
-      values.map((v, t) => (t === 0 ? 0 : ((v - values[t - 1]) / values[t - 1]) * 100));
-    const allGrowth = JOBS_SERIES.flatMap((s) => growthOf(s.values));
-    const gMin = Math.min(...allGrowth);
-    const gMax = Math.max(...allGrowth);
-    const gPad = (gMax - gMin) * 0.12;
-    const gLo = gMin - gPad;
-    const gHi = gMax + gPad;
-    const yScale = (g: number) => PLOT_Y1 - ((g - gLo) / (gHi - gLo)) * (PLOT_Y1 - PLOT_Y0);
+    // Thay đổi TUYỆT ĐỐI số lao động so với năm trước (đơn vị: lao động, có thể âm/dương)
+    // cho mọi ngành/năm để lấy miền trục Y cố định.
+    const deltaOf = (values: number[]) => values.map((v, t) => (t === 0 ? 0 : v - values[t - 1]));
+    const allDelta = JOBS_SERIES.flatMap((s) => deltaOf(s.values));
+    const dMin = Math.min(...allDelta);
+    const dMax = Math.max(...allDelta);
+    const dPad = (dMax - dMin) * 0.1;
+    const dLo = dMin - dPad;
+    const dHi = dMax + dPad;
+    const yScale = (d: number) => PLOT_Y1 - ((d - dLo) / (dHi - dLo)) * (PLOT_Y1 - PLOT_Y0);
 
     const prepared: PreparedSeries[] = JOBS_SERIES.map((s) => {
-      const growth = growthOf(s.values);
+      const delta = deltaOf(s.values);
       return {
         name: s.name,
         short: s.name.split(" / ")[0],
         sector: s.sector,
         color: SECTOR_COLORS[s.sector] ?? DEFAULT_COLOR,
         cx: s.values.map(xScale),
-        cy: growth.map(yScale),
+        cy: delta.map(yScale),
         r: s.values.map(rScale),
-        growth,
+        delta,
       };
     });
 
     const xTickVals = [10, 100, 1000, 10000].filter((v) => v >= vMin * 0.8 && v <= vMax * 1.2);
     const xTicks = xTickVals.map((v) => ({ v, x: xScale(v) }));
 
-    // Nhãn trục Y: các mốc % chẵn trong miền.
+    // Bước chia "đẹp" cho trục Y (dải lao động rộng nên chọn bội của 1/2/5·10^n).
+    const rawStep = (dHi - dLo) / 6;
+    const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const norm = rawStep / mag;
+    const niceStep = (norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10) * mag;
     const yTickVals: number[] = [];
-    const step = 5;
-    for (let g = Math.ceil(gLo / step) * step; g <= gHi; g += step) yTickVals.push(g);
-    const yTicks = yTickVals.map((g) => ({ g, y: yScale(g) }));
+    for (let d = Math.ceil(dLo / niceStep) * niceStep; d <= dHi; d += niceStep) yTickVals.push(d);
+    const yTicks = yTickVals.map((d) => ({ d, y: yScale(d) }));
 
-    return { series: prepared, xTicks, yTicks, y0Line: yScale(0) };
+    return { series: prepared, xTicks, yTicks };
   }, []);
 
   // progress ∈ [0, N-1] — phần nguyên là năm, phần thập phân là tween giữa hai năm.
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [showTrail, setShowTrail] = useState(true);
   const rafRef = useRef<number | null>(null);
   const lastTsRef = useRef<number | null>(null);
   const hasAutoStarted = useRef(false);
@@ -165,6 +173,7 @@ export function JobsBubbleRace() {
 
   const yearIndex = clamp(Math.round(progress), 0, N - 1);
   const year = JOBS_YEARS[yearIndex];
+  const isForecast = year > JOBS_HISTORICAL_END; // 2026–2030 là dự báo
   const atEnd = progress >= N - 1;
 
   const togglePlay = () => {
@@ -194,9 +203,35 @@ export function JobsBubbleRace() {
     }))
     .sort((a, b) => b.r - a.r);
 
+  const selectedSeries = selected ? series.find((s) => s.name === selected) ?? null : null;
+
+  // Đường đi của bong bóng được chọn — vẽ từ 2000 tới vị trí hiện tại của animation,
+  // chấm mốc từng năm, nhãn năm ở các mốc chia hết cho 5.
+  let trailD = "";
+  const trailMarks: { x: number; y: number; year: number; isMajor: boolean }[] = [];
+  if (selectedSeries && showTrail) {
+    const pts: [number, number][] = [];
+    for (let t = 0; t <= i0; t++) {
+      pts.push([selectedSeries.cx[t], selectedSeries.cy[t]]);
+      trailMarks.push({
+        x: selectedSeries.cx[t],
+        y: selectedSeries.cy[t],
+        year: JOBS_YEARS[t],
+        isMajor: JOBS_YEARS[t] % 5 === 0,
+      });
+    }
+    if (frac > 0) {
+      pts.push([
+        lerp(selectedSeries.cx[i0], selectedSeries.cx[i1], frac),
+        lerp(selectedSeries.cy[i0], selectedSeries.cy[i1], frac),
+      ]);
+    }
+    trailD = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  }
+
   const hoveredFrame = hovered ? frame.find((f) => f.s.name === hovered) : null;
   const hoveredValue = hovered ? JOBS_SERIES.find((s) => s.name === hovered)?.values[yearIndex] : undefined;
-  const hoveredGrowth = hovered ? series.find((s) => s.name === hovered)?.growth[yearIndex] : undefined;
+  const hoveredDelta = hovered ? series.find((s) => s.name === hovered)?.delta[yearIndex] : undefined;
 
   const sectors = Object.keys(SECTOR_COLORS);
 
@@ -239,14 +274,42 @@ export function JobsBubbleRace() {
         </div>
       </div>
 
+      {/* Thanh trạng thái khi đã chọn một bong bóng */}
+      {selectedSeries && (
+        <div className="fade-up mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl bg-brand-light/60 px-3.5 py-2.5 text-sm">
+          <span className="inline-flex items-center gap-2 font-semibold text-ink">
+            <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: selectedSeries.color }} />
+            {selectedSeries.name}
+          </span>
+          <label className="inline-flex cursor-pointer items-center gap-1.5 text-ink-soft">
+            <input
+              type="checkbox"
+              checked={showTrail}
+              onChange={(e) => setShowTrail(e.target.checked)}
+              className="accent-brand"
+            />
+            Hiện đường đi theo thời gian
+          </label>
+          <button
+            type="button"
+            onClick={() => setSelected(null)}
+            aria-label="Bỏ chọn ngành"
+            className="ml-auto rounded-lg p-1.5 text-ink-soft transition-colors hover:bg-white hover:text-ink"
+          >
+            <IconX />
+          </button>
+        </div>
+      )}
+
       <div className="relative">
         <svg
           viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
           className="h-auto w-full"
+          onClick={() => setSelected(null)}
           role="img"
-          aria-label={`Biểu đồ bong bóng việc làm theo ngành, năm ${year}. Trục ngang là quy mô lao động (thang log), trục dọc là tăng trưởng so với năm trước, kích thước bong bóng theo quy mô lao động.`}
+          aria-label={`Biểu đồ bong bóng việc làm theo ngành, năm ${year}${isForecast ? " (dự báo)" : ""}. Trục ngang là quy mô lao động (thang log), trục dọc là thay đổi số lao động so với năm trước, kích thước bong bóng theo quy mô lao động.`}
         >
-          {/* Watermark năm — phía sau, lớn và mờ */}
+          {/* Watermark năm — phía sau, lớn và mờ. Năm dự báo (2026+) đổi sang màu cam. */}
           <text
             x={(PLOT_X0 + PLOT_X1) / 2}
             y={(PLOT_Y0 + PLOT_Y1) / 2}
@@ -254,11 +317,24 @@ export function JobsBubbleRace() {
             dominantBaseline="central"
             fontSize={220}
             fontWeight={800}
-            className="fill-ink"
-            style={{ opacity: 0.05, letterSpacing: "-0.02em" }}
+            fill={isForecast ? "#E8A13A" : "#10312E"}
+            style={{ opacity: isForecast ? 0.11 : 0.05, letterSpacing: "-0.02em" }}
           >
             {year}
           </text>
+          {isForecast && (
+            <text
+              x={(PLOT_X0 + PLOT_X1) / 2}
+              y={(PLOT_Y0 + PLOT_Y1) / 2 + 92}
+              textAnchor="middle"
+              fontSize={22}
+              fontWeight={800}
+              fill="#CE8A25"
+              style={{ opacity: 0.55, letterSpacing: "0.35em" }}
+            >
+              DỰ BÁO
+            </text>
+          )}
 
           {/* Lưới trục X (log) */}
           {xTicks.map((t) => (
@@ -270,26 +346,27 @@ export function JobsBubbleRace() {
             </g>
           ))}
 
-          {/* Lưới trục Y + đường 0% đậm */}
+          {/* Lưới trục Y + đường 0 (không đổi so với năm trước) đậm */}
           {yTicks.map((t) => (
-            <g key={`y-${t.g}`}>
+            <g key={`y-${t.d}`}>
               <line
                 x1={PLOT_X0}
                 y1={t.y}
                 x2={PLOT_X1}
                 y2={t.y}
-                stroke={t.g === 0 ? "#CBD5D3" : "#EDF1F0"}
-                strokeWidth={t.g === 0 ? 1.5 : 1}
+                stroke={t.d === 0 ? "#CBD5D3" : "#EDF1F0"}
+                strokeWidth={t.d === 0 ? 1.5 : 1}
               />
               <text x={PLOT_X0 - 8} y={t.y + 4} textAnchor="end" className="fill-ink-soft" fontSize={11}>
-                {t.g > 0 ? `+${t.g}` : t.g}%
+                {t.d > 0 ? "+" : ""}
+                {fmtInt(Math.round(t.d))}
               </text>
             </g>
           ))}
 
           {/* Nhãn trục */}
           <text x={(PLOT_X0 + PLOT_X1) / 2} y={VIEW_H - 8} textAnchor="middle" className="fill-ink-soft" fontSize={11} fontWeight={600}>
-            Quy mô lao động (nghìn người · thang log) →
+            Quy mô lao động (thang log) →
           </text>
           <text
             x={16}
@@ -300,25 +377,77 @@ export function JobsBubbleRace() {
             fontWeight={600}
             transform={`rotate(-90 16 ${(PLOT_Y0 + PLOT_Y1) / 2})`}
           >
-            Tăng trưởng so với năm trước ↑
+            Thay đổi lao động so với năm trước ↑
           </text>
+
+          {/* Đường đi của bong bóng được chọn */}
+          {selectedSeries && showTrail && trailD && (
+            <g className="pointer-events-none">
+              <path
+                d={trailD}
+                fill="none"
+                stroke={selectedSeries.color}
+                strokeWidth={2}
+                strokeOpacity={0.55}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+              {trailMarks.map((m) => (
+                <g key={m.year}>
+                  <circle cx={m.x} cy={m.y} r={m.isMajor ? 3.5 : 2} fill={selectedSeries.color} fillOpacity={0.85} />
+                  {m.isMajor && (
+                    <text
+                      x={m.x}
+                      y={m.y - 9}
+                      textAnchor="middle"
+                      fontSize={9.5}
+                      fontWeight={700}
+                      fill={selectedSeries.color}
+                      stroke="#fff"
+                      strokeWidth={3}
+                      paintOrder="stroke"
+                    >
+                      {m.year}
+                    </text>
+                  )}
+                </g>
+              ))}
+            </g>
+          )}
 
           {/* Bong bóng */}
           {frame.map(({ s, cx, cy, r }) => {
-            const isActive = hovered === s.name;
-            const dim = hovered != null && !isActive;
+            const isSelected = selected === s.name;
+            const isActive = hovered === s.name || isSelected;
+            const isBlurred = selected != null && !isSelected;
+            const dim = selected == null && hovered != null && !isActive;
             return (
               <g
                 key={s.name}
                 className="cursor-pointer"
-                style={{ opacity: dim ? 0.25 : 1, transition: "opacity .2s" }}
+                style={{
+                  opacity: isBlurred ? 0.35 : dim ? 0.25 : 1,
+                  filter: isBlurred ? "blur(3px) grayscale(85%)" : undefined,
+                  transition: "opacity .25s, filter .25s",
+                }}
                 onMouseEnter={() => setHovered(s.name)}
                 onMouseLeave={() => setHovered(null)}
                 tabIndex={0}
-                role="img"
-                aria-label={`${s.name}, khu vực ${s.sector}`}
+                role="button"
+                aria-pressed={isSelected}
+                aria-label={`${s.name}, khu vực ${s.sector} — bấm để tách riêng và xem đường đi qua các năm`}
                 onFocus={() => setHovered(s.name)}
                 onBlur={() => setHovered(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelected(isSelected ? null : s.name);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelected(isSelected ? null : s.name);
+                  }
+                }}
               >
                 <circle
                   cx={cx}
@@ -329,8 +458,16 @@ export function JobsBubbleRace() {
                   stroke={s.color}
                   strokeWidth={isActive ? 2.5 : 1.5}
                 />
-                {r > 22 && (
-                  <text x={cx} y={cy + 3.5} textAnchor="middle" fill={s.color} fontSize={r > 32 ? 11 : 9.5} fontWeight={700}>
+                {(r > 30 || isActive || isSelected) && (
+                  <text
+                    x={cx}
+                    y={cy + 3.5}
+                    textAnchor="middle"
+                    fill={s.color}
+                    fontSize={11}
+                    fontWeight={700}
+                    style={{ pointerEvents: "none" }}
+                  >
                     {s.short}
                   </text>
                 )}
@@ -350,12 +487,12 @@ export function JobsBubbleRace() {
           >
             <p className="font-bold">{hoveredFrame.s.name}</p>
             <p className="mt-0.5 text-white/85">
-              {year} · {hoveredValue != null ? fmtInt(Math.round(hoveredValue)) : "—"} nghìn lao động
-              {hoveredGrowth != null && yearIndex > 0 ? (
+              {year} · {hoveredValue != null ? fmtInt(Math.round(hoveredValue)) : "—"} lao động
+              {hoveredDelta != null && yearIndex > 0 ? (
                 <>
                   {" · "}
-                  {hoveredGrowth >= 0 ? "+" : ""}
-                  {hoveredGrowth.toFixed(1)}%
+                  {hoveredDelta >= 0 ? "+" : ""}
+                  {fmtInt(Math.round(hoveredDelta))} so với năm trước
                 </>
               ) : null}
             </p>

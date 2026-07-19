@@ -89,7 +89,7 @@ export function ProfileModal({ profile, onSave, onClose }: Props) {
             const ev1 = c.matched_profile_evidence[0];
             whyStr = `Bạn có thiên hướng "${ev1.value}" (khớp từ khóa: ${ev1.matched_tokens.join(", ")})`;
             if (c.market_evidence?.salary) {
-              whyStr += `, kết hợp mức lương trung vị ngành là ${c.market_evidence.salary.median_trieu} triệu/tháng.`;
+              whyStr += `, kết hợp mức lương trung bình ngành là ${c.market_evidence.salary.median_trieu} triệu/tháng.`;
             }
           } else {
             whyStr = `Khối ngành đang tuyển dụng sôi động với ${c.market_evidence?.posting_count || 0} tin tuyển dụng.`;
@@ -105,7 +105,7 @@ export function ProfileModal({ profile, onSave, onClose }: Props) {
               : "Yêu cầu kỹ thuật/học thuật sâu: Khuyên học Đại học chính quy",
             evidence: [
               `${c.market_evidence?.posting_count || 0} tin tuyển dụng`,
-              c.market_evidence?.salary ? `Lương trung vị: ${c.market_evidence.salary.median_trieu} triệu` : "Lương thỏa thuận",
+              c.market_evidence?.salary ? `Lương trung bình: ${c.market_evidence.salary.median_trieu} triệu` : "Lương thỏa thuận",
               `Cho người mới: ${(c.market_evidence?.entry_level_ratio * 100).toFixed(0)}%`
             ]
           };
