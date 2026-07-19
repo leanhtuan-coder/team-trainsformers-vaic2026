@@ -19,6 +19,8 @@ import { CtaBand } from "@/components/landing/CtaBand";
 import { Footer } from "@/components/landing/Footer";
 import { MarketCharts } from "@/components/dashboard/MarketCharts";
 import { ChatPanel } from "@/components/chat/ChatPanel";
+import { MotionProvider, Reveal } from "@/components/ui/motion";
+import { scaleIn } from "@/lib/animation";
 import { clearPortalRef, loadPortalRef, type PortalRef } from "@/lib/profile";
 
 interface MarketStats {
@@ -85,7 +87,7 @@ export default function HomePage() {
   };
 
   return (
-    <>
+    <MotionProvider>
       <Navbar onStart={openChat} />
       <main>
         <Hero onStart={openChat} totalJobs={stats?.totalJobs} />
@@ -97,7 +99,7 @@ export default function HomePage() {
           className="scroll-mt-20 px-4 pb-20 md:px-6"
         >
           <div className="mx-auto max-w-6xl">
-            <div className="mb-7 text-center">
+            <Reveal className="mb-7 text-center">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand">
                 Dữ liệu thị trường · Tương tác trực tiếp
               </p>
@@ -107,10 +109,13 @@ export default function HomePage() {
               <p className="mx-auto mt-3 max-w-xl text-ink-soft">
                 Lọc theo vùng và khối ngành — tổng hợp từ tin tuyển dụng thật trên toàn quốc.
               </p>
-            </div>
-            <div className="relative rounded-3xl border border-gray-200 bg-white p-4 shadow-2xl shadow-brand-deep/10 md:p-6">
+            </Reveal>
+            <Reveal
+              variant={scaleIn}
+              className="relative rounded-3xl border border-gray-200 bg-white p-4 shadow-2xl shadow-brand-deep/10 md:p-6"
+            >
               <MarketCharts onStart={openChat} />
-            </div>
+            </Reveal>
           </div>
         </section>
 
@@ -133,6 +138,6 @@ export default function HomePage() {
         onRetake={handleRetake}
         onViewPortal={handleViewPortal}
       />
-    </>
+    </MotionProvider>
   );
 }
