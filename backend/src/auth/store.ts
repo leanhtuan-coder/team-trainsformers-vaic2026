@@ -16,16 +16,30 @@ export interface Account {
 }
 
 const ACCOUNT_PATH = fileURLToPath(new URL("../../../data/accounts/accounts.json", import.meta.url));
-const SEEDED_ACCOUNT: Account = {
-  username: "minhnd",
-  email: "minhnd@careerradar.vn",
-  name: "Minh ND",
-  region: "Hà Nội",
-  password_salt: "careerradar-minhnd-v1",
-  password_hash: "358e128dcf84db865db01040e5cc5b136f241c581ab8fa4a497fe3e50e97ca2b9ff86fa28a2f648e97d235708c5246d373d841118608d98a63008898531e297e",
-  profile_id: "5a7f8c18-895b-4fb2-8711-10fe93afc326",
-  created_at: "2026-07-19T00:00:00.000Z",
-};
+const SEEDED_ACCOUNTS: Account[] = [
+  {
+    username: "minhnd",
+    email: "minhnd@careerradar.vn",
+    name: "Minh ND",
+    region: "Hà Nội",
+    password_salt: "careerradar-minhnd-v1",
+    password_hash: "358e128dcf84db865db01040e5cc5b136f241c581ab8fa4a497fe3e50e97ca2b9ff86fa28a2f648e97d235708c5246d373d841118608d98a63008898531e297e",
+    profile_id: "5a7f8c18-895b-4fb2-8711-10fe93afc326",
+    created_at: "2026-07-19T00:00:00.000Z",
+  },
+  {
+    // Tài khoản demo cho ban giám khảo VAIC 2026 — luôn được tự tạo lại nếu thiếu
+    // (kể cả sau khi filesystem tạm thời của Render bị reset), để judge luôn đăng nhập được.
+    username: "giamkhao",
+    email: "giamkhao@careerradar.vn",
+    name: "Ban Giám Khảo",
+    region: "Toàn quốc",
+    password_salt: "careerradar-giamkhao-v1",
+    password_hash: "131ca4e2c3c724d52d2a821d72ec302d6d41887ee0137bd038ed127271d54ec1a17f38b260ab6e864a9bb71b639fdd8914b73c4c0bf8840d896cee19fa0e27a8",
+    profile_id: "34263f3e-5bc3-4189-8acb-725203df0e61",
+    created_at: "2026-07-19T00:00:00.000Z",
+  },
+];
 
 function hashPassword(password: string, salt: string): string {
   return scryptSync(password, salt, 64).toString("hex");
@@ -44,8 +58,11 @@ async function readAccounts(): Promise<Account[]> {
   } catch (error: any) {
     if (error?.code !== "ENOENT") throw error;
   }
-  if (!accounts.some((account) => account.username === SEEDED_ACCOUNT.username)) {
-    accounts.push(SEEDED_ACCOUNT);
+  const missingSeeds = SEEDED_ACCOUNTS.filter(
+    (seed) => !accounts.some((account) => account.username === seed.username)
+  );
+  if (missingSeeds.length > 0) {
+    accounts.push(...missingSeeds);
     await writeAccounts(accounts);
   }
   return accounts;
