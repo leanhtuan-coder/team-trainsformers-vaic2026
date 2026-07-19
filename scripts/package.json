@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "ingest": "tsx src/ingest_jobs.ts"
+    "ingest": "tsx src/ingest_jobs.ts",
+    "gen:demo": "tsx src/gen_market_demo_data.ts"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
