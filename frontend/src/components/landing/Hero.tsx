@@ -1,7 +1,6 @@
 "use client";
 
 import { m } from "framer-motion";
-import Image from "next/image";
 import { META } from "@/lib/demoData";
 import { fmtInt } from "@/lib/format";
 import { EASE_OUT_EXPO, staggerContainer } from "@/lib/animation";
@@ -41,16 +40,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Logo phóng to, chìm làm watermark phía sau nội dung hero */}
-      <Image
-        src="/logo.png"
-        alt=""
-        aria-hidden="true"
-        width={950}
-        height={950}
-        priority
-        className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 -translate-y-[12%] select-none opacity-[0.07] md:h-[780px] md:w-[780px]"
-      />
+
 
       <div className="relative mx-auto max-w-3xl px-6 pb-12 pt-14 text-center md:pt-20">
         <m.p

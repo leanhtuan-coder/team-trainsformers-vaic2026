@@ -366,7 +366,7 @@ export function JobsBubbleRace() {
 
           {/* Nhãn trục */}
           <text x={(PLOT_X0 + PLOT_X1) / 2} y={VIEW_H - 8} textAnchor="middle" className="fill-ink-soft" fontSize={11} fontWeight={600}>
-            Quy mô lao động (thang log) →
+            Quy mô lao động →
           </text>
           <text
             x={16}
