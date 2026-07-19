@@ -61,6 +61,12 @@ export interface PathwayCandidate {
   relevance_score: number;
   matched_profile_evidence: MatchedProfileEvidence[];
   market_evidence: MarketSignalSnapshot["industry_insights"][number];
+  /** Có khi candidate được AI predict/rerank từ hồ sơ onboarding. */
+  ai_explanation?: string;
+  ai_reasons?: string[];
+  missing_skills?: string[];
+  next_step?: string;
+  ranking_source?: "ai" | "rule_based";
 }
 
 export interface PathwayPortfolio {
@@ -70,6 +76,11 @@ export interface PathwayPortfolio {
   is_personalized: boolean;
   candidates: PathwayCandidate[];
   data_limitations: string[];
+  prediction?: {
+    source: "ai" | "rule_based_fallback";
+    model?: string;
+    disclaimer?: string;
+  };
 }
 
 const MIN_PERSONALIZED_CANDIDATES = 3;
@@ -190,10 +201,10 @@ export function scoreCorpusAgainstProfile(
   return { score, matched_profile_evidence };
 }
 
-export function matchPathways(
+export function buildPathwayCandidates(
   snapshot: DerivedProfileSnapshot,
   market: MarketSignalSnapshot
-): PathwayPortfolio {
+): PathwayCandidate[] {
   const profileSources = collectProfileSources(snapshot);
   const riasec = extractRiasecScores(snapshot);
 
@@ -213,10 +224,18 @@ export function matchPathways(
     };
   });
 
-  const normalizedCandidates = allCandidates.map((c) => ({
+  return allCandidates.map((c) => ({
     ...c,
     relevance_score: normalizeToCeiling(c.relevance_score),
+    ranking_source: "rule_based" as const,
   }));
+}
+
+export function matchPathways(
+  snapshot: DerivedProfileSnapshot,
+  market: MarketSignalSnapshot
+): PathwayPortfolio {
+  const normalizedCandidates = buildPathwayCandidates(snapshot, market);
 
   const matched = normalizedCandidates
     .filter((c) => c.relevance_score > 0)
@@ -237,9 +256,10 @@ export function matchPathways(
     generated_at: new Date().toISOString(),
     is_personalized: isPersonalized,
     candidates,
+    prediction: { source: "rule_based_fallback" },
     data_limitations: [
       "Dữ liệu ngành hiện chỉ từ TopCV (thiên về khối văn phòng/kinh doanh/CNTT) — chưa có nguồn riêng cho tuyến học nghề/kỹ thuật (CADjob.vn hoặc ESCO), nên danh sách dưới đây CHƯA đại diện đầy đủ cho các lựa chọn học nghề.",
-      "Khớp hồ sơ với ngành hiện dùng đối chiếu từ khóa (rule-based, xác định) — CHƯA có bước LLM sinh giải thích tự nhiên bằng câu văn; cần cấu hình OPENAI_API_KEY hoặc GEMINI_API_KEY để bật bước đó.",
+      "Khi AI predict không được cấu hình hoặc tạm lỗi, hệ thống tự dùng đối chiếu từ khóa và Holland Code để luồng onboarding không bị gián đoạn.",
     ],
   };
 }

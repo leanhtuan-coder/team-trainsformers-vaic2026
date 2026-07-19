@@ -8,9 +8,10 @@ import { scoreRiasecWithGroq, isGroqConfigured, type QuestionAnswer } from "../l
 import { scoreRiasecFallback } from "../profile/riasecFallback.js";
 import type { AssessmentDetail, Evidence, Profile } from "../profile/schema.js";
 import { loadProfile, saveProfile } from "../profile/store.js";
-import { matchPathways } from "../matching/engine.js";
+import { buildPathwayCandidates, matchPathways } from "../matching/engine.js";
 import { getJobTitleBranches } from "../matching/jobTitles.js";
 import { loadMarketSnapshot } from "./market.js";
+import { isIndustrySuggestConfigured, suggestIndustriesWithAi } from "../llm/industrySuggest.js";
 
 const router = Router();
 
@@ -243,71 +244,59 @@ router.post("/:id/riasec/tiebreak", async (req, res) => {
   res.json(scoreRiasec(profile));
 });
 
-/** Pathway Portfolio (Slice C, bước rule-based — xem backend/src/matching/engine.ts). */
+/** Pathway Portfolio sau onboarding: AI predict ngành, rule-based làm fallback an toàn. */
 router.get("/:id/pathways", async (req, res) => {
   const profile = await loadProfile(req.params.id);
   if (!profile) return res.status(404).json({ error: "profile_not_found" });
 
   try {
     const market = await loadMarketSnapshot();
-    const portfolio = matchPathways(buildSnapshot(profile), market);
+    const snapshot = buildSnapshot(profile);
+    let portfolio = matchPathways(snapshot, market);
 
-    // Sinh AI explanation cho top 3 candidates bằng NVIDIA NIM (Llama 3.1 70B)
-    const apiKey = process.env.NVIDIA_API_KEY;
-    if (apiKey && portfolio.candidates.length > 0) {
-      const top3 = portfolio.candidates.slice(0, 3);
-      const snap = buildSnapshot(profile);
-      const studentName = snap.groups?.goals_exploration?.find(d => d.dimension === "tên")?.values?.[0]?.value || "Học sinh";
-      const hollandCode = scoreRiasec(profile).holland_code || "chưa rõ";
+    // AI predict từ module job_suggest được áp vào đúng luồng sau onboarding. AI chỉ được
+    // chọn ngành tồn tại trong snapshot; mọi lỗi provider/JSON đều rơi về portfolio rule-based.
+    if (isIndustrySuggestConfigured()) {
+      try {
+        const aiResult = await suggestIndustriesWithAi(snapshot, scoreRiasec(profile), market, 6);
+        const candidateByIndustry = new Map(
+          buildPathwayCandidates(snapshot, market).map((candidate) => [candidate.industry, candidate])
+        );
+        const aiCandidates = aiResult.suggestions.flatMap((suggestion) => {
+          const candidate = candidateByIndustry.get(suggestion.industry);
+          if (!candidate) return [];
+          return [{
+            ...candidate,
+            relevance_score: suggestion.match_score,
+            ai_explanation: suggestion.reasons.join(" "),
+            ai_reasons: suggestion.reasons,
+            missing_skills: suggestion.missing_skills,
+            next_step: suggestion.next_step,
+            ranking_source: "ai" as const,
+          }];
+        });
 
-      const promises = top3.map(async (c: any) => {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 4000); // 4 giây timeout
-        try {
-          const matchedDetails = c.matched_profile_evidence
-            .map((e: any) => `- ${e.dimension}: ${e.value} ${e.matched_tokens.length ? '(khớp: ' + e.matched_tokens.join(', ') + ')' : ''}`)
-            .join("\n");
-
-          const systemPrompt = `Bạn là trợ lý AI hướng nghiệp thông minh La Bàn. Nhiệm vụ của bạn là giải thích ngắn gọn, súc tích (1-2 câu) lý do vì sao một ngành nghề phù hợp với học sinh dựa trên Holland Code và bằng chứng của học sinh đó. Trả lời bằng Tiếng Việt tự nhiên, truyền cảm hứng và mang tính xây dựng.`;
-
-          const userPrompt = `Học sinh: ${studentName}
-Holland Code: ${hollandCode}
-Ngành đang xét: ${c.industry}
-Bằng chứng khớp nối:
-${matchedDetails}
-
-Hãy viết một lời giải thích ngắn gọn (tối đa 2 câu) giải thích trực tiếp cho học sinh lý do ngành này rất phù hợp với họ. Xưng hô là 'La Bàn' và 'bạn'.`;
-
-          const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${apiKey}`,
-              "Content-Type": "application/json"
+        if (aiCandidates.length > 0) {
+          const selected = new Set(aiCandidates.map((candidate) => candidate.industry));
+          const fallbackTail = portfolio.candidates.filter((candidate) => !selected.has(candidate.industry));
+          portfolio = {
+            ...portfolio,
+            is_personalized: true,
+            candidates: [...aiCandidates, ...fallbackTail].slice(0, 6),
+            data_limitations: [
+              portfolio.data_limitations[0],
+              "AI xếp hạng ngành từ hồ sơ onboarding và market snapshot; kết quả được kiểm tra để chỉ chứa ngành có trong dữ liệu thị trường, nhưng vẫn là gợi ý tham khảo.",
+            ],
+            prediction: {
+              source: "ai",
+              model: aiResult.model,
+              disclaimer: aiResult.disclaimer,
             },
-            body: JSON.stringify({
-              model: "meta/llama-3.1-70b-instruct",
-              messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: userPrompt }
-              ],
-              temperature: 0.5,
-              max_tokens: 256
-            }),
-            signal: controller.signal
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            c.ai_explanation = result.choices?.[0]?.message?.content?.trim() || "";
-          }
-        } catch (err) {
-          console.error(`Lỗi sinh giải thích AI cho ngành ${c.industry}:`, err);
-        } finally {
-          clearTimeout(timeout);
+          };
         }
-      });
-
-      await Promise.all(promises);
+      } catch (err) {
+        console.error("[industry-suggest] AI predict lỗi, dùng rule-based fallback:", err);
+      }
     }
 
     res.json(portfolio);
@@ -315,7 +304,7 @@ Hãy viết một lời giải thích ngắn gọn (tối đa 2 câu) giải th�
     console.error("Lỗi lấy pathways:", err);
     res.status(503).json({
       error: "market_signal_snapshot_unavailable",
-      message: "Chưa có data/processed/market_signal_snapshot.json — chạy `npm run ingest` trước.",
+      message: "Không đọc được market snapshot — kiểm tra INDUSTRY_MARKET_PATH hoặc chạy `npm run ingest`.",
     });
   }
 });

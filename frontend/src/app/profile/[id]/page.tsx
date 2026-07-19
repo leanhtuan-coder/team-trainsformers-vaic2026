@@ -89,12 +89,21 @@ interface PathwayCandidate {
     top_provinces: { name: string; count: number }[];
   };
   ai_explanation?: string;
+  ai_reasons?: string[];
+  missing_skills?: string[];
+  next_step?: string;
+  ranking_source?: "ai" | "rule_based";
 }
 
 interface PathwayPortfolio {
   is_personalized: boolean;
   candidates: PathwayCandidate[];
   data_limitations: string[];
+  prediction?: {
+    source: "ai" | "rule_based_fallback";
+    model?: string;
+    disclaimer?: string;
+  };
 }
 
 /* ---- Chặng 3: nhánh chức danh cụ thể trong 1 ngành — GET /api/profile/:id/jobs?industry=... ---- */
@@ -1245,12 +1254,15 @@ function StudentPortalPageContent() {
                           const entryPct = Math.round((c.market_evidence?.entry_level_ratio ?? 0) * 100);
                           const vocationalFriendly = (c.market_evidence?.entry_level_ratio ?? 0) >= 0.25;
                           const gapSkill = c.market_evidence?.top_skills?.find((s: any) => !owned.has(s.name));
+                          const suggestedGapSkill = c.missing_skills?.[0] || gapSkill?.name;
                           return (
                             <article key={c.industry} className="rounded-2xl border border-gray-200/80 bg-white p-5 flex flex-col shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-brand/40">
                               {/* Header */}
                               <div className="flex items-start justify-between gap-3">
                                 <div>
-                                  <span className="inline-flex rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase tracking-wide">Gợi ý tham khảo</span>
+                                  <span className="inline-flex rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase tracking-wide">
+                                    {c.ranking_source === "ai" ? "AI đề xuất" : "Gợi ý tham khảo"}
+                                  </span>
                                   <h4 className="mt-2 text-base font-extrabold text-[#111827] leading-tight">{c.industry}</h4>
                                 </div>
                                 <div className="relative flex items-center justify-center w-11 h-11 rounded-full border-[3px] border-[#16a34a] text-[#16a34a] font-bold text-xs shrink-0">
@@ -1330,8 +1342,10 @@ function StudentPortalPageContent() {
                                 <div className="rounded-xl border border-brand/20 bg-brand-light/40 p-3">
                                   <p className="font-bold uppercase tracking-wider text-[10px] text-brand">5 · Nếu — thì</p>
                                   <p className="mt-1 leading-relaxed text-ink">
-                                    {gapSkill ? (
-                                      <>Nếu em học thêm <b>{gapSkill.name}</b> → hồ sơ khớp ngành này rõ hơn.</>
+                                    {c.next_step ? (
+                                      <>{c.next_step}</>
+                                    ) : suggestedGapSkill ? (
+                                      <>Nếu em học thêm <b>{suggestedGapSkill}</b> → hồ sơ khớp ngành này rõ hơn.</>
                                     ) : (
                                       <>Em đã có nhiều kỹ năng cốt lõi — làm 1 dự án nhỏ để minh chứng là đủ mạnh.</>
                                     )}

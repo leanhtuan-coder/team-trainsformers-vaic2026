@@ -4,7 +4,15 @@ import path from "node:path";
 
 const router = Router();
 
-const PROCESSED_DIR = path.resolve(import.meta.dirname, "../../../data/processed");
+const PROJECT_ROOT = path.resolve(import.meta.dirname, "../../..");
+const DEFAULT_MARKET_SNAPSHOT_PATH = path.join(PROJECT_ROOT, "data/processed/market_signal_snapshot.json");
+
+/** Đường dẫn tương đối trong env luôn được hiểu từ project root, không phụ thuộc cwd khi deploy. */
+function marketSnapshotPath(): string {
+  const configured = String(process.env.INDUSTRY_MARKET_PATH || "").trim();
+  if (!configured) return DEFAULT_MARKET_SNAPSHOT_PATH;
+  return path.isAbsolute(configured) ? configured : path.resolve(PROJECT_ROOT, configured);
+}
 
 let cachedSnapshot: MarketSignalSnapshot | null = null;
 
@@ -23,8 +31,17 @@ export interface MarketSignalSnapshot {
 
 export async function loadMarketSnapshot(): Promise<MarketSignalSnapshot> {
   if (cachedSnapshot) return cachedSnapshot;
-  const raw = await readFile(path.join(PROCESSED_DIR, "market_signal_snapshot.json"), "utf-8");
-  cachedSnapshot = JSON.parse(raw);
+  const sourcePath = marketSnapshotPath();
+  const raw = await readFile(sourcePath, "utf-8");
+  const parsed: unknown = JSON.parse(raw);
+  if (
+    !parsed ||
+    typeof parsed !== "object" ||
+    !Array.isArray((parsed as Partial<MarketSignalSnapshot>).industry_insights)
+  ) {
+    throw new Error(`invalid_market_snapshot: ${sourcePath} cần có mảng industry_insights`);
+  }
+  cachedSnapshot = parsed as MarketSignalSnapshot;
   return cachedSnapshot!;
 }
 
@@ -35,7 +52,7 @@ router.get("/snapshot", async (_req, res) => {
   } catch {
     res.status(503).json({
       error: "market_signal_snapshot_unavailable",
-      message: "Chưa có data/processed/market_signal_snapshot.json — chạy `npm run ingest` trước.",
+      message: "Không đọc được market snapshot — kiểm tra INDUSTRY_MARKET_PATH hoặc chạy `npm run ingest`.",
     });
   }
 });
