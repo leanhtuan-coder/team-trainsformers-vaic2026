@@ -198,6 +198,9 @@ export function MarketCharts({ onStart, initialRegion, initialCluster, showCta =
   const activeHotLocal = dbData ? dbData.hotLocal : HOT_LOCAL;
   const activeClusterDemand = dbData ? dbData.clusterDemand : CLUSTER_DEMAND;
   const activeRegionDemand = dbData ? dbData.regionDemand : REGION_DEMAND;
+  const topClusterDemand = [...activeClusterDemand]
+    .sort((a, b) => b.jobs - a.jobs)
+    .slice(0, 7);
 
   const [region, setRegion] = useState(
     initialRegion && activeRegions.includes(initialRegion) ? initialRegion : ALL_REGIONS
@@ -320,10 +323,10 @@ export function MarketCharts({ onStart, initialRegion, initialCluster, showCta =
         <ChartCard
           className="lg:col-span-7"
           title="Khối ngành đang tuyển nhiều nhất"
-          sub="Số tin tuyển dụng trong snapshot — bấm vào một khối ngành để xem bạn có hợp không"
+          sub="Top 7 theo số tin tuyển dụng trong snapshot — bấm vào một khối ngành để xem bạn có hợp không"
         >
           <div className="space-y-3">
-            {activeClusterDemand.map((c) => {
+            {topClusterDemand.map((c) => {
               const active = !clusterFilterOn || c.cluster === cluster;
               const salary = salaryOf(c.cluster);
               return (
