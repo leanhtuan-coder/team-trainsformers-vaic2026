@@ -5,10 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { LogoMark } from "@/components/ui/Compass";
-import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
-import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
-import { linkSessionToProfile, friendlyProfileError } from "@/lib/linkProfile";
-import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
+import { friendlyAuthError, registerAccount } from "@/lib/auth";
+import { getBackendProfile, hasCompletedOnboarding, savePortalRef } from "@/lib/profile";
 
 const REGIONS = [
   "Hồ Chí Minh",
@@ -29,56 +27,34 @@ export default function RegisterPage() {
   const [region, setRegion] = useState("Hồ Chí Minh");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setInfo("");
-
-    if (!isSupabaseConfigured) {
-      setError("Chưa cấu hình Supabase — điền NEXT_PUBLIC_SUPABASE_URL/ANON_KEY trong .env.local.");
-      return;
-    }
-    const supabase = getSupabase()!;
     setLoading(true);
 
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: email.trim(),
+      const account = await registerAccount({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
         password,
-        options: {
-          data: { full_name: name.trim(), region },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        region,
       });
-      if (signUpError) {
-        const msg = signUpError.message || "";
-        setError(
-          /already registered|already exists/i.test(msg)
-            ? "Email này đã có tài khoản. Hãy đăng nhập."
-            : /at least 6/i.test(msg)
-            ? "Mật khẩu cần tối thiểu 6 ký tự."
-            : msg || "Đăng ký thất bại. Vui lòng thử lại."
-        );
-        return;
-      }
-
-      if (data.session && data.user) {
-        // Email confirmation TẮT → đã có phiên, vào Portal luôn.
-        const profileId = await linkSessionToProfile(supabase, data.user, {
-          name: name.trim(),
-          region,
-        });
-        const profile = await getBackendProfile(profileId);
-        router.push(hasCompletedOnboarding(profile) ? `/profile/${profileId}` : `/onboarding?profileId=${profileId}`);
-      } else {
-        // Email confirmation BẬT → chờ user xác nhận qua email.
-        setInfo(`Đã gửi email xác nhận tới ${email.trim()}. Xác nhận xong rồi đăng nhập nhé.`);
-      }
-    } catch (err: any) {
-      setError(friendlyProfileError(err));
+      savePortalRef({
+        profile_id: account.profile_id,
+        name: account.name,
+        region: account.region,
+        completedAt: new Date().toISOString(),
+      });
+      const profile = await getBackendProfile(account.profile_id);
+      router.push(
+        hasCompletedOnboarding(profile)
+          ? `/profile/${account.profile_id}`
+          : `/onboarding?profileId=${account.profile_id}`
+      );
+    } catch (err: unknown) {
+      setError(friendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -109,12 +85,6 @@ export default function RegisterPage() {
           {error && (
             <div className="p-3.5 rounded-xl text-sm font-medium mb-5 bg-red-50 text-red-600 border border-red-100">
               {error}
-            </div>
-          )}
-
-          {info && (
-            <div className="p-3.5 rounded-xl text-sm font-medium mb-5 bg-emerald-50 text-emerald-700 border border-emerald-100">
-              {info}
             </div>
           )}
 
@@ -189,18 +159,8 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-gray-400 font-medium">Hoặc tiếp tục với</span>
-            <div className="flex-1 h-px bg-gray-100" />
-          </div>
-
-          {/* Social — Google login thật qua Supabase Auth */}
-          <GoogleLoginButton label="Đăng ký với Google" disabled={loading} />
-
           {/* Footer */}
-          <p className="mt-8 text-sm text-center text-gray-500">
+          <p className="mt-2 text-sm text-center text-gray-500">
             Đã có tài khoản?{" "}
             <Link href="/login" className="text-[#005c6d] font-semibold hover:underline">
               Đăng nhập ngay

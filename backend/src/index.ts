@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import marketRouter from "./routes/market.js";
 import profileRouter from "./routes/profile.js";
+import authRouter from "./routes/auth.js";
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/market", marketRouter);
 app.use("/api/profile", profileRouter);
+app.use("/api/auth", authRouter);
 
 // Express 5 tự forward lỗi async (throw trong route handler) tới đây — trả JSON gọn thay vì
 // trang lỗi mặc định. supabase_not_configured (thiếu env) là lỗi cấu hình dev, không phải lỗi user.

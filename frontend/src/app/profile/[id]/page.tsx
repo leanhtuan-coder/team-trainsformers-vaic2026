@@ -13,7 +13,6 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { LogoMark } from "@/components/ui/Compass";
 import { fmtInt, fmtSalaryFromMillions } from "@/lib/format";
 import { clearPortalRef, loadPortalRef, savePortalRef, addEvidence } from "@/lib/profile";
-import { getSupabase } from "@/lib/supabaseClient";
 import { MarketCharts } from "@/components/dashboard/MarketCharts";
 import {
   IconBranch,
@@ -608,12 +607,7 @@ function StudentPortalPageContent() {
     if (res.ok) setRiasec((await res.json()) as RiasecResult);
   };
 
-  const handleLogout = async () => {
-    try {
-      await getSupabase()?.auth.signOut();
-    } catch {
-      /* bỏ qua — vẫn dọn phiên local phía dưới */
-    }
+  const handleLogout = () => {
     clearPortalRef();
     router.push("/");
   };
@@ -1929,4 +1923,3 @@ export default function StudentPortalPage() {
     </Suspense>
   );
 }
-

@@ -5,14 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { LogoMark } from "@/components/ui/Compass";
-import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
-import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
-import { linkSessionToProfile, friendlyProfileError } from "@/lib/linkProfile";
+import { friendlyAuthError, loginAccount } from "@/lib/auth";
 import { getBackendProfile, hasCompletedOnboarding, savePortalRef } from "@/lib/profile";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -22,34 +20,24 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    if (!isSupabaseConfigured) {
-      setError("Chưa cấu hình Supabase — điền NEXT_PUBLIC_SUPABASE_URL/ANON_KEY trong .env.local.");
-      return;
-    }
-    const supabase = getSupabase()!;
     setLoading(true);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
+      const account = await loginAccount(identifier.trim(), password);
+      savePortalRef({
+        profile_id: account.profile_id,
+        name: account.name,
+        region: account.region,
+        completedAt: new Date().toISOString(),
       });
-      if (signInError || !data.user) {
-        const msg = signInError?.message || "";
-        setError(
-          /invalid login credentials/i.test(msg)
-            ? "Email hoặc mật khẩu không đúng."
-            : /email not confirmed/i.test(msg)
-              ? "Tài khoản chưa xác nhận email. Kiểm tra hộp thư của bạn nhé."
-              : msg || "Đăng nhập thất bại. Vui lòng thử lại."
-        );
-        return;
-      }
-      const profileId = await linkSessionToProfile(supabase, data.user);
-      const profile = await getBackendProfile(profileId);
-      router.push(hasCompletedOnboarding(profile) ? `/profile/${profileId}` : `/onboarding?profileId=${profileId}`);
-    } catch (err: any) {
-      setError(friendlyProfileError(err));
+      const profile = await getBackendProfile(account.profile_id);
+      router.push(
+        hasCompletedOnboarding(profile)
+          ? `/profile/${account.profile_id}`
+          : `/onboarding?profileId=${account.profile_id}`
+      );
+    } catch (err: unknown) {
+      setError(friendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -85,14 +73,15 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col">
             <label className="text-sm font-semibold text-gray-600 mb-2">
-              Email đăng nhập
+              Tên đăng nhập
             </label>
             <input
               className="w-full h-12 px-4 bg-white border-2 border-gray-100 rounded-xl focus:border-[#005c6d] focus:outline-none transition shadow-sm mb-4 text-sm text-[#111827] placeholder:text-gray-300"
-              type="email"
-              placeholder="ten@vi-du.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="VD: minhnd"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              autoComplete="username"
               required
               autoFocus
             />
@@ -120,25 +109,15 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading || !email.trim() || !password}
+              disabled={loading || !identifier.trim() || !password}
               className="w-full h-12 bg-[#005c6d] hover:bg-[#004b58] text-white font-semibold rounded-full transition mb-6 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#005c6d]/20"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Đăng nhập"}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-gray-400 font-medium">Hoặc tiếp tục với</span>
-            <div className="flex-1 h-px bg-gray-100" />
-          </div>
-
-          {/* Social — Google login thật qua Supabase Auth */}
-          <GoogleLoginButton label="Tài khoản Google" disabled={loading} />
-
           {/* Footer */}
-          <p className="mt-8 text-sm text-center text-gray-500">
+          <p className="mt-2 text-sm text-center text-gray-500">
             Chưa có tài khoản?{" "}
             <Link href="/register" className="text-[#005c6d] font-semibold hover:underline">
               Đăng ký miễn phí

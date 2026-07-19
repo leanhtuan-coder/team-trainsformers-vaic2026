@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "ingest": "tsx src/ingest_jobs.ts"
+    "ingest": "tsx src/ingest_jobs.ts",
+    "summarize:market": "node src/summarize_market_signal.mjs",
+    "analyze:roles": "node src/analyze_role_insights.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

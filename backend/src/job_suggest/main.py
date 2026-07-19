@@ -127,12 +127,10 @@ def suggestion_title(item: dict[str, Any]) -> str:
 def build_messages(profile: dict[str, Any], market: Any, limit: int) -> list[dict[str, str]]:
     system = """Bạn là chuyên gia hướng nghiệp tại Việt Nam. Đánh giá theo bằng chứng trong user_profile và
 market_data; không đoán dữ kiện còn thiếu. Nếu market_data có tin tuyển dụng cụ thể, chỉ chọn các job có sẵn
-và trả về đúng job_id. Nếu market_data là Markdown hoặc digest tổng hợp không có job_id, hãy gợi ý ngành/nhánh
-nghề phù hợp dựa trên tín hiệu thị trường trong đó. Không suy luận hay đề cập các thuộc tính nhạy cảm.
-Điểm match_score là
-0-100, phản ánh mức phù hợp hiện tại (không phải xác suất được tuyển). Trả về DUY NHẤT JSON hợp lệ:
+và trả về đúng job. Không suy luận hay đề cập các thuộc tính nhạy cảm.
+Trả về DUY NHẤT JSON hợp lệ:
 {
-  "suggestions": [{"job_id":"...","title":"...","match_score":0,"reasons":["..."],"missing_skills":["..."],"next_step":"..."}],
+  "suggestions": [{"job":"...","title":"...","match_score":0,"reasons":["..."],"missing_skills":["..."],"next_step":"..."}],
   "disclaimer":"..."
 }
 Mỗi reasons có tối đa 3 ý ngắn, tiếng Việt. Chọn tối đa số lượng yêu cầu."""
