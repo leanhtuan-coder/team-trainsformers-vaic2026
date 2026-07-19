@@ -109,6 +109,7 @@ export interface EvidenceItem {
   confidence: "low" | "medium" | "high" | string;
   collected_at: string;
   user_confirmed?: boolean;
+  supersedes?: string;
 }
 
 export interface ProfileApiResponse {
@@ -170,6 +171,8 @@ export async function addEvidence(
     source_ref?: string;
     confidence?: "low" | "medium" | "high";
     claims: EvidenceClaim[];
+    /** ID evidence bị thay thế (đúng nguyên tắc append-only — xem backend routes/profile.ts). */
+    supersedes?: string;
   }
 ) {
   return apiJson(`/profile/${profileId}/evidence`, {

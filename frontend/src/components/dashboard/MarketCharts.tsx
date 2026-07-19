@@ -134,6 +134,7 @@ function mapApiToMarketData(apiData: any): DynamicMarketData {
 type Props = {
   onStart: () => void;
   initialRegion?: string;
+  initialCluster?: string;
   showCta?: boolean;
 };
 
@@ -171,7 +172,7 @@ function Kpi({ label, value, delta, sub }: { label: string; value: string; delta
   );
 }
 
-export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) {
+export function MarketCharts({ onStart, initialRegion, initialCluster, showCta = true }: Props) {
   const [dbData, setDbData] = useState<DynamicMarketData | null>(null);
 
   useEffect(() => {
@@ -207,8 +208,16 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
     }
   }, [activeRegions, initialRegion]);
 
-  const [cluster, setCluster] = useState(ALL_CLUSTERS);
+  const [cluster, setCluster] = useState(
+    initialCluster && activeClusterDemand.some((c) => c.cluster === initialCluster) ? initialCluster : ALL_CLUSTERS
+  );
   const [ctaCluster, setCtaCluster] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialCluster && activeClusterDemand.some((c) => c.cluster === initialCluster)) {
+      setCluster(initialCluster);
+    }
+  }, [activeClusterDemand, initialCluster]);
 
   const isAllRegions = region === ALL_REGIONS;
   const regionInfo = activeRegionDemand.find((r) => r.region === region);

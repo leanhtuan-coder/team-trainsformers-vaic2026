@@ -31,7 +31,11 @@ const fadeUpLoad = {
   }),
 };
 
-export function Hero({ onStart }: { onStart: () => void }) {
+export function Hero({ onStart, totalJobs, topSkill }: { onStart: () => void; totalJobs?: number; topSkill?: { name: string; pct: number } }) {
+  const jobsCount = totalJobs || META.totalJobs;
+  const activeSkillName = topSkill?.name || TOP_SKILLS[0].name;
+  const activeSkillPct = topSkill?.pct || TOP_SKILLS[0].pct;
+
   return (
     <section id="tong-quan" aria-labelledby="hero-heading" className="relative overflow-hidden">
       {/* blob nền trôi chậm */}
@@ -74,7 +78,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
             <span className="text-accent">●</span> Nhu cầu tăng {HOT_LOCAL[0].growth}
           </p>
           <p className="text-ink-soft">
-            {TOP_SKILLS[0].name} {TOP_SKILLS[0].pct}% · SQL đang tăng
+            {activeSkillName} {activeSkillPct}% · SQL đang tăng
           </p>
         </m.div>
       </Parallax>
@@ -112,7 +116,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           initial="hidden"
           animate="visible"
         >
-          La Bàn Nghề phân tích hồ sơ năng lực của bạn và đối chiếu với {fmtInt(META.totalJobs)} tin
+          La Bàn Nghề phân tích hồ sơ năng lực của bạn và đối chiếu với {fmtInt(jobsCount)} tin
           tuyển dụng thật để đưa ra lộ trình nghề cụ thể — có giải thích, có tuyến học.
         </m.p>
 
@@ -147,7 +151,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           initial="hidden"
           animate="visible"
         >
-          ✓ Miễn phí cho học sinh · Dữ liệu từ {fmtInt(META.totalJobs)} tin tuyển dụng thật
+          ✓ Miễn phí cho học sinh · Dữ liệu từ {fmtInt(jobsCount)} tin tuyển dụng thật
         </m.p>
       </div>
     </section>

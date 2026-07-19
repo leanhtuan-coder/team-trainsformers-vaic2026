@@ -220,7 +220,7 @@ export default function LoginPage() {
           </div>
 
           <div className="absolute -top-2 -right-6 bg-white text-[#111827] text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg border border-gray-100 transform -rotate-6">
-            <span className="text-[#005c6d]">92%</span> Điểm khớp
+            <span className="text-[#005c6d]">✓</span> Đã khớp lộ trình
           </div>
         </div>
 

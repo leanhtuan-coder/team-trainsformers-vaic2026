@@ -167,18 +167,27 @@ function OnboardingContent() {
         .filter(([, text]) => text.trim())
         .map(([qId, text]) => ({ question_id: qId, answer: text.trim() }));
 
-      // Thêm thông tin cơ bản làm self_report
-      formattedAnswers.push(
-        { question_id: "age", answer: age },
-        { question_id: "gender", answer: gender },
-        { question_id: "current_location", answer: currentLoc },
-        { question_id: "prefer_location", answer: preferLoc }
-      );
-
       await fetch(`${API_BASE}/profile/${profileId}/quickstart`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers: formattedAnswers })
+      });
+
+      // 3. Gửi thông tin cơ bản lên Evidence Ledger
+      await fetch(`${API_BASE}/profile/${profileId}/evidence`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source_type: "self_report",
+          source_ref: "onboarding-basic",
+          confidence: "high",
+          claims: [
+            { group: "context_preferences", dimension: "tuổi", value: age },
+            { group: "context_preferences", dimension: "giới tính", value: gender },
+            { group: "context_preferences", dimension: "nơi ở hiện tại", value: currentLoc },
+            { group: "context_preferences", dimension: "vùng miền mong muốn làm việc", value: preferLoc }
+          ]
+        })
       });
 
       // 3. Gửi hồ sơ năng lực tự khai/chứng chỉ (nếu có nhập)
@@ -249,6 +258,14 @@ function OnboardingContent() {
           <LogoMark className="w-8 h-8 text-[#005c6d]" />
           <span className="font-bold text-lg text-[#005c6d]">CareerRadar</span>
         </div>
+        {profileId && !profileId.startsWith("u_") && (
+          <button
+            onClick={() => router.push(`/profile/${profileId}`)}
+            className="flex items-center gap-1.5 text-xs font-bold text-[#005c6d] hover:underline"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Quay lại Portal
+          </button>
+        )}
         <span className="text-xs font-semibold text-[#8a8981] bg-[#f4f2ec] px-3 py-1.5 rounded-full">
           Onboarding
         </span>

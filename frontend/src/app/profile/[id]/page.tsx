@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { LogoMark } from "@/components/ui/Compass";
 import { fmtInt, fmtSalaryFromMillions } from "@/lib/format";
-import { clearPortalRef, loadPortalRef } from "@/lib/profile";
+import { clearPortalRef, loadPortalRef, savePortalRef, addEvidence } from "@/lib/profile";
 import { getSupabase } from "@/lib/supabaseClient";
 import { MarketCharts } from "@/components/dashboard/MarketCharts";
 import {
@@ -55,6 +55,7 @@ interface EvidenceItem {
   };
   confidence: string;
   collected_at: string;
+  supersedes?: string;
 }
 
 interface ProfileResponse {
@@ -88,6 +89,7 @@ interface PathwayCandidate {
     top_skills: { name: string; count: number }[];
     top_provinces: { name: string; count: number }[];
   };
+  ai_explanation?: string;
 }
 
 interface PathwayPortfolio {
@@ -96,135 +98,25 @@ interface PathwayPortfolio {
   data_limitations: string[];
 }
 
-/* ------------------------ Thuật toán điểm nhóm ngành + cờ mâu thuẫn ------------------------ */
-
-interface GroupScore {
-  id: string;
-  score: number;
+/* ---- Chặng 3: nhánh chức danh cụ thể trong 1 ngành — GET /api/profile/:id/jobs?industry=... ---- */
+interface SkillWithTier {
   name: string;
-  desc: string;
-  gradient: string;
+  count: number;
+  required_count: number;
+  preferred_count: number;
+  tier: "buoc_phai_co" | "can_co" | "nen_co";
 }
 
-const calculateStrengths = (evidenceList: EvidenceItem[]) => {
-  // Gom câu trả lời quickstart theo dimension — câu multi (Q6) nối chuỗi để includes() quét được hết.
-  const quickstartAnswers: Record<string, string> = {};
-  evidenceList.forEach((ev) => {
-    if (ev.source_type === "self_report") {
-      ev.claims?.forEach((claim) => {
-        const prev = quickstartAnswers[claim.dimension];
-        quickstartAnswers[claim.dimension] = prev ? `${prev} | ${claim.value}` : claim.value;
-      });
-    }
-  });
-
-  const scores: Record<string, { score: number; name: string; desc: string; gradient: string }> = {
-    "1": { score: 0, name: "Công nghệ & Dữ liệu", desc: "Phân tích, viết code, quản trị hệ thống, xử lý con số", gradient: "from-teal-400 to-teal-600" },
-    "2": { score: 0, name: "Kinh doanh & Tiếp thị", desc: "Thuyết phục, thương lượng, lập kế hoạch kinh doanh, bán hàng", gradient: "from-amber-400 to-amber-600" },
-    "3": { score: 0, name: "Tài chính & Tổ chức", desc: "Kiểm toán, lưu trữ, tuân thủ quy trình, tối ưu ngân sách", gradient: "from-blue-400 to-blue-600" },
-    "4": { score: 0, name: "Kỹ thuật & Công nghệ vật lý", desc: "Chế tạo, sửa chữa máy móc, thiết kế phần cứng, vận hành thiết bị", gradient: "from-indigo-400 to-indigo-600" },
-    "5": { score: 0, name: "Y khoa & Khoa học sự sống", desc: "Nghiên cứu sinh học, hóa dược, chăm sóc bệnh nhân, điều trị", gradient: "from-emerald-400 to-emerald-600" },
-    "6": { score: 0, name: "Giáo dục & Dịch vụ xã hội", desc: "Giảng dạy, tư vấn tâm lý, hòa giải, tổ chức hoạt động cộng đồng", gradient: "from-pink-400 to-pink-600" },
-    "7": { score: 0, name: "Sản xuất & Nông nghiệp vận tải", desc: "Giao nhận, chuỗi cung ứng, trồng trọt, giám sát công trình", gradient: "from-orange-400 to-orange-600" },
-    "9": { score: 0, name: "Mỹ thuật & Thiết kế sáng tạo", desc: "Vẽ minh họa, thiết kế đồ họa, sáng tác nhạc, trang trí không gian", gradient: "from-purple-400 to-purple-600" },
-  };
-
-  const checkAnswer = (dim: string, keyword: string) => {
-    const val = quickstartAnswers[dim];
-    return Boolean(val && val.toLowerCase().includes(keyword.toLowerCase()));
-  };
-
-  // Q1
-  if (checkAnswer("đối tượng làm việc cuốn hút", "máy móc")) { scores["4"].score += 1; scores["7"].score += 1; }
-  if (checkAnswer("đối tượng làm việc cuốn hút", "con số")) { scores["3"].score += 1; scores["1"].score += 1; }
-  if (checkAnswer("đối tượng làm việc cuốn hút", "con người")) { scores["5"].score += 1; scores["6"].score += 1; }
-  if (checkAnswer("đối tượng làm việc cuốn hút", "ý tưởng")) { scores["9"].score += 1; scores["2"].score += 1; }
-
-  // Q2
-  if (checkAnswer("vai trò trong dự án nhóm", "dẫn dắt")) { scores["2"].score += 1; }
-  if (checkAnswer("vai trò trong dự án nhóm", "kế hoạch")) { scores["3"].score += 1; }
-  if (checkAnswer("vai trò trong dự án nhóm", "kết nối")) { scores["6"].score += 1; scores["5"].score += 1; }
-  if (checkAnswer("vai trò trong dự án nhóm", "khó nhất")) { scores["1"].score += 1; scores["4"].score += 1; }
-
-  // Q3
-  if (checkAnswer("nguồn gốc sự thỏa mãn", "sửa được")) { scores["4"].score += 1; scores["1"].score += 1; }
-  if (checkAnswer("nguồn gốc sự thỏa mãn", "tìm ra quy luật")) { scores["3"].score += 1; scores["1"].score += 1; }
-  if (checkAnswer("nguồn gốc sự thỏa mãn", "tiến bộ")) { scores["5"].score += 1; scores["6"].score += 1; }
-  if (checkAnswer("nguồn gốc sự thỏa mãn", "chưa ai làm")) { scores["9"].score += 1; scores["2"].score += 1; }
-
-  // Q4
-  if (checkAnswer("môn học hoạt động dễ chịu", "toán")) { scores["1"].score += 1; scores["4"].score += 1; scores["3"].score += 1; }
-  if (checkAnswer("môn học hoạt động dễ chịu", "văn")) { scores["6"].score += 1; scores["2"].score += 1; }
-  if (checkAnswer("môn học hoạt động dễ chịu", "sinh")) { scores["5"].score += 1; }
-  if (checkAnswer("môn học hoạt động dễ chịu", "mỹ thuật")) { scores["9"].score += 1; }
-
-  // Q5
-  if (checkAnswer("đối tượng muốn xây dựng", "vô hình")) { scores["1"].score += 1; }
-  if (checkAnswer("đối tượng muốn xây dựng", "sờ được")) { scores["4"].score += 1; scores["7"].score += 1; }
-  if (checkAnswer("đối tượng muốn xây dựng", "thuộc về con người")) { scores["6"].score += 1; }
-  if (checkAnswer("đối tượng muốn xây dựng", "thuộc về cái đẹp")) { scores["9"].score += 1; }
-
-  // Q6 (chọn tối đa 2)
-  if (checkAnswer("năng lực nổi trội tự nhận", "logic")) { scores["1"].score += 1; scores["3"].score += 1; scores["4"].score += 1; }
-  if (checkAnswer("năng lực nổi trội tự nhận", "viết")) { scores["2"].score += 1; scores["6"].score += 1; }
-  if (checkAnswer("năng lực nổi trội tự nhận", "nhớ chi tiết")) { scores["3"].score += 1; scores["5"].score += 1; }
-  if (checkAnswer("năng lực nổi trội tự nhận", "vẽ")) { scores["9"].score += 1; }
-  if (checkAnswer("năng lực nổi trội tự nhận", "tay chân")) { scores["4"].score += 1; scores["7"].score += 1; }
-
-  // Q7
-  if (checkAnswer("phương thức xử lý dữ liệu", "kiểm tra")) { scores["3"].score += 1; }
-  if (checkAnswer("phương thức xử lý dữ liệu", "tìm insight")) { scores["1"].score += 1; scores["2"].score += 1; }
-  if (checkAnswer("phương thức xử lý dữ liệu", "trình bày")) { scores["2"].score += 1; scores["6"].score += 1; }
-
-  // Q8
-  if (checkAnswer("môi trường làm việc mong muốn", "hiện trường")) { scores["4"].score += 1; scores["7"].score += 1; }
-  if (checkAnswer("môi trường làm việc mong muốn", "văn phòng")) { scores["3"].score += 1; }
-  if (checkAnswer("môi trường làm việc mong muốn", "tiếp xúc")) { scores["6"].score += 1; scores["2"].score += 1; }
-  if (checkAnswer("môi trường làm việc mong muốn", "tự do")) { scores["9"].score += 1; scores["1"].score += 1; }
-
-  // Q9
-  if (checkAnswer("độ mở định hướng nghề", "ổn định")) { scores["3"].score += 1; scores["6"].score += 1; scores["5"].score += 1; }
-  if (checkAnswer("độ mở định hướng nghề", "nghề mới")) { scores["1"].score += 1; scores["2"].score += 1; }
-  if (checkAnswer("độ mở định hướng nghề", "tự làm chủ")) { scores["9"].score += 1; scores["2"].score += 1; }
-
-  // Câu 10 phản chứng: trừ điểm + so với điểm nền (Q1-9) để bật cờ mâu thuẫn.
-  let hasConflict = false;
-  let conflictText = "";
-  const baseScores = JSON.parse(JSON.stringify(scores)) as typeof scores;
-
-  if (checkAnswer("yếu tố né tránh trong công việc", "lặp đi lặp lại")) {
-    scores["3"].score -= 1; scores["7"].score -= 1;
-    scores["2"].score += 1; scores["4"].score += 1; scores["6"].score += 1;
-    if (baseScores["3"].score >= 2) {
-      hasConflict = true;
-      conflictText = "Bạn quan tâm đến các quy tắc và tính tổ chức (Tài chính / Kế toán), nhưng lại e ngại công việc lặp đi lặp lại. Đây là điểm đáng khám phá khi chọn công việc cụ thể.";
-    }
-  } else if (checkAnswer("yếu tố né tránh trong công việc", "giao tiếp")) {
-    scores["2"].score -= 1; scores["6"].score -= 1;
-    scores["1"].score += 1; scores["3"].score += 1; scores["4"].score += 1;
-    if (baseScores["2"].score >= 2 || baseScores["6"].score >= 2) {
-      hasConflict = true;
-      conflictText = "Bạn e ngại việc thuyết phục hoặc tiếp xúc người lạ liên tục, dù mong muốn làm việc trong nhóm hoặc có tiềm năng dẫn dắt.";
-    }
-  } else if (checkAnswer("yếu tố né tránh trong công việc", "mơ hồ")) {
-    scores["9"].score -= 1; scores["2"].score -= 1;
-    scores["3"].score += 1; scores["4"].score += 1;
-    if (baseScores["9"].score >= 2) {
-      hasConflict = true;
-      conflictText = "Bạn hướng tới nghệ thuật và sự sáng tạo độc lập, nhưng lại e ngại môi trường làm việc mơ hồ, không có đáp án đúng.";
-    }
-  } else if (checkAnswer("yếu tố né tránh trong công việc", "áp lực")) {
-    scores["2"].score -= 1; scores["5"].score -= 1;
-    scores["3"].score += 1; scores["6"].score += 1;
-  }
-
-  const sorted: GroupScore[] = Object.entries(scores)
-    .map(([id, info]) => ({ id, ...info }))
-    .sort((a, b) => b.score - a.score);
-
-  const hasAnswers = Object.keys(quickstartAnswers).length > 0;
-  return { sorted, hasConflict, conflictText, hasAnswers };
-};
+interface JobTitleBranch {
+  title: string;
+  posting_count: number;
+  fit_score: number;
+  hiring_volume: "cao" | "vừa" | "thấp";
+  recommended: boolean;
+  entry_level_ratio: number;
+  salary: { median_trieu: number; min_trieu: number; max_trieu: number; sample_size: number } | null;
+  top_skills: SkillWithTier[];
+}
 
 /* --------------------------------- Tiện ích hiển thị --------------------------------- */
 
@@ -533,118 +425,6 @@ function careerTradeoffs(industry: string, entryRatio: number): string[] {
   return t;
 }
 
-interface JobBranch {
-  name: string;
-  isRecommended?: boolean;
-  requiredSkills: string[];
-  preferredSkills: string[];
-  optionalSkills: string[];
-  salaryRange: string;
-  fitPercentage: number;
-}
-
-const RAG_SKILL_MAP: Record<string, JobBranch[]> = {
-  "IT - Phần mềm": [
-    {
-      name: "Frontend Developer (Lập trình giao diện)",
-      isRecommended: true,
-      requiredSkills: ["HTML/CSS", "Javascript", "Giao tiếp"],
-      preferredSkills: ["React/Next.js", "UI/UX Design cơ bản", "Git/Github"],
-      optionalSkills: ["Typescript", "Tailwind CSS", "Tối ưu hiệu năng"],
-      salaryRange: "15 - 35 triệu/tháng",
-      fitPercentage: 85
-    },
-    {
-      name: "Backend Developer (Lập trình hệ thống)",
-      requiredSkills: ["Node.js/Express", "SQL/Database", "Làm việc nhóm"],
-      preferredSkills: ["RESTful API design", "Git/Github", "Cấu trúc dữ liệu & Thuật toán"],
-      optionalSkills: ["Docker", "Redis", "Bảo mật hệ thống"],
-      salaryRange: "18 - 40 triệu/tháng",
-      fitPercentage: 70
-    }
-  ],
-  "Kế toán": [
-    {
-      name: "Kế toán viên thuế",
-      isRecommended: true,
-      requiredSkills: ["Luật Thuế Việt Nam", "Hóa đơn chứng từ", "Cẩn thận"],
-      preferredSkills: ["Excel kế toán", "Phần Mềm Kế Toán MISA", "Kê khai thuế"],
-      optionalSkills: ["Phân tích báo cáo tài chính", "Kỹ năng báo cáo"],
-      salaryRange: "10 - 22 triệu/tháng",
-      fitPercentage: 90
-    },
-    {
-      name: "Kế toán tổng hợp",
-      requiredSkills: ["Nguyên lý kế toán", "Sổ sách định khoản", "Trung thực"],
-      preferredSkills: ["Excel nâng cao", "Lập Báo cáo tài chính", "Giao tiếp"],
-      optionalSkills: ["Quản trị dòng tiền", "Tiếng Anh chuyên ngành"],
-      salaryRange: "14 - 30 triệu/tháng",
-      fitPercentage: 75
-    }
-  ],
-  "Marketing / Quảng cáo": [
-    {
-      name: "Content Creator (Sáng tạo nội dung)",
-      isRecommended: true,
-      requiredSkills: ["Viết lách", "Sáng tạo", "Giao tiếp"],
-      preferredSkills: ["Storytelling", "Edit video ngắn (Capcut/Tiktok)", "SEO cơ bản"],
-      optionalSkills: ["Quản lý fanpage", "Photoshop/Illustrator"],
-      salaryRange: "10 - 25 triệu/tháng",
-      fitPercentage: 90
-    },
-    {
-      name: "Digital Marketing Executive (Vận hành quảng cáo)",
-      requiredSkills: ["Giao tiếp", "Excel phân tích số liệu", "Thuyết phục"],
-      preferredSkills: ["Chạy quảng cáo (Facebook/Google Ads)", "Đàm phán", "Kỹ năng lập kế hoạch"],
-      optionalSkills: ["Google Analytics", "Quản trị ngân sách"],
-      salaryRange: "12 - 30 triệu/tháng",
-      fitPercentage: 70
-    }
-  ]
-};
-
-const BRANCH_TIMELINE: Record<string, string[]> = {
-  "Frontend Developer (Lập trình giao diện)": [
-    "Học vững HTML, CSS, JavaScript cơ bản (3-6 tháng)",
-    "Xây dựng portfolio cá nhân với 3-5 trang web tự thiết kế (2 tháng)",
-    "Học React/Next.js và cách sử dụng Git/Github để làm việc nhóm (3 tháng)",
-    "Thực tập tại doanh nghiệp phần mềm hoặc làm dự án Freelance đầu tiên"
-  ],
-  "Backend Developer (Lập trình hệ thống)": [
-    "Học ngôn ngữ lập trình (Javascript/Python) & cơ sở dữ liệu SQL (4 tháng)",
-    "Xây dựng RESTful API cho các ứng dụng nhỏ như Quản lý thư viện, Blog (2 tháng)",
-    "Học Git, Docker và triển khai dự án lên đám mây (AWS/Heroku) (3 tháng)",
-    "Ứng tuyển vị trí Junior Backend Developer tại các công ty Outsourcing"
-  ],
-  "Kế toán viên thuế": [
-    "Học nguyên lý kế toán & Luật Thuế hiện hành (4 tháng)",
-    "Thực hành kê khai thuế GTGT, TNCN trên phần mềm HTKK (2 tháng)",
-    "Sử dụng thành thạo phần mềm MISA và lập hóa đơn điện tử (2 tháng)",
-    "Thực tập tại các văn phòng dịch vụ kế toán thuế để cọ xát hóa đơn thật"
-  ],
-  "Kế toán tổng hợp": [
-    "Tốt nghiệp ngành Kế toán/Tài chính và học cách lập sổ sách định khoản (4 năm hoặc khóa học 6 tháng)",
-    "Thành thạo Excel kế toán nâng cao (Pivot Table, Vlookup, Index/Match) (2 tháng)",
-    "Rèn luyện kỹ năng giao tiếp và lập báo cáo tài chính nội bộ (3 tháng)",
-    "Ứng tuyển vị trí Kế toán nội bộ hoặc Kế toán tổng hợp tại doanh nghiệp vừa và nhỏ"
-  ],
-  "Content Creator (Sáng tạo nội dung)": [
-    "Rèn luyện kỹ năng viết lách hàng ngày & học tư duy Storytelling (3 tháng)",
-    "Tạo kênh nội dung cá nhân (Tiktok/Blog/Fanpage) và đạt mốc 1.000 followers đầu tiên (3 tháng)",
-    "Học thiết kế Canva/Photoshop và dựng video cơ bản trên Capcut (2 tháng)",
-    "Nhận các hợp đồng viết bài hoặc ứng tuyển Content Marketing Intern"
-  ],
-  "Digital Marketing Executive (Vận hành quảng cáo)": [
-    "Học các kiến thức căn bản về Marketing & Hành vi khách hàng (3 tháng)",
-    "Thực hành chạy quảng cáo Facebook Ads/Google Ads với ngân sách nhỏ (2 tháng)",
-    "Học cách đọc chỉ số dữ liệu Google Analytics & tối ưu phễu chuyển đổi (2 tháng)",
-    "Ứng tuyển vị trí Digital Marketing Executive hoặc chạy Freelance tối ưu ngân sách"
-  ]
-};
-
-
-
-
 function StudentPortalPageContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -652,6 +432,15 @@ function StudentPortalPageContent() {
 
   const profileId = typeof params?.id === "string" ? params.id : "";
   const activeTab = searchParams.get("tab") || "roadmap";
+
+  const [loadingStep, setLoadingStep] = useState(0);
+  const loadingMessages = [
+    "La Bàn AI đang đọc Evidence Ledger của bạn...",
+    "Đang phân tích câu trả lời và tính toán mã Holland...",
+    "Đang truy quét dữ liệu tuyển dụng thật từ snapshot thị trường...",
+    "Đang sinh lộ trình cá nhân hóa và gợi ý kỹ năng...",
+    "Đang hoàn thiện Student Portal cá nhân của bạn..."
+  ];
 
   const [data, setData] = useState<ProfileResponse | null>(null);
   const [portfolio, setPortfolio] = useState<PathwayPortfolio | null>(null);
@@ -664,8 +453,19 @@ function StudentPortalPageContent() {
   const [topSkills, setTopSkills] = useState<any[]>([]);
   const [riasec, setRiasec] = useState<RiasecResult | null>(null);
   const [rejected, setRejected] = useState<string[]>([]); // ngành đã bấm "Không phải tôi"
-  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
-  const [selectedJobTitle, setSelectedJobTitle] = useState<string | null>(null);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[] | null>(null);
+  const [industryChoice, setIndustryChoice] = useState<{ primary: string; altPick: string } | null>(null);
+  const [jobBranches, setJobBranches] = useState<Record<string, JobTitleBranch[] | null>>({});
+  const [jobBranchesLoading, setJobBranchesLoading] = useState(false);
+  const [marketIndustryFilter, setMarketIndustryFilter] = useState<string | null>(null);
+
+  // Chỉnh sửa hồ sơ (tên/tuổi/giới tính/khu vực) — luôn truy cập được, không chỉ lần đăng nhập đầu.
+  const [editOpen, setEditOpen] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editAge, setEditAge] = useState("");
+  const [editGender, setEditGender] = useState("");
+  const [editRegion, setEditRegion] = useState("");
 
   // State chatbot AI La Bàn
   const [messages, setMessages] = useState<any[]>([
@@ -705,6 +505,14 @@ function StudentPortalPageContent() {
         console.error("Lỗi khi tải dữ liệu kỹ năng thật:", err);
       });
   }, []);
+
+  useEffect(() => {
+    if (!loading) return;
+    const interval = setInterval(() => {
+      setLoadingStep((prev) => (prev < loadingMessages.length - 1 ? prev + 1 : prev));
+    }, 1200);
+    return () => clearInterval(interval);
+  }, [loading, loadingMessages.length]);
 
   const loadAll = useCallback(async () => {
     try {
@@ -753,6 +561,43 @@ function StudentPortalPageContent() {
     router.push(`/onboarding?profileId=${profileId}`);
   };
 
+  // Chặng 3 — tải nhánh chức danh cụ thể (dữ liệu thật) cho mỗi ngành đang xem chi tiết.
+  const jobBranchesRef = useRef<Record<string, JobTitleBranch[] | null>>({});
+  const [selectedJobTitle, setSelectedJobTitle] = useState<Record<string, string | null>>({});
+
+  useEffect(() => {
+    if (!selectedIndustries || selectedIndustries.length === 0 || !profileId) return;
+    const toFetch = selectedIndustries.filter((ind) => !(ind in jobBranchesRef.current));
+    if (toFetch.length === 0) return;
+    setJobBranchesLoading(true);
+    Promise.all(
+      toFetch.map(async (ind) => {
+        try {
+          const res = await fetch(`${API_BASE}/profile/${profileId}/jobs?industry=${encodeURIComponent(ind)}`);
+          if (!res.ok) return [ind, null] as const;
+          const json = await res.json();
+          return [ind, (json.branches as JobTitleBranch[]) || []] as const;
+        } catch {
+          return [ind, null] as const;
+        }
+      })
+    ).then((entries) => {
+      entries.forEach(([ind, branches]) => {
+        jobBranchesRef.current[ind] = branches;
+      });
+      setJobBranches({ ...jobBranchesRef.current });
+      setJobBranchesLoading(false);
+    });
+  }, [selectedIndustries, profileId]);
+
+  // Chặng 2: xác nhận lựa chọn ngành từ hộp thoại trắc nghiệm — cập nhật cả tab chi tiết
+  // và bộ lọc "Khối ngành" ở tab Tổng quan thị trường theo đúng lựa chọn của học sinh.
+  const applyIndustryChoice = (industries: string[], filterAnchor: string) => {
+    setSelectedIndustries(industries);
+    setMarketIndustryFilter(filterAnchor);
+    setIndustryChoice(null);
+  };
+
   // Câu phá hoà (E1.3): user chọn 1 nhóm → ghi evidence, cập nhật RIASEC ngay.
   const handleTiebreak = async (letter: string) => {
     const res = await fetch(`${API_BASE}/profile/${profileId}/riasec/tiebreak`, {
@@ -771,6 +616,65 @@ function StudentPortalPageContent() {
     }
     clearPortalRef();
     router.push("/");
+  };
+
+  // Tìm evidence self_report MỚI NHẤT (chưa bị supersedes) cho 1 dimension — dùng để "sửa" đúng
+  // nguyên tắc append-only: evidence mới sẽ supersedes evidence này thay vì tạo giá trị mâu thuẫn.
+  const latestActiveEvidence = (group: string, dimension: string): { id: string; value: string } | null => {
+    if (!data) return null;
+    const superseded = new Set(data.evidence.map((e) => e.supersedes).filter(Boolean));
+    const matches = data.evidence
+      .filter((e) => e.source_type === "self_report" && !superseded.has(e.evidence_id))
+      .flatMap((e) => e.claims.filter((c) => c.group === group && c.dimension === dimension).map((c) => ({ id: e.evidence_id, value: c.value, at: e.collected_at })));
+    if (matches.length === 0) return null;
+    matches.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+    return { id: matches[0].id, value: matches[0].value };
+  };
+
+  const openEditModal = () => {
+    setEditName(latestActiveEvidence("goals_exploration", "tên")?.value || studentName || "");
+    setEditAge(latestActiveEvidence("context_preferences", "tuổi")?.value || "");
+    setEditGender(latestActiveEvidence("context_preferences", "giới tính")?.value || "");
+    setEditRegion(latestActiveEvidence("context_preferences", "vùng miền mong muốn làm việc")?.value || studentRegion || "");
+    setEditOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    setEditSaving(true);
+    try {
+      const fields: { group: string; dimension: string; value: string }[] = [
+        { group: "goals_exploration", dimension: "tên", value: editName.trim() },
+        { group: "context_preferences", dimension: "tuổi", value: editAge.trim() },
+        { group: "context_preferences", dimension: "giới tính", value: editGender.trim() },
+        { group: "context_preferences", dimension: "vùng miền mong muốn làm việc", value: editRegion.trim() },
+      ];
+      for (const f of fields) {
+        if (!f.value) continue;
+        const prev = latestActiveEvidence(f.group, f.dimension);
+        if (prev && prev.value === f.value) continue; // không đổi — khỏi ghi evidence thừa
+        await addEvidence(profileId, {
+          source_type: "self_report",
+          source_ref: "profile-edit",
+          confidence: "medium",
+          claims: [{ group: f.group as any, dimension: f.dimension, value: f.value }],
+          ...(prev ? { supersedes: prev.id } : {}),
+        });
+      }
+      savePortalRef({
+        profile_id: profileId,
+        name: editName.trim() || studentName,
+        region: editRegion.trim() || studentRegion || "Toàn quốc",
+        completedAt: new Date().toISOString(),
+      });
+      setStudentName(editName.trim() || studentName);
+      setStudentRegion(editRegion.trim() || studentRegion);
+      await loadAll();
+      setEditOpen(false);
+    } catch (err) {
+      console.error("Lỗi lưu chỉnh sửa hồ sơ:", err);
+    } finally {
+      setEditSaving(false);
+    }
   };
 
   const setTab = (newTab: string) => {
@@ -847,10 +751,17 @@ function StudentPortalPageContent() {
   /* ----- Trạng thái đặc biệt ----- */
   if (loading) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F8FAFC] px-6">
-        <LogoMark className="h-14 w-14 animate-pulse" />
-        <p className="font-semibold text-[#131B2E]">Đang tải Student Portal từ hệ thống…</p>
-        <p className="text-xs text-[#464555]">Đọc Evidence Ledger · tính điểm thế mạnh · khớp dữ liệu tuyển dụng thật</p>
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F8FAFC] px-6 text-center">
+        <LogoMark className="h-14 w-14 animate-pulse text-[#005c6d] mb-1" />
+        <div className="flex items-center gap-2 text-[#005c6d]">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <p className="font-bold text-[#111827] text-sm tracking-wide transition-all duration-300">
+            {loadingMessages[loadingStep]}
+          </p>
+        </div>
+        <p className="text-xs text-gray-400 max-w-sm">
+          Đang đọc Evidence Ledger · tính điểm thế mạnh · truy quét dữ liệu tuyển dụng thật
+        </p>
       </main>
     );
   }
@@ -875,9 +786,6 @@ function StudentPortalPageContent() {
   }
 
   /* ----- Dữ liệu dẫn xuất ----- */
-  const { sorted } = calculateStrengths(data.evidence);
-  const top3 = sorted.slice(0, 3);
-
   // Hiện chân dung (dù sơ bộ) khi có Holland Code — chỉ ẩn khi insufficient_data.
   const riasecReady = riasec && riasec.status !== "insufficient_data" && !!riasec.holland_code;
   const confCls = !riasec
@@ -1051,17 +959,23 @@ function StudentPortalPageContent() {
         <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-gray-200/70 bg-white sticky top-0 z-30">
           <h1 className="text-lg font-bold text-[#111827]">{HEADER_TITLES[activeTab] || "Student Portal"}</h1>
           <div>
-            {activeTab === "market" && (
-              <span className="text-xs text-[#9CA3AF] font-medium">Cập nhật lúc 08:00, 18/07/2025</span>
-            )}
             {activeTab === "roadmap" && (
-              <button
-                type="button"
-                onClick={handleRetake}
-                className="inline-flex h-9 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 text-xs font-semibold text-[#111827] hover:bg-gray-50 transition"
-              >
-                Làm lại khảo sát
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleRetake}
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-gray-200 bg-white px-3.5 text-xs font-semibold text-[#111827] hover:bg-gray-50 transition"
+                >
+                  Làm lại khảo sát nhanh
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push(`/holland-test?profileId=${profileId}`)}
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-[#005c6d] bg-[#005c6d] px-3.5 text-xs font-semibold text-white hover:bg-[#004b58] transition"
+                >
+                  Làm lại trắc nghiệm Holland
+                </button>
+              </div>
             )}
             {activeTab === "chat" && (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
@@ -1106,7 +1020,7 @@ function StudentPortalPageContent() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setTab("ledger")}
+                  onClick={openEditModal}
                   className="rounded-lg border border-gray-200 bg-white hover:bg-gray-50 px-4 py-2 text-xs font-bold text-[#111827]"
                 >
                   <span className="flex items-center gap-1.5">
@@ -1272,6 +1186,13 @@ function StudentPortalPageContent() {
                     </details>
 
                     <p className="text-[11px] text-ink-soft">{riasec!.note}</p>
+
+                    <div className="border-t border-gray-100 pt-3 flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-xs">
+                      <span className="text-gray-400 text-[10px]">Bạn muốn cập nhật kết quả mới?</span>
+                      <Link href={`/holland-test?profileId=${profileId}`} className="font-bold text-[#005c6d] hover:underline">
+                        Làm lại trắc nghiệm Holland đầy đủ →
+                      </Link>
+                    </div>
                   </div>
                 )}
               </Card>
@@ -1299,12 +1220,11 @@ function StudentPortalPageContent() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base font-extrabold text-[#111827]">
-                    {selectedJobTitle
-                      ? `Lộ trình học tập & Kỹ năng: ${selectedJobTitle}`
-                      : selectedIndustry
-                        ? `Các nhánh nghề (Job Titles) thuộc ngành ${selectedIndustry}`
-                        : "Nghề nghiệp phù hợp với bạn"
-                    }
+                    {selectedIndustries && selectedIndustries.length > 1
+                      ? `So sánh ${selectedIndustries.length} ngành`
+                      : selectedIndustries && selectedIndustries.length === 1
+                        ? `Chi tiết ngành: ${selectedIndustries[0]}`
+                        : "Nghề nghiệp phù hợp với bạn"}
                   </h3>
                   <span className="text-xs text-[#9CA3AF] font-medium flex items-center gap-1">
                     <IconRoute className="w-3.5 h-3.5 text-[#9CA3AF]" />
@@ -1316,7 +1236,7 @@ function StudentPortalPageContent() {
                   <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{pathwayError}</p>
                 ) : !portfolio ? (
                   <p className="text-sm text-gray-500">Đang tải gợi ý lộ trình…</p>
-                ) : selectedIndustry === null ? (
+                ) : !selectedIndustries || selectedIndustries.length === 0 ? (
                   /* ─── CHẶNG 2: DANH SÁCH NGÀNH PHÙ HỢP ─── */
                   <div className="space-y-6">
                     {topCandidates.length === 0 ? (
@@ -1350,6 +1270,9 @@ function StudentPortalPageContent() {
                                 <div className="rounded-xl border border-teal-100 bg-teal-50/50 p-3">
                                   <p className="font-bold uppercase tracking-wider text-[10px] text-teal-800">1 · Vì em</p>
                                   <p className="mt-1 leading-relaxed text-[#005c6d]">
+                                    {c.ai_explanation && (
+                                      <span className="mb-2 block font-semibold italic text-[#005c6d]/90 border-b border-teal-100 pb-1.5">&ldquo;{c.ai_explanation}&rdquo;</span>
+                                    )}
                                     {c.matched_profile_evidence.length > 0 ? (
                                       <>&ldquo;{highlightTokens(c.matched_profile_evidence[0].value, c.matched_profile_evidence[0].matched_tokens)}&rdquo;</>
                                     ) : (
@@ -1422,16 +1345,16 @@ function StudentPortalPageContent() {
                                 </div>
                               </div>
 
-                              {/* Chọn Ngành & Rẽ Nhánh (Chặng 2) */}
+                              {/* Xem chi tiết ngành (Chặng 2 → hộp thoại chọn ngành phân tích) */}
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setSelectedIndustry(c.industry);
-                                  setSelectedJobTitle(null);
+                                  const others = [...topCandidates, ...horizonCandidates].filter((x: any) => x.industry !== c.industry);
+                                  setIndustryChoice({ primary: c.industry, altPick: others[0]?.industry || c.industry });
                                 }}
                                 className="mt-4 w-full rounded-xl bg-[#005c6d] hover:bg-[#004b58] py-2.5 text-xs font-bold text-white transition active:scale-[0.98]"
                               >
-                                Khám phá các nhánh nghề (Job Titles) →
+                                Xem chi tiết & kỹ năng cần có →
                               </button>
 
                               {/* Quyền từ chối */}
@@ -1476,190 +1399,202 @@ function StudentPortalPageContent() {
                       </div>
                     )}
                   </div>
-                ) : selectedJobTitle === null ? (
-                  /* ─── CHẶNG 3: RẼ NHÁNH NGHỀ (JOB TITLES) ─── */
-                  <div className="space-y-4">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedIndustry(null)}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#005c6d] hover:underline mb-2"
-                    >
-                      ← Quay lại danh sách ngành phù hợp
-                    </button>
-
-                    <div className="grid gap-5 md:grid-cols-2">
-                      {(RAG_SKILL_MAP[selectedIndustry] || [
-                        {
-                          name: `Chuyên viên ${selectedIndustry} (Phổ thông)`,
-                          isRecommended: true,
-                          requiredSkills: ["Giao tiếp", "Làm việc nhóm", "Cẩn thận"],
-                          preferredSkills: ["Giải quyết vấn đề", "Lập kế hoạch"],
-                          optionalSkills: ["Tiếng Anh giao tiếp"],
-                          salaryRange: "12 - 25 triệu/tháng",
-                          fitPercentage: 80
-                        }
-                      ]).map((branch) => (
-                        <div key={branch.name} className="rounded-2xl border border-gray-200 bg-white p-5 flex flex-col shadow-sm hover:shadow-md transition">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              {branch.isRecommended && (
-                                <span className="inline-flex rounded bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 uppercase tracking-wide mb-1">
-                                  Nên bắt đầu từ đây
-                                </span>
-                              )}
-                              <h4 className="font-extrabold text-[#111827] text-base leading-snug">{branch.name}</h4>
-                            </div>
-                            <span className="text-xs font-bold text-[#005c6d] bg-[#e6f1fb] px-2.5 py-1 rounded-lg">
-                              {branch.fitPercentage}% khớp
-                            </span>
-                          </div>
-
-                          <div className="mt-4 space-y-2 text-xs flex-1">
-                            <p className="text-gray-600">
-                              Lương tham chiếu: <b className="text-[#111827]">{branch.salaryRange}</b>
-                            </p>
-                            <p className="font-semibold text-gray-500 mt-2">Kỹ năng cốt lõi cần có:</p>
-                            <div className="flex flex-wrap gap-1.5 mt-1">
-                              {branch.requiredSkills.map(sk => (
-                                <span key={sk} className={`px-2 py-0.5 rounded text-[10px] font-medium ${owned.has(sk) ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-gray-50 text-gray-600 border border-gray-100"
-                                  }`}>
-                                  {sk} {owned.has(sk) ? "✓" : ""}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => setSelectedJobTitle(branch.name)}
-                            className="mt-5 w-full rounded-xl bg-[#005c6d] hover:bg-[#004b58] py-2 text-xs font-bold text-white transition"
-                          >
-                            Xem lộ trình học tập & Kỹ năng →
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 ) : (
-                  /* ─── CHẶNG 4: LỘ TRÌNH CHI TIẾT NHÁNH NGHỀ ─── */
-                  <div className="space-y-6">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedJobTitle(null)}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#005c6d] hover:underline"
-                    >
-                      ← Quay lại danh sách nhánh nghề
-                    </button>
+                  /* ─── Chi tiết ngành: 100% số liệu thật từ market_evidence (không có RAG job-title
+                     level trong dữ liệu nguồn, nên KHÔNG hiển thị "job title" bịa — chỉ chi tiết
+                     ngành, dữ liệu vốn đã tính sẵn ở Chặng 2). ─── */
+                  <div className="space-y-5">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => { setSelectedIndustries(null); setIndustryChoice(null); }}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#005c6d] hover:underline"
+                      >
+                        ← Quay lại danh sách ngành phù hợp
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTab("market")}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline"
+                      >
+                        Xem xu hướng ngành này trên Tổng quan thị trường →
+                      </button>
+                    </div>
 
-                    <div className="grid gap-5 lg:grid-cols-12">
-                      {/* Skill Gap phân loại buộc có / cần có / nên có */}
-                      <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm lg:col-span-7 space-y-4">
-                        <h3 className="font-bold text-ink text-base">Bản đồ kỹ năng: {selectedJobTitle}</h3>
-
-                        {(() => {
-                          const branchData = (RAG_SKILL_MAP[selectedIndustry] || []).find(b => b.name === selectedJobTitle) || {
-                            requiredSkills: ["Giao tiếp", "Làm việc nhóm", "Cẩn thận"],
-                            preferredSkills: ["Giải quyết vấn đề", "Lập kế hoạch"],
-                            optionalSkills: ["Tiếng Anh giao tiếp"]
-                          };
-
+                    <div className={selectedIndustries.length > 1 ? "grid gap-6 xl:grid-cols-2" : ""}>
+                      {selectedIndustries.map((industryName) => {
+                        const c = [...topCandidates, ...horizonCandidates].find((x: any) => x.industry === industryName);
+                        if (!c) {
                           return (
-                            <div className="space-y-4">
-                              <div>
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-red-600 mb-2">1 · Buộc phải có (Required)</h4>
-                                <div className="grid gap-2">
-                                  {branchData.requiredSkills.map(sk => {
-                                    const hasSk = owned.has(sk);
+                            <p key={industryName} className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                              Không tìm thấy dữ liệu ngành {industryName}.
+                            </p>
+                          );
+                        }
+                        const skills = c.market_evidence?.top_skills ?? [];
+                        const salary = c.market_evidence?.salary;
+                        const branches = jobBranches[industryName];
+                        const activeTitle = selectedJobTitle[industryName] || null;
+                        const activeBranch = branches?.find((b) => b.title === activeTitle) || null;
+                        const TIER_META: Record<string, { label: string; cls: string }> = {
+                          buoc_phai_co: { label: "Buộc phải có", cls: "bg-red-50 text-red-700 border-red-200" },
+                          can_co: { label: "Cần có", cls: "bg-amber-50 text-amber-700 border-amber-200" },
+                          nen_co: { label: "Nên có", cls: "bg-blue-50 text-blue-700 border-blue-200" },
+                        };
+
+                        return (
+                          <div key={industryName} className="space-y-4 rounded-2xl border border-gray-200/60 bg-[#F4F6F8]/40 p-4">
+                            {selectedIndustries.length > 1 && (
+                              <h4 className="text-sm font-extrabold text-[#111827]">{industryName}</h4>
+                            )}
+
+                            {/* Chặng 3: nhánh chức danh cụ thể — 100% từ tin tuyển dụng thật */}
+                            <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm space-y-3">
+                              <h3 className="font-bold text-ink text-base">Các vị trí cụ thể trong {industryName}</h3>
+                              <p className="text-xs text-ink-soft">
+                                Nhóm theo từ khoá chức danh xuất hiện trong tin tuyển dụng thật — bấm 1 vị trí để xem kỹ năng cần theo mức ưu tiên.
+                              </p>
+                              {jobBranchesLoading && !branches ? (
+                                <p className="text-xs text-ink-soft">Đang tải các vị trí cụ thể…</p>
+                              ) : !branches || branches.length === 0 ? (
+                                <p className="text-xs text-ink-soft">Chưa đủ dữ liệu để tách vị trí cụ thể cho ngành này — xem thông tin ngành tổng quát bên dưới.</p>
+                              ) : (
+                                <div className="grid gap-2.5 sm:grid-cols-2">
+                                  {branches.map((b) => {
+                                    const active = activeTitle === b.title;
                                     return (
-                                      <div key={sk} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
-                                        <span className="font-medium text-gray-700">{sk}</span>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                                          }`}>
-                                          {hasSk ? "Đã có" : "↗ Cần học"}
-                                        </span>
-                                      </div>
+                                      <button
+                                        key={b.title}
+                                        type="button"
+                                        onClick={() => setSelectedJobTitle((prev) => ({ ...prev, [industryName]: active ? null : b.title }))}
+                                        className={`text-left rounded-xl border p-3 transition ${active ? "border-[#005c6d] bg-[#e6f1fb]" : "border-gray-200 bg-gray-50/50 hover:border-[#005c6d]/40"}`}
+                                      >
+                                        <div className="flex items-start justify-between gap-2">
+                                          <span className="font-bold text-xs text-[#111827]">{b.title}</span>
+                                          <span className="shrink-0 text-[10px] font-bold text-[#16a34a]">{b.fit_score}% phù hợp</span>
+                                        </div>
+                                        {b.recommended && (
+                                          <span className="mt-1 inline-block rounded-full bg-emerald-100 text-emerald-700 px-1.5 py-0.5 text-[9px] font-bold">
+                                            ✓ Nên bắt đầu từ đây
+                                          </span>
+                                        )}
+                                        <p className="mt-1 text-[10px] text-ink-soft">
+                                          {fmtInt(b.posting_count)} tin · tuyển dụng {b.hiring_volume}
+                                          {b.salary ? ` · ${fmtSalaryFromMillions(b.salary.min_trieu)}-${fmtSalaryFromMillions(b.salary.max_trieu)}` : ""}
+                                        </p>
+                                      </button>
                                     );
                                   })}
                                 </div>
+                              )}
+                            </div>
+
+                            <div className="grid gap-5 lg:grid-cols-12">
+                              {/* Chặng 4: kỹ năng phân loại theo mức ưu tiên (khi đã chọn 1 vị trí) hoặc mức ngành */}
+                              <div className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm lg:col-span-7 space-y-3">
+                                <h3 className="font-bold text-ink text-base">
+                                  {activeBranch ? `Kỹ năng cần cho ${activeBranch.title}` : `Kỹ năng thị trường cần cho ${industryName}`}
+                                </h3>
+                                <p className="text-xs text-ink-soft">
+                                  {activeBranch
+                                    ? "Phân loại theo tần suất thật trong tin tuyển dụng — sắp theo mức độ ảnh hưởng."
+                                    : "Tính từ tin tuyển dụng thật trong snapshot — chọn 1 vị trí cụ thể ở trên để xem phân loại chi tiết hơn."}
+                                </p>
+                                {activeBranch ? (
+                                  activeBranch.top_skills.length === 0 ? (
+                                    <p className="text-xs text-ink-soft">Chưa đủ dữ liệu kỹ năng cho vị trí này.</p>
+                                  ) : (
+                                    (["buoc_phai_co", "can_co", "nen_co"] as const).map((tier) => {
+                                      const items = activeBranch.top_skills.filter((s) => s.tier === tier).sort((a, b) => b.count - a.count);
+                                      if (items.length === 0) return null;
+                                      return (
+                                        <div key={tier} className="space-y-1.5">
+                                          <p className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold ${TIER_META[tier].cls}`}>
+                                            {TIER_META[tier].label}
+                                          </p>
+                                          <div className="grid gap-1.5">
+                                            {items.map((s) => {
+                                              const hasSk = owned.has(s.name);
+                                              return (
+                                                <div key={s.name} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
+                                                  <span className="font-medium text-gray-700">{s.name}</span>
+                                                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                                                    {hasSk ? "Đã có" : "↗ Cần học"}
+                                                  </span>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      );
+                                    })
+                                  )
+                                ) : skills.length === 0 ? (
+                                  <p className="text-xs text-ink-soft">Chưa đủ dữ liệu kỹ năng cho ngành này trong snapshot hiện tại.</p>
+                                ) : (
+                                  <div className="grid gap-2 mt-2">
+                                    {skills.map((s: any) => {
+                                      const hasSk = owned.has(s.name);
+                                      return (
+                                        <div key={s.name} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
+                                          <span className="font-medium text-gray-700">{s.name}</span>
+                                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                                            {hasSk ? "Đã có" : "↗ Cần học"}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
                               </div>
 
-                              <div>
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2">2 · Cần có (Preferred)</h4>
-                                <div className="grid gap-2">
-                                  {branchData.preferredSkills.map(sk => {
-                                    const hasSk = owned.has(sk);
-                                    return (
-                                      <div key={sk} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
-                                        <span className="font-medium text-gray-700">{sk}</span>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                                          }`}>
-                                          {hasSk ? "Đã có" : "↗ Cần học"}
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
+                              <div className="space-y-5 lg:col-span-5">
+                                {/* Số liệu thị trường thật */}
+                                <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-2 text-sm">
+                                  <h3 className="font-bold text-ink text-base mb-1">Số liệu thị trường</h3>
+                                  <p>· <b>{fmtInt(c.market_evidence?.posting_count ?? 0)}</b> tin tuyển (trong snapshot)</p>
+                                  <p>
+                                    · Lương:{" "}
+                                    <b className="text-[#005c6d]">
+                                      {salary ? `${fmtSalaryFromMillions(salary.min_trieu)} - ${fmtSalaryFromMillions(salary.max_trieu)}/tháng (trung vị ${fmtSalaryFromMillions(salary.median_trieu)})` : "Thỏa thuận"}
+                                    </b>
+                                  </p>
+                                  <p>· <b>{Math.round((c.market_evidence?.entry_level_ratio ?? 0) * 100)}%</b> tin nhận người mới</p>
                                 </div>
-                              </div>
 
-                              <div>
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">3 · Nên có thêm (Optional)</h4>
-                                <div className="grid gap-2">
-                                  {branchData.optionalSkills.map(sk => {
-                                    const hasSk = owned.has(sk);
-                                    return (
-                                      <div key={sk} className="flex justify-between items-center text-xs p-2.5 rounded-lg border border-gray-100 bg-gray-50/50">
-                                        <span className="font-medium text-gray-700">{sk}</span>
-                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${hasSk ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                                          }`}>
-                                          {hasSk ? "Đã có" : "↗ Cần học"}
+                                {/* Lộ trình chung (không gắn với 1 job title bịa) */}
+                                <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                                  <h3 className="font-bold text-ink text-base">Lộ trình 4 bước của bạn</h3>
+                                  <p className="mt-0.5 text-xs text-ink-soft">Mốc thời gian ước lượng theo lựa chọn học vấn của bạn</p>
+                                  <ol className="relative mt-5 space-y-5">
+                                    <span aria-hidden="true" className="absolute bottom-4 left-[15px] top-1 w-0.5 bg-brand-light" />
+                                    {milestones.map((step, i) => (
+                                      <li key={step} className="relative flex items-start gap-3.5">
+                                        <span className="relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold bg-[#005c6d] text-white">
+                                          {i + 1}
                                         </span>
-                                      </div>
-                                    );
-                                  })}
+                                        <div>
+                                          <p className="font-semibold text-ink text-sm leading-relaxed">{step}</p>
+                                        </div>
+                                      </li>
+                                    ))}
+                                  </ol>
                                 </div>
                               </div>
                             </div>
-                          );
-                        })()}
-                      </div>
-
-                      {/* Timeline 4 bước chi tiết */}
-                      <div className="space-y-5 lg:col-span-5">
-                        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                          <h3 className="font-bold text-ink text-base">Lộ trình 4 bước của bạn</h3>
-                          <p className="mt-0.5 text-xs text-ink-soft">
-                            Mốc thời gian chi tiết được cá nhân hóa cho nhánh nghề
-                          </p>
-                          <ol className="relative mt-5 space-y-5">
-                            <span
-                              aria-hidden="true"
-                              className="absolute bottom-4 left-[15px] top-1 w-0.5 bg-brand-light"
-                            />
-                            {(BRANCH_TIMELINE[selectedJobTitle] || milestones).map((step, i) => (
-                              <li key={step} className="relative flex items-start gap-3.5">
-                                <span
-                                  className="relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold bg-[#005c6d] text-white"
-                                >
-                                  {i + 1}
-                                </span>
-                                <div>
-                                  <p className="font-semibold text-ink text-sm leading-relaxed">{step}</p>
-                                </div>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-
-                        {/* Mở rộng cơ hội */}
-                        <div className="rounded-2xl border border-[#005c6d]/20 bg-[#005c6d]/5 p-5 flex items-start gap-3.5">
-                          <IconBulb className="w-5 h-5 text-[#005c6d] shrink-0 mt-0.5" />
-                          <div>
-                            <h4 className="font-bold text-[#005c6d] text-sm">Mở rộng cơ hội của bạn</h4>
-                            <p className="mt-1.5 text-xs leading-relaxed text-gray-600">
-                              Học bổng nghề nghiệp, chương trình thực tập trả lương, và sự kiện kết nối nhà tuyển dụng đang chờ bạn. Hướng đi không bao giờ đóng lại.
-                            </p>
                           </div>
-                        </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Mở rộng cơ hội — thông điệp chung, không gắn 1 ngành cụ thể */}
+                    <div className="rounded-2xl border border-[#005c6d]/20 bg-[#005c6d]/5 p-5 flex items-start gap-3.5">
+                      <IconBulb className="w-5 h-5 text-[#005c6d] shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-bold text-[#005c6d] text-sm">Mở rộng cơ hội của bạn</h4>
+                        <p className="mt-1.5 text-xs leading-relaxed text-gray-600">
+                          Học bổng nghề nghiệp, chương trình thực tập trả lương, và sự kiện kết nối nhà tuyển dụng đang chờ bạn. Hướng đi không bao giờ đóng lại.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1672,7 +1607,12 @@ function StudentPortalPageContent() {
           {activeTab === "market" && (
             <div className="fade-up space-y-4">
               <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm md:p-6">
-                <MarketCharts onStart={handleRetake} initialRegion={studentRegion || undefined} showCta={false} />
+                <MarketCharts
+                  onStart={handleRetake}
+                  initialRegion={studentRegion || undefined}
+                  initialCluster={marketIndustryFilter || undefined}
+                  showCta={false}
+                />
               </div>
             </div>
           )}
@@ -1823,6 +1763,155 @@ function StudentPortalPageContent() {
           )}
         </main>
       </div>
+
+      {/* Chặng 2 — hộp thoại trắc nghiệm chọn ngành muốn phân tích trước khi vào chi tiết. */}
+      {industryChoice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setIndustryChoice(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-[#111827]">Bạn muốn phân tích ngành nào?</h3>
+            <p className="mt-1 text-xs text-[#9CA3AF]">Chọn ngành gợi ý nổi bật, một ngành khác, hoặc xem cả hai để so sánh.</p>
+
+            <div className="mt-5 space-y-3">
+              <button
+                type="button"
+                onClick={() => applyIndustryChoice([industryChoice.primary], industryChoice.primary)}
+                className="w-full text-left rounded-xl border-2 border-[#005c6d] bg-[#e6f1fb] p-3.5 transition hover:bg-[#d9ecf7]"
+              >
+                <p className="text-xs font-bold text-[#005c6d]">Ngành {industryChoice.primary}</p>
+                <p className="text-[11px] text-ink-soft mt-0.5">Ngành gợi ý nổi bật nhất với hồ sơ của bạn</p>
+              </button>
+
+              {[...topCandidates, ...horizonCandidates].filter((x: any) => x.industry !== industryChoice.primary).length > 0 && (
+                <div className="rounded-xl border border-gray-200 p-3.5 space-y-2.5">
+                  <label className="block text-[11px] font-bold text-gray-600">Hoặc chọn ngành khác:</label>
+                  <select
+                    value={industryChoice.altPick}
+                    onChange={(e) => setIndustryChoice({ ...industryChoice, altPick: e.target.value })}
+                    className="w-full h-10 rounded-lg border border-gray-200 px-3 text-xs focus:border-[#005c6d] focus:outline-none"
+                  >
+                    {[...topCandidates, ...horizonCandidates]
+                      .filter((x: any) => x.industry !== industryChoice.primary)
+                      .map((x: any) => (
+                        <option key={x.industry} value={x.industry}>{x.industry}</option>
+                      ))}
+                  </select>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => applyIndustryChoice([industryChoice.altPick], industryChoice.altPick)}
+                      className="flex-1 rounded-lg border border-gray-300 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                      Chỉ xem ngành này
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyIndustryChoice([industryChoice.primary, industryChoice.altPick], industryChoice.primary)}
+                      className="flex-1 rounded-lg bg-[#005c6d] py-2 text-xs font-semibold text-white hover:bg-[#004b58]"
+                    >
+                      Xem cả hai
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIndustryChoice(null)}
+              className="mt-4 w-full text-center text-xs font-semibold text-gray-400 hover:text-gray-600"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Chỉnh sửa hồ sơ — luôn truy cập được (không chỉ lần đăng nhập đầu tiên).
+          Ghi self_report evidence thật vào Ledger, supersedes giá trị cũ, đồng bộ localStorage. */}
+      {editOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => !editSaving && setEditOpen(false)}>
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold text-[#111827]">Chỉnh sửa hồ sơ</h3>
+            <p className="mt-1 text-xs text-[#9CA3AF]">Thông tin này lưu vào hồ sơ của bạn — có thể sửa lại bất cứ lúc nào.</p>
+
+            <div className="mt-5 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1.5">Tên</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm focus:border-[#005c6d] focus:outline-none"
+                  placeholder="Tên của bạn"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 mb-1.5">Tuổi</label>
+                  <input
+                    type="number"
+                    value={editAge}
+                    onChange={(e) => setEditAge(e.target.value)}
+                    className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm focus:border-[#005c6d] focus:outline-none"
+                    placeholder="Ví dụ: 18"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 mb-1.5">Giới tính</label>
+                  <select
+                    value={editGender}
+                    onChange={(e) => setEditGender(e.target.value)}
+                    className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm focus:border-[#005c6d] focus:outline-none"
+                  >
+                    <option value="">Chọn</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Khác">Khác</option>
+                    <option value="Không muốn tiết lộ">Không muốn tiết lộ</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1.5">Khu vực</label>
+                <input
+                  type="text"
+                  value={editRegion}
+                  onChange={(e) => setEditRegion(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-xl border border-gray-200 text-sm focus:border-[#005c6d] focus:outline-none"
+                  placeholder="Ví dụ: Hà Nội"
+                />
+              </div>
+            </div>
+
+            <p className="mt-3 text-[11px] text-[#9CA3AF]">
+              Giới tính/khu vực chỉ dùng để hiển thị và lọc dữ liệu thị trường — không tham gia chấm điểm Holland Code hay xếp hạng ngành nghề.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setEditOpen(false)}
+                disabled={editSaving}
+                className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveEdit}
+                disabled={editSaving || !editName.trim()}
+                className="rounded-xl bg-[#005c6d] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#004b58] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {editSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+                Lưu thay đổi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

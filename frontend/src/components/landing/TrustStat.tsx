@@ -12,7 +12,14 @@ const STATS = [
   { to: META.avgMatch, suffix: "%", label: "Độ phù hợp trung bình" },
 ];
 
-export function TrustStat() {
+export function TrustStat({ stats }: { stats?: { totalJobs: number; careerGroups: number; provinces: number } | null }) {
+  const statsData = [
+    { to: stats?.totalJobs || META.totalJobs, suffix: "", label: "Tin tuyển dụng" },
+    { to: stats?.careerGroups || META.careerGroups, suffix: "", label: "Nhóm nghề" },
+    { to: stats?.provinces || META.provinces, suffix: "", label: "Tỉnh thành" },
+    { to: META.avgMatch, suffix: "%", label: "Độ phù hợp trung bình" },
+  ];
+
   return (
     <section aria-label="Số liệu tổng quan" className="px-6 pb-20">
       <Reveal
@@ -25,7 +32,7 @@ export function TrustStat() {
         variant={scaleIn}
         className="mx-auto grid max-w-5xl grid-cols-2 gap-y-8 rounded-2xl bg-gradient-to-r from-brand-dark to-brand-deep px-6 py-10 text-center text-white shadow-xl shadow-brand-deep/20 md:grid-cols-4"
       >
-        {STATS.map((s, i) => (
+        {statsData.map((s, i) => (
           <Reveal key={s.label} variant={fadeUp} delay={0.15 + i * 0.1}>
             <p className="text-3xl font-extrabold md:text-4xl">
               <CountUp to={s.to} suffix={s.suffix} />

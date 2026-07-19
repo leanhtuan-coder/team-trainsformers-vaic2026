@@ -29,7 +29,30 @@ const STEPS = [
   },
 ];
 
-export function HowItWorks() {
+export function HowItWorks({ totalJobs }: { totalJobs?: number }) {
+  const jobsCount = totalJobs || META.totalJobs;
+
+  const STEPS = [
+    {
+      num: "01",
+      icon: IconChat,
+      title: "Trò chuyện với AI",
+      desc: "Kể về môn học bạn mạnh, điều bạn thích và ưu tiên của bạn — như nhắn tin với một người anh đi trước.",
+    },
+    {
+      num: "02",
+      icon: IconDatabase,
+      title: "Đối chiếu thị trường",
+      desc: `AI so hồ sơ của bạn với ${fmtInt(jobsCount)} tin tuyển dụng thật: kỹ năng nào đang cần, ở đâu, lương bao nhiêu.`,
+    },
+    {
+      num: "03",
+      icon: IconRoute,
+      title: "Nhận lộ trình",
+      desc: "2–3 hướng nghề kèm lý do \"vì sao hợp bạn\" và tuyến học rõ ràng: đại học, cao đẳng hoặc học nghề.",
+    },
+  ];
+
   return (
     <section id="cach-hoat-dong" aria-labelledby="how-heading" className="px-6 py-20">
       <Reveal>

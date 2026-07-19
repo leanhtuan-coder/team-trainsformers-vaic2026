@@ -27,6 +27,7 @@ interface MarketStats {
   totalJobs: number;
   careerGroups: number;
   provinces: number;
+  topSkill?: { name: string; pct: number };
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
@@ -60,7 +61,12 @@ export default function HomePage() {
             });
           });
           const provinces = provSet.size || 25;
-          setStats({ totalJobs, careerGroups, provinces });
+          const totalAnalyzed = data.total_jobs || totalJobs;
+          const topSkillRaw = data.top_skills_required?.[0];
+          const topSkill = topSkillRaw
+            ? { name: topSkillRaw.name, pct: Math.round((topSkillRaw.count / totalAnalyzed) * 100) }
+            : undefined;
+          setStats({ totalJobs, careerGroups, provinces, topSkill });
         }
       })
       .catch((err) => {
@@ -90,7 +96,7 @@ export default function HomePage() {
     <MotionProvider>
       <Navbar onStart={openChat} />
       <main>
-        <Hero onStart={openChat} totalJobs={stats?.totalJobs} />
+        <Hero onStart={openChat} totalJobs={stats?.totalJobs} topSkill={stats?.topSkill} />
 
         {/* Dashboard thị trường CHUNG (công khai) — dữ liệu thật từ GET /api/market/snapshot */}
         <section

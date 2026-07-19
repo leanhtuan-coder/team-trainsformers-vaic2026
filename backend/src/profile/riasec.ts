@@ -98,7 +98,11 @@ export function scoreRiasec(profile: Profile): RiasecResult {
 
   for (const e of active) {
     // Trắc nghiệm Holland đầy đủ (108 câu)
-    if (e.source_ref === "Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ") {
+    if (
+      e.source_ref === "Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ" ||
+      e.source_ref === "T&C Việt Nam — Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ" ||
+      (e.source_type === "assessment" && e.assessment_detail?.name === "Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ")
+    ) {
       const weight = sourceWeight(e);
       answeredQuickstart.add("full-holland-test");
       for (const claim of e.claims) {
@@ -149,7 +153,8 @@ export function scoreRiasec(profile: Profile): RiasecResult {
     }
   }
 
-  const answered_count = answeredQuickstart.size;
+  const hasFullHolland = answeredQuickstart.has("full-holland-test");
+  const answered_count = hasFullHolland ? 6 : answeredQuickstart.size;
 
   // ─── Edge case: quá ít dữ liệu (< 3 câu) → không xuất Holland Code ───
   if (answered_count < 3) {
@@ -197,11 +202,14 @@ export function scoreRiasec(profile: Profile): RiasecResult {
   }
 
   // ─── Confidence ───
-  const completeness = answered_count / RIASEC_QUESTION_COUNT;
+  const completeness = hasFullHolland ? 1.0 : answered_count / RIASEC_QUESTION_COUNT;
 
   // evidence_ratio: tỉ lệ có bằng chứng "thật" (assessment/document) chứ không chỉ tự khai.
   const realEvidence = active.filter((e) => e.source_type === "assessment" || e.source_type === "document").length;
-  const evidence_ratio = clamp01(realEvidence / Math.max(answered_count, 1) + (realEvidence > 0 ? 0.3 : 0));
+  let evidence_ratio = clamp01(realEvidence / Math.max(answered_count, 1) + (realEvidence > 0 ? 0.3 : 0));
+  if (hasFullHolland) {
+    evidence_ratio = 1.0; // Bài test Holland chuẩn là bằng chứng vàng
+  }
 
   // consistency: 1 - tỉ lệ dimension bị mâu thuẫn (nhiều giá trị khác nhau cho cùng dimension).
   const snapshot = buildSnapshot(profile);
