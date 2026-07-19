@@ -576,19 +576,19 @@ function StudentPortalPageContent() {
         const found = portfolio?.candidates.find(c => query.includes(c.industry.toLowerCase()));
         if (found) {
           const entryPct = Math.round(found.market_evidence.entry_level_ratio * 100);
-          replyText = `Ngành **${found.industry}** hiện có **${fmtInt(found.market_evidence.posting_count)}** tin tuyển dụng đang hoạt động.\n\n- Lương trung vị: **${found.market_evidence.salary ? fmtSalaryFromMillions(found.market_evidence.salary.median_trieu) + "/tháng" : "Thỏa thuận"}**\n- Yêu cầu người mới (entry-level): **${entryPct}% số tin tuyển dụng**\n- Kỹ năng hàng đầu: ${found.market_evidence.top_skills.slice(0, 4).map(s => s.name).join(", ")}\n\nLộ trình đề xuất: Bạn đã có kỹ năng **${found.market_evidence.top_skills[0]?.name ? (owned.has(found.market_evidence.top_skills[0].name) ? "đã sở hữu" : "cần bổ sung") : "cần học"}**. Môi trường tuyển dụng ${entryPct >= 25 ? "chấp nhận Cao đẳng/Học nghề khá tốt" : "ưu tiên Đại học chính quy hơn"}.`;
+          replyText = `Ngành **${found.industry}** hiện có **${fmtInt(found.market_evidence.posting_count)}** tin tuyển dụng đang hoạt động.\n\n- Lương trung bình: **${found.market_evidence.salary ? fmtSalaryFromMillions(found.market_evidence.salary.median_trieu) + "/tháng" : "Thỏa thuận"}**\n- Yêu cầu người mới (entry-level): **${entryPct}% số tin tuyển dụng**\n- Kỹ năng hàng đầu: ${found.market_evidence.top_skills.slice(0, 4).map(s => s.name).join(", ")}\n\nLộ trình đề xuất: Bạn đã có kỹ năng **${found.market_evidence.top_skills[0]?.name ? (owned.has(found.market_evidence.top_skills[0].name) ? "đã sở hữu" : "cần bổ sung") : "cần học"}**. Môi trường tuyển dụng ${entryPct >= 25 ? "chấp nhận Cao đẳng/Học nghề khá tốt" : "ưu tiên Đại học chính quy hơn"}.`;
         } else {
           replyText = "Hiện tại mình đang lưu trữ dữ liệu của các ngành: " + (portfolio?.candidates.map(c => c.industry).join(", ") || "Công nghệ, Vận hành CNC...") + ". Bạn vui lòng hỏi cụ thể về một trong các ngành này nhé!";
         }
       } else if (query.includes("lương")) {
-        replyText = `Dựa trên dữ liệu thị trường mới nhất của vùng **${studentRegion || "Toàn quốc"}**, mức lương trung vị của một số ngành hot là:\n${
+        replyText = `Dựa trên dữ liệu thị trường mới nhất của vùng **${studentRegion || "Toàn quốc"}**, mức lương trung bình của một số ngành hot là:\n${
           portfolio?.candidates.slice(0, 4).map(c => `- ${c.industry}: **${c.market_evidence.salary ? fmtSalaryFromMillions(c.market_evidence.salary.median_trieu) + "/tháng" : "Thỏa thuận"}**`).join("\n") || "Đang cập nhật..."
         }\n\nBạn muốn tìm hiểu kỹ hơn về ngành nào không?`;
         opts = portfolio?.candidates.slice(0, 3).map(c => `Lương ${c.industry}`) || [];
       } else if (query.includes("sql") || query.includes("học sql")) {
         replyText = `SQL (Structured Query Language) là kỹ năng truy vấn dữ liệu cực kỳ quan trọng cho các nhóm ngành **Công nghệ & Dữ liệu, Tài chính**.\n\nĐể học SQL hiệu quả:\n1. Tìm hiểu cú pháp SELECT, WHERE, JOIN cơ bản.\n2. Thực hành qua các trang web miễn phí như W3Schools SQL, LeetCode hoặc SQLZoo.\n3. Làm các project nhỏ về phân tích dữ liệu bán hàng, quản lý học sinh và lưu trữ vào Evidence Ledger để tăng uy tín hồ sơ của bạn nhé!`;
       } else {
-        replyText = "Cảm ơn câu hỏi của bạn! Mình là La Bàn, mình có thể giúp bạn giải đáp các thông tin về lương trung vị, số tin tuyển dụng, và kỹ năng yêu cầu của các ngành nghề bạn quan tâm. Bạn có thể hỏi: 'Lương ngành Công nghệ thông tin thế nào?' hoặc 'Kỹ năng nào cần cho Marketing?' để mình tra cứu dữ liệu thật giúp bạn nhé!";
+        replyText = "Cảm ơn câu hỏi của bạn! Mình là La Bàn, mình có thể giúp bạn giải đáp các thông tin về lương trung bình, số tin tuyển dụng, và kỹ năng yêu cầu của các ngành nghề bạn quan tâm. Bạn có thể hỏi: 'Lương ngành Công nghệ thông tin thế nào?' hoặc 'Kỹ năng nào cần cho Marketing?' để mình tra cứu dữ liệu thật giúp bạn nhé!";
         opts = ["Nghề nào phù hợp tôi?", "Lương các ngành ra sao?", "Làm sao học SQL?"];
       }
 

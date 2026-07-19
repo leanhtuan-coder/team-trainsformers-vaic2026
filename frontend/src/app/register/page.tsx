@@ -183,7 +183,7 @@ export default function RegisterPage() {
               disabled={loading || !name.trim() || !email.trim() || !password}
               className="w-full h-12 bg-[#005c6d] hover:bg-[#004b58] text-white font-semibold rounded-full transition mb-6 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#005c6d]/20"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Đăng ký miễn phí"}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Đăng ký ngay"}
             </button>
           </form>
 

@@ -17,14 +17,14 @@ type Card = {
 const CARDS: Card[] = [
   {
     title: "Học sinh & Sinh viên",
-    badge: { label: "Miễn phí", className: "bg-accent/10 text-accent-dark" },
+    badge: { label: "Ngay", className: "bg-accent/10 text-accent-dark" },
     desc: "Tìm hướng đi phù hợp với chính mình, trước khi đặt bút chọn nguyện vọng.",
     checks: [
       "Đánh giá qua hội thoại ~5 phút",
       "Lộ trình nghề có giải thích rõ ràng",
       "Luôn kèm tuyến cao đẳng, học nghề",
     ],
-    cta: { label: "Bắt đầu miễn phí", className: "bg-accent text-white hover:bg-accent-dark" },
+    cta: { label: "Bắt đầu ngay", className: "bg-accent text-white hover:bg-accent-dark" },
   },
   {
     title: "Nhà trường & Trung tâm",

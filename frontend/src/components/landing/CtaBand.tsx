@@ -49,7 +49,7 @@ export function CtaBand({ onStart }: { onStart: () => void }) {
               whileTap={{ scale: 0.97 }}
               className="rounded-xl bg-accent px-6 py-3.5 font-semibold text-white shadow-lg shadow-black/10 transition-colors hover:bg-accent-dark"
             >
-              Làm bài đánh giá miễn phí →
+              Làm bài đánh giá ngay →
             </m.button>
             <a
               href="#dashboard"
@@ -59,7 +59,7 @@ export function CtaBand({ onStart }: { onStart: () => void }) {
             </a>
           </m.div>
           <m.p variants={fadeUp} className="mt-5 text-sm text-white/70">
-            Miễn phí cho học sinh · Không cần thẻ tín dụng
+            Không cần thẻ tín dụng
           </m.p>
         </m.div>
       </div>

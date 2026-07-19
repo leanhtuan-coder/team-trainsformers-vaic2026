@@ -67,7 +67,7 @@ export function Navbar({ onStart }: { onStart: () => void }) {
               whileTap={{ scale: 0.96 }}
               className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
             >
-              Bắt đầu miễn phí →
+              Bắt đầu ngay →
             </m.button>
           )}
         </div>

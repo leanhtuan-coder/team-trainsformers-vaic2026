@@ -1,16 +1,13 @@
 "use client";
 
 // LUỒNG 1 — Landing Page công khai: giới thiệu sản phẩm + dashboard thị trường chung
-// (fetch backend thật, mặc định Toàn quốc) + chatbox khảo sát 10 câu quickstart.
-// Khảo sát xong KHÔNG mở dashboard tại chỗ — redirect sang Student Portal /profile/[id].
+// (dữ liệu thật từ snapshot). KHÔNG còn chat khảo sát tại chỗ — mọi CTA dẫn sang /login.
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { TrustStat } from "@/components/landing/TrustStat";
 import { Problem } from "@/components/landing/Problem";
-import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Features } from "@/components/landing/Features";
 import { Testimonial } from "@/components/landing/Testimonial";
 import { Audience } from "@/components/landing/Audience";
@@ -18,51 +15,22 @@ import { Faq } from "@/components/landing/Faq";
 import { CtaBand } from "@/components/landing/CtaBand";
 import { Footer } from "@/components/landing/Footer";
 import { MarketCharts } from "@/components/dashboard/MarketCharts";
-import { ChatPanel } from "@/components/chat/ChatPanel";
 import { MotionProvider, Reveal } from "@/components/ui/motion";
 import { scaleIn } from "@/lib/animation";
-import { clearPortalRef, loadPortalRef, type PortalRef } from "@/lib/profile";
 
 export default function HomePage() {
   const router = useRouter();
-  const [portal, setPortal] = useState<PortalRef | null>(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [retakeCount, setRetakeCount] = useState(0);
 
-  useEffect(() => {
-    setPortal(loadPortalRef());
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("start") === "1") {
-      setChatOpen(true);
-      window.history.replaceState(null, "", window.location.pathname);
-    }
-  }, []);
-
-  const openChat = () => setChatOpen(true);
-
-  // Chat hoàn tất: backend đã có hồ sơ + câu trả lời → chuyển hướng sang Portal cá nhân.
-  const handleComplete = (profileId: string) => {
-    setChatOpen(false);
-    router.push(`/profile/${profileId}`);
-  };
-
-  const handleRetake = () => {
-    clearPortalRef();
-    setPortal(null);
-    setRetakeCount((c) => c + 1);
-  };
-
-  const handleViewPortal = () => {
-    if (portal) router.push(`/profile/${portal.profile_id}`);
-  };
+  // Mọi CTA ("Làm bài đánh giá", "Bắt đầu", "Tìm lộ trình của riêng bạn"...) dẫn sang đăng nhập.
+  const handleStart = () => router.push("/login");
 
   return (
     <MotionProvider>
-      <Navbar onStart={openChat} />
+      <Navbar onStart={handleStart} />
       <main>
-        <Hero onStart={openChat} />
+        <Hero onStart={handleStart} />
 
-        {/* Dashboard thị trường CHUNG (công khai) — dữ liệu thật từ GET /api/market/snapshot */}
+        {/* Dashboard thị trường CHUNG (công khai) — dữ liệu thật từ snapshot */}
         <section
           id="dashboard"
           aria-labelledby="dashboard-heading"
@@ -84,30 +52,20 @@ export default function HomePage() {
               variant={scaleIn}
               className="relative rounded-3xl border border-gray-200 bg-white p-4 shadow-2xl shadow-brand-deep/10 md:p-6"
             >
-              <MarketCharts onStart={openChat} />
+              <MarketCharts onStart={handleStart} showFilter={false} />
             </Reveal>
           </div>
         </section>
 
         <TrustStat />
         <Problem />
-        <HowItWorks />
         <Features />
         <Testimonial />
-        <Audience onStart={openChat} />
+        <Audience onStart={handleStart} />
         <Faq />
-        <CtaBand onStart={openChat} />
+        <CtaBand onStart={handleStart} />
       </main>
       <Footer />
-      <ChatPanel
-        key={`${retakeCount}-${portal ? portal.profile_id : "new"}`}
-        open={chatOpen}
-        portal={portal}
-        onClose={() => setChatOpen(false)}
-        onComplete={handleComplete}
-        onRetake={handleRetake}
-        onViewPortal={handleViewPortal}
-      />
     </MotionProvider>
   );
 }

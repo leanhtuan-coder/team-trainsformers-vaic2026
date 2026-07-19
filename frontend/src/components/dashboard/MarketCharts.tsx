@@ -16,7 +16,6 @@ import {
 import { fmtInt, fmtMillionsShort, fmtSalaryFromMillions } from "@/lib/format";
 import { looseMatch } from "@/lib/text";
 import { IconX } from "@/components/ui/icons";
-import { BubbleChart, type BubblePoint } from "./BubbleChart";
 import { JobsBubbleRace } from "./JobsBubbleRace";
 
 const ALL_CLUSTERS = "Tất cả khối ngành";
@@ -41,6 +40,7 @@ function mapApiToMarketData(apiData: any): DynamicMarketData {
 
   const meta = {
     totalJobs: totalJobs,
+    analyzedJobs: totalAnalyzed,
     careerGroups: apiData.industry_insights ? apiData.industry_insights.length : 63,
     provinces: provincesCount,
     avgMatch: 92,
@@ -135,6 +135,8 @@ type Props = {
   onStart: () => void;
   initialRegion?: string;
   showCta?: boolean;
+  /** Ẩn bộ lọc Vùng + Khối ngành (ví dụ trên landing page). */
+  showFilter?: boolean;
 };
 
 function ChartCard({
@@ -171,7 +173,7 @@ function Kpi({ label, value, delta, sub }: { label: string; value: string; delta
   );
 }
 
-export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) {
+export function MarketCharts({ onStart, initialRegion, showCta = true, showFilter = true }: Props) {
   const [dbData, setDbData] = useState<DynamicMarketData | null>(null);
 
   useEffect(() => {
@@ -193,7 +195,6 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
   const activeRegions = dbData ? dbData.regions : REGIONS;
   const activeTopSkills = dbData ? dbData.topSkills : TOP_SKILLS;
   const activeSalaryByCluster = dbData ? dbData.salaryByCluster : SALARY_BY_CLUSTER;
-  const activeHotLocal = dbData ? dbData.hotLocal : HOT_LOCAL;
   const activeClusterDemand = dbData ? dbData.clusterDemand : CLUSTER_DEMAND;
   const activeRegionDemand = dbData ? dbData.regionDemand : REGION_DEMAND;
 
@@ -212,7 +213,7 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
 
   const isAllRegions = region === ALL_REGIONS;
   const regionInfo = activeRegionDemand.find((r) => r.region === region);
-  const hot = activeHotLocal.find((h) => h.region === region) ?? activeHotLocal[0] ?? { skill: "Đang tải...", growth: "0%", region: "" };
+  const topCluster = activeClusterDemand[0];
 
   const maxClusterJobs = Math.max(...activeClusterDemand.map((c) => c.jobs), 1);
   const maxSkillPct = Math.max(...activeTopSkills.map((s) => s.pct), 1);
@@ -225,60 +226,51 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
   const salaryOf = (clusterName: string) =>
     activeSalaryByCluster.find((s) => looseMatch(s.cluster, clusterName));
 
-  const hotRows = isAllRegions ? activeHotLocal : activeHotLocal.filter((h) => h.region === region);
   const selectedCta = ctaCluster ? activeClusterDemand.find((c) => c.cluster === ctaCluster) : undefined;
-
-  // Bản đồ cơ hội: gộp nhu cầu (số tin + tăng trưởng) với lương trung vị theo khối ngành.
-  // Chỉ giữ khối ngành có đủ cả lương và tăng trưởng để bong bóng biểu diễn đúng 3 chiều.
-  const parseTrendPct = (trend: string): number => {
-    const match = trend.match(/-?\d+(\.\d+)?/);
-    return match ? parseFloat(match[0]) : 0;
-  };
-  const bubblePoints: BubblePoint[] = activeClusterDemand
-    .map((c) => {
-      const salary = salaryOf(c.cluster);
-      if (!salary) return null;
-      return { cluster: c.cluster, salary: salary.salary, growth: parseTrendPct(c.trend), jobs: c.jobs };
-    })
-    .filter((p): p is BubblePoint => p !== null);
 
   return (
     <div className="space-y-5">
-      {/* Bộ lọc */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <label className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-ink-soft">Vùng</span>
-          <select
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-            className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-brand"
-          >
-            {activeRegions.map((r) => (
-              <option key={r}>{r}</option>
-            ))}
-          </select>
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-ink-soft">Khối ngành</span>
-          <select
-            value={cluster}
-            onChange={(e) => setCluster(e.target.value)}
-            className="max-w-[220px] rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-brand"
-          >
-            {[ALL_CLUSTERS, ...activeClusterDemand.map((c) => c.cluster)].map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </label>
-        <span className="ml-auto hidden items-center gap-2 rounded-full bg-brand-light px-3 py-1.5 text-xs font-semibold text-brand md:inline-flex">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
-          Snapshot {fmtInt(activeMeta.totalJobs)} tin · {activeMeta.provinces} tỉnh thành
-        </span>
-      </div>
+      {/* Bộ lọc — ẩn trên landing page (showFilter=false) */}
+      {showFilter && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <label className="flex items-center gap-2 text-sm">
+            <span className="font-medium text-ink-soft">Vùng</span>
+            <select
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-brand"
+            >
+              {activeRegions.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="font-medium text-ink-soft">Khối ngành</span>
+            <select
+              value={cluster}
+              onChange={(e) => setCluster(e.target.value)}
+              className="max-w-[220px] rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-brand"
+            >
+              {[ALL_CLUSTERS, ...activeClusterDemand.map((c) => c.cluster)].map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+          <span className="ml-auto hidden items-center gap-2 rounded-full bg-brand-light px-3 py-1.5 text-xs font-semibold text-brand md:inline-flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+            Snapshot {fmtInt(activeMeta.totalJobs)} tin · {activeMeta.provinces} tỉnh thành
+          </span>
+        </div>
+      )}
 
       {/* KPI */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="Nghề đang tăng trưởng" value={hot.skill} delta={`↑ ${hot.growth}`} sub={hot.region} />
+        <Kpi
+          label="Ngành tuyển dụng nhiều nhất"
+          value={topCluster?.cluster || "Đang tải..."}
+          delta={topCluster ? `${fmtInt(topCluster.jobs)} tin` : undefined}
+        />
         <Kpi
           label="Kỹ năng thiếu hụt nhất"
           value={activeTopSkills[0]?.name || "Đang tải..."}
@@ -286,24 +278,33 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
           sub="Toàn quốc"
         />
         <Kpi
-          label="Lương trung vị cao nhất"
+          label="Lương trung bình cao nhất"
           value={activeSalaryByCluster[0]?.cluster.split(" / ")[0] || "Đang tải..."}
           delta={activeSalaryByCluster[0] ? fmtSalaryFromMillions(activeSalaryByCluster[0].salary) : "0đ"}
         />
         <Kpi
           label="Số tin đã phân tích"
-          value={fmtInt(regionInfo ? regionInfo.jobs : activeMeta.totalJobs)}
+          value={fmtInt(regionInfo ? regionInfo.jobs : activeMeta.analyzedJobs)}
           sub={`tại ${region}`}
         />
       </div>
 
       {/* Bong bóng động — hành trình việc làm 2000–2025 (dữ liệu thật) */}
       <ChartCard
-        title="Hành trình việc làm 2000–2025"
-        sub="Mỗi bong bóng là một nhóm ngành — bấm Chạy để xem quy mô lao động và tăng trưởng biến đổi qua từng năm"
+        title="Hành trình việc làm 2000–2030"
+        sub="Mỗi bong bóng là một nhóm ngành · 2026–2030 là dự báo (watermark màu cam) — bấm Chạy để xem biến đổi qua từng năm, bấm một bong bóng để tách riêng và xem đường đi của nó"
       >
         <JobsBubbleRace />
       </ChartCard>
+
+      {/* Nguồn dữ liệu 4 bảng bên dưới */}
+      <div className="flex items-center gap-3 pt-1">
+        <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+        <p className="text-center text-xs font-medium text-ink-soft">
+          Số liệu thống kê từ một trang web tìm việc trong 6 tháng đầu năm 2026
+        </p>
+        <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+      </div>
 
       <div className="grid gap-5 lg:grid-cols-12">
         {/* Xu thế tuyển dụng theo khối ngành */}
@@ -321,7 +322,7 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
                   key={c.cluster}
                   type="button"
                   onClick={() => setCtaCluster(ctaCluster === c.cluster ? null : c.cluster)}
-                  aria-label={`${c.cluster}: ${fmtInt(c.jobs)} tin, tăng trưởng ${c.trend}`}
+                  aria-label={`${c.cluster}: ${fmtInt(c.jobs)} tin, ${c.trend} không đòi kinh nghiệm`}
                   className={`group relative block w-full text-left transition-opacity ${active ? "" : "opacity-35"}`}
                 >
                   <div className="flex items-baseline justify-between gap-3 text-sm">
@@ -343,7 +344,7 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
                   </div>
                   <div className="pointer-events-none absolute -top-9 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 text-xs text-white shadow-lg group-hover:block">
                     {fmtInt(c.jobs)} tin · {c.trend}
-                    {salary ? ` · trung vị ${fmtSalaryFromMillions(salary.salary)}` : ""}
+                    {salary ? ` · trung bình ${fmtSalaryFromMillions(salary.salary)}` : ""}
                   </div>
                 </button>
               );
@@ -357,7 +358,7 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
                   <b>{selectedCta.cluster}</b> đang có {fmtInt(selectedCta.jobs)} tin, đặc trưng là{" "}
                   <b className="text-accent-dark">{selectedCta.trend}</b>
                   {salaryOf(selectedCta.cluster)
-                    ? `, lương trung vị ${fmtSalaryFromMillions(salaryOf(selectedCta.cluster)!.salary)}`
+                    ? `, lương trung bình ${fmtSalaryFromMillions(salaryOf(selectedCta.cluster)!.salary)}`
                     : ""}
                   . Bạn có tố chất phù hợp không?
                 </p>
@@ -418,16 +419,6 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
         </ChartCard>
       </div>
 
-      {/* Bản đồ cơ hội — bubble chart 3 chiều */}
-      {bubblePoints.length >= 2 && (
-        <ChartCard
-          title="Bản đồ cơ hội nghề nghiệp"
-          sub="Lương trung vị × tốc độ tăng trưởng × số tin tuyển — bấm một bong bóng để xem bạn có hợp không"
-        >
-          <BubbleChart points={bubblePoints} activeCluster={cluster} onStart={onStart} />
-        </ChartCard>
-      )}
-
       <div className="grid gap-5 lg:grid-cols-12">
         {/* Nhu cầu theo vùng */}
         <ChartCard
@@ -463,8 +454,8 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
           </div>
         </ChartCard>
 
-        {/* Lương trung vị theo nhóm ngành */}
-        <ChartCard className="lg:col-span-5" title="Lương trung vị theo nhóm ngành" sub="Triệu đồng / tháng">
+        {/* Lương trung bình theo nhóm ngành */}
+        <ChartCard className="lg:col-span-5" title="Lương trung bình theo nhóm ngành" sub="Triệu đồng / tháng">
           <div className="flex h-44 items-end gap-2.5">
             {activeSalaryByCluster.map((s) => {
               const active = !clusterFilterOn || looseMatch(s.cluster, cluster);
@@ -498,40 +489,6 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
           </div>
         </ChartCard>
       </div>
-
-      {/* Kỹ năng nóng cục bộ */}
-      <ChartCard title="Kỹ năng nóng cục bộ" sub="Kỹ năng tăng trưởng nhanh nhất theo từng vùng">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead>
-              <tr className="text-xs uppercase tracking-wide text-ink-soft">
-                <th className="pb-2.5 font-semibold">Vùng</th>
-                <th className="pb-2.5 font-semibold">Kỹ năng</th>
-                <th className="pb-2.5 font-semibold">Tăng trưởng</th>
-                <th className="pb-2.5 font-semibold">Lương tham chiếu</th>
-              </tr>
-            </thead>
-            <tbody>
-              {hotRows.length > 0 ? (
-                hotRows.map((h) => (
-                  <tr key={h.region} className="border-t border-gray-100 transition-colors hover:bg-brand-light/40">
-                    <td className="py-3 font-semibold text-ink">{h.region}</td>
-                    <td className="py-3 text-ink">{h.skill}</td>
-                    <td className="py-3 font-bold text-accent-dark">{h.growth}</td>
-                    <td className="py-3 tabular-nums text-ink">{h.salary}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="border-t border-gray-100">
-                  <td colSpan={4} className="py-4 text-ink-soft">
-                    Chưa có dữ liệu cho {region} — chọn &ldquo;Toàn quốc&rdquo; để xem tất cả.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </ChartCard>
 
       {showCta && (
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-brand to-brand-dark px-6 py-5 text-white">

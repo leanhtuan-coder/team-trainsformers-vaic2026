@@ -1,20 +1,13 @@
 "use client";
 
 import { m } from "framer-motion";
-import { HOT_LOCAL, META, TOP_SKILLS } from "@/lib/demoData";
+import Image from "next/image";
+import { META } from "@/lib/demoData";
 import { fmtInt } from "@/lib/format";
 import { EASE_OUT_EXPO, staggerContainer } from "@/lib/animation";
-import { Parallax } from "@/components/ui/motion";
 
-// H1 tách theo từ cho hiệu ứng "mask rise". LƯU Ý LCP: chữ nằm trong mask (overflow-hidden)
-// nên chỉ paint khi trượt vào — giữ stagger 0.03 + duration 0.45 để tổng chuỗi ≤ ~0.9s.
-// Dấu phẩy dính vào "thật," (teal) để flex gap không chèn khoảng trắng thừa trước dấu.
-const HEADLINE: { text: string; brand?: boolean }[] = [
-  { text: "Chọn" }, { text: "nghề" }, { text: "bằng" },
-  { text: "dữ", brand: true }, { text: "liệu", brand: true }, { text: "thật,", brand: true },
-  { text: "không" }, { text: "còn" }, { text: "cảm" }, { text: "tính" },
-];
-
+// H1 là tên thương hiệu "CareerRadar" với hiệu ứng "mask rise". LCP: chữ nằm trong mask
+// (overflow-hidden) nên chỉ paint khi trượt vào.
 const wordMask = staggerContainer(0.03, 0.1);
 const wordRise = {
   hidden: { y: "110%" },
@@ -48,36 +41,16 @@ export function Hero({ onStart }: { onStart: () => void }) {
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Thẻ glass nổi — parallax bọc ngoài + float CSS bên trong (chỉ màn rộng) */}
-      <Parallax offset={40} className="absolute left-[5%] top-28 hidden xl:block">
-        <m.div
-          aria-hidden="true"
-          className="glass animate-floaty rounded-2xl px-4 py-3 text-sm"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: EASE_OUT_EXPO, delay: 0.9 }}
-        >
-          <p className="font-semibold text-ink">Phân tích Dữ liệu</p>
-          <p className="font-bold text-accent-dark">{META.avgMatch}% phù hợp với bạn</p>
-        </m.div>
-      </Parallax>
-      <Parallax offset={70} className="absolute right-[5%] top-24 hidden xl:block">
-        <m.div
-          aria-hidden="true"
-          className="glass animate-floaty rounded-2xl px-4 py-3 text-sm"
-          style={{ animationDelay: "1.4s" }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: EASE_OUT_EXPO, delay: 1.05 }}
-        >
-          <p className="font-semibold text-ink">
-            <span className="text-accent">●</span> Nhu cầu tăng {HOT_LOCAL[0].growth}
-          </p>
-          <p className="text-ink-soft">
-            {TOP_SKILLS[0].name} {TOP_SKILLS[0].pct}% · SQL đang tăng
-          </p>
-        </m.div>
-      </Parallax>
+      {/* Logo phóng to, chìm làm watermark phía sau nội dung hero */}
+      <Image
+        src="/logo.png"
+        alt=""
+        aria-hidden="true"
+        width={950}
+        height={950}
+        priority
+        className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 -translate-y-[12%] select-none opacity-[0.07] md:h-[780px] md:w-[780px]"
+      />
 
       <div className="relative mx-auto max-w-3xl px-6 pb-12 pt-14 text-center md:pt-20">
         <m.p
@@ -91,29 +64,26 @@ export function Hero({ onStart }: { onStart: () => void }) {
 
         <m.h1
           id="hero-heading"
-          className="mt-5 flex flex-wrap justify-center gap-x-[0.28em] gap-y-1 text-4xl font-extrabold leading-[1.1] tracking-tight text-ink md:text-[3.3rem]"
+          className="mt-5 flex justify-center text-6xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-[5.5rem]"
           variants={wordMask}
           initial="hidden"
           animate="visible"
         >
-          {HEADLINE.map((w, i) => (
-            <span key={i} className="inline-block overflow-hidden pb-[0.15em] -mb-[0.15em]">
-              <m.span variants={wordRise} className={`inline-block ${w.brand ? "text-brand" : ""}`}>
-                {w.text}
-              </m.span>
-            </span>
-          ))}
+          <span className="inline-block overflow-hidden pb-[0.15em] -mb-[0.15em]">
+            <m.span variants={wordRise} className="inline-block">
+              Career<span className="text-brand">Radar</span>
+            </m.span>
+          </span>
         </m.h1>
 
         <m.p
-          className="mx-auto mt-5 max-w-xl text-base text-ink-soft md:text-lg"
+          className="mx-auto mt-6 max-w-xl text-xl font-semibold text-ink md:text-2xl"
           variants={fadeUpLoad}
           custom={0.5}
           initial="hidden"
           animate="visible"
         >
-          La Bàn Nghề phân tích hồ sơ năng lực của bạn và đối chiếu với {fmtInt(META.totalJobs)} tin
-          tuyển dụng thật để đưa ra lộ trình nghề cụ thể — có giải thích, có tuyến học.
+          Chọn nghề bằng <span className="text-brand">dữ liệu thật</span>, không còn cảm tính.
         </m.p>
 
         <m.div
@@ -132,12 +102,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
           >
             Làm bài đánh giá →
           </m.button>
-          <a
-            href="#cach-hoat-dong"
-            className="rounded-xl border border-gray-300 bg-white px-6 py-3.5 font-semibold text-ink transition-colors hover:border-brand hover:text-brand"
-          >
-            Xem cách hoạt động
-          </a>
         </m.div>
 
         <m.p
@@ -147,7 +111,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           initial="hidden"
           animate="visible"
         >
-          ✓ Miễn phí cho học sinh · Dữ liệu từ {fmtInt(META.totalJobs)} tin tuyển dụng thật
+          ✓ Dữ liệu từ {fmtInt(META.totalJobs)} tin tuyển dụng thật
         </m.p>
       </div>
     </section>
