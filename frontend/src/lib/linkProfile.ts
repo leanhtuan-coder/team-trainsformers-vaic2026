@@ -9,6 +9,16 @@ import { loadPortalRef, savePortalRef } from "@/lib/profile";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
+async function backendProfileExists(profileId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/profile/${profileId}`);
+    return res.ok;
+  } catch {
+    // Lỗi mạng: không kết luận là "không tồn tại" — tránh tạo hồ sơ trùng vô ích khi chỉ là mất mạng tạm thời.
+    return true;
+  }
+}
+
 export async function linkSessionToProfile(
   supabase: SupabaseClient,
   user: User,
@@ -23,10 +33,17 @@ export async function linkSessionToProfile(
 
   let profileId = link?.profile_id as string | undefined;
 
-  // 2. Chưa có → tái dùng hồ sơ ẩn danh trên máy, hoặc tạo mới ở backend
+  // Backend Render dùng filesystem tạm thời — hồ sơ có thể đã mất sau redeploy dù mapping Supabase
+  // vẫn còn. Xác minh trước khi tin cậy, không thì mọi lần đăng nhập sẽ báo "profile_not_found".
+  if (profileId && !(await backendProfileExists(profileId))) {
+    profileId = undefined;
+  }
+
+  // 2. Chưa có (hoặc vừa phát hiện mapping cũ đã mất) → tái dùng hồ sơ ẩn danh trên máy nếu còn,
+  //    hoặc tạo mới ở backend.
   if (!profileId) {
     const existing = loadPortalRef();
-    if (existing?.profile_id) {
+    if (existing?.profile_id && (await backendProfileExists(existing.profile_id))) {
       profileId = existing.profile_id;
     } else {
       const res = await fetch(`${API_BASE}/profile`, { method: "POST" });
@@ -58,4 +75,20 @@ export async function linkSessionToProfile(
   });
 
   return profileId!;
+}
+
+/** Dịch mã lỗi thô (backend/network) sang thông báo tiếng Việt thân thiện — tránh hiện thẳng
+ *  chuỗi như "profile_not_found" hay "api_error_500" ra màn hình người dùng. */
+export function friendlyProfileError(err: unknown): string {
+  const msg = err instanceof Error ? err.message : String(err);
+  if (/profile_not_found/.test(msg)) {
+    return "Không tìm thấy hồ sơ của bạn trên hệ thống. Vui lòng thử đăng nhập lại.";
+  }
+  if (/create_profile_failed|api_error_5\d\d/.test(msg)) {
+    return "Máy chủ đang khởi động lại, việc này có thể mất khoảng 30-60 giây. Vui lòng thử lại sau ít phút.";
+  }
+  if (/Failed to fetch|NetworkError|api_error_0/.test(msg)) {
+    return "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.";
+  }
+  return msg || "Đã xảy ra lỗi. Vui lòng thử lại.";
 }

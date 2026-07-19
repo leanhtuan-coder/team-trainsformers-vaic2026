@@ -7,8 +7,8 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { LogoMark } from "@/components/ui/Compass";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
-import { linkSessionToProfile } from "@/lib/linkProfile";
-import { getBackendProfile, hasCompletedOnboarding } from "@/lib/profile";
+import { linkSessionToProfile, friendlyProfileError } from "@/lib/linkProfile";
+import { getBackendProfile, hasCompletedOnboarding, savePortalRef } from "@/lib/profile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,8 +40,8 @@ export default function LoginPage() {
           /invalid login credentials/i.test(msg)
             ? "Email hoặc mật khẩu không đúng."
             : /email not confirmed/i.test(msg)
-            ? "Tài khoản chưa xác nhận email. Kiểm tra hộp thư của bạn nhé."
-            : msg || "Đăng nhập thất bại. Vui lòng thử lại."
+              ? "Tài khoản chưa xác nhận email. Kiểm tra hộp thư của bạn nhé."
+              : msg || "Đăng nhập thất bại. Vui lòng thử lại."
         );
         return;
       }
@@ -49,7 +49,7 @@ export default function LoginPage() {
       const profile = await getBackendProfile(profileId);
       router.push(hasCompletedOnboarding(profile) ? `/profile/${profileId}` : `/onboarding?profileId=${profileId}`);
     } catch (err: any) {
-      setError(err?.message || "Đăng nhập thất bại. Vui lòng thử lại.");
+      setError(friendlyProfileError(err));
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ export default function LoginPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:flex-row items-center justify-center max-w-[1400px] mx-auto w-full px-6 md:px-8 lg:px-16 gap-10 lg:gap-24 xl:gap-32 pb-12">
-        
+
         {/* Left Column — Form */}
         <div className="w-full max-w-[400px] xl:max-w-[440px] flex flex-col justify-center flex-shrink-0 mt-8 lg:mt-0">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#111827] tracking-tight leading-tight mb-3">
@@ -220,7 +220,7 @@ export default function LoginPage() {
           </div>
 
           <div className="absolute -top-2 -right-6 bg-white text-[#111827] text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg border border-gray-100 transform -rotate-6">
-            <span className="text-[#005c6d]">92%</span> Điểm khớp
+            <span className="text-[#005c6d]">✓</span> Đã khớp lộ trình
           </div>
         </div>
 

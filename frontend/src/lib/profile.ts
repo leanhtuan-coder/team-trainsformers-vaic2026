@@ -109,6 +109,7 @@ export interface EvidenceItem {
   confidence: "low" | "medium" | "high" | string;
   collected_at: string;
   user_confirmed?: boolean;
+  supersedes?: string;
 }
 
 export interface ProfileApiResponse {
@@ -170,6 +171,8 @@ export async function addEvidence(
     source_ref?: string;
     confidence?: "low" | "medium" | "high";
     claims: EvidenceClaim[];
+    /** ID evidence bị thay thế (đúng nguyên tắc append-only — xem backend routes/profile.ts). */
+    supersedes?: string;
   }
 ) {
   return apiJson(`/profile/${profileId}/evidence`, {
@@ -196,7 +199,27 @@ export async function addAssessment(
   });
 }
 
+// 6 id câu hỏi quickstart tự do (Chặng 1) — phải khớp backend/src/profile/quickstart.ts.
+const RIASEC_QUESTION_IDS = [
+  "q1-interest",
+  "q2-aptitude",
+  "q3-value",
+  "q4-environment",
+  "q5-trait",
+  "q6-aspiration",
+];
+
 export function hasCompletedOnboarding(profile: ProfileApiResponse): boolean {
-  const quickstartCount = profile.evidence.filter((e) => e.source_type === "self_report" && e.source_ref?.startsWith("qs-")).length;
-  return quickstartCount >= 3;
+  const quickstartCount = profile.evidence.filter(
+    (e) => e.source_type === "self_report" && !!e.source_ref && RIASEC_QUESTION_IDS.includes(e.source_ref)
+  ).length;
+
+  const hasFullHolland = profile.evidence.some(
+    (e) =>
+      e.source_type === "assessment" &&
+      (e.source_ref?.includes("Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ") ||
+       e.assessment_detail?.name === "Trắc nghiệm sở thích nghề nghiệp Holland đầy đủ")
+  );
+
+  return quickstartCount >= 3 || hasFullHolland;
 }

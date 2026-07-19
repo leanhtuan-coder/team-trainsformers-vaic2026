@@ -1,5 +1,8 @@
+"use client";
+
+import { m } from "framer-motion";
 import { LogoMark } from "@/components/ui/Compass";
-import { BRAND } from "@/lib/demoData";
+import { REVEAL_VIEWPORT, fadeIn } from "@/lib/animation";
 
 const COLUMNS = [
   {
@@ -32,15 +35,22 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer id="ve-chung-toi" className="bg-brand-deep px-6 py-14 text-white/80">
+    <m.footer
+      id="ve-chung-toi"
+      variants={fadeIn}
+      initial="hidden"
+      whileInView="visible"
+      viewport={REVEAL_VIEWPORT}
+      className="bg-brand-deep px-6 py-14 text-white/80"
+    >
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-5">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
             <LogoMark />
-            <span className="font-bold text-white">{BRAND.name}</span>
+            <span className="font-bold text-white">CareerRadar</span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed">
-            {BRAND.slogan}
+            La Bàn Nghề — trợ lý AI hướng nghiệp bằng dữ liệu thật cho học sinh, sinh viên Việt Nam.
           </p>
         </div>
         {COLUMNS.map((col) => (
@@ -59,9 +69,9 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-12 flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-sm text-white/60">
-        <p>© {BRAND.year} · {BRAND.team} × {BRAND.partner}</p>
-        <p>Được xây dựng tại {BRAND.event} · {BRAND.location}</p>
+        <p>© 2026 · TrainSformers × VEX Technology Solutions</p>
+        <p>Được xây dựng tại VAIC 2026 · Hà Nội, Việt Nam</p>
       </div>
-    </footer>
+    </m.footer>
   );
 }

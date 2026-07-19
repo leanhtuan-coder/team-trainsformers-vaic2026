@@ -3,9 +3,13 @@ import { randomUUID } from "node:crypto";
 import { QUICKSTART_QUESTIONS } from "../profile/quickstart.js";
 import { buildSnapshot } from "../profile/snapshot.js";
 import { scoreRiasec } from "../profile/riasec.js";
+import { scoreRiasecWithNvidia, isNvidiaConfigured } from "../llm/nvidia.js";
+import { scoreRiasecWithGroq, isGroqConfigured, type QuestionAnswer } from "../llm/groq.js";
+import { scoreRiasecFallback } from "../profile/riasecFallback.js";
 import type { AssessmentDetail, Evidence, Profile } from "../profile/schema.js";
 import { loadProfile, saveProfile } from "../profile/store.js";
 import { matchPathways } from "../matching/engine.js";
+import { getJobTitleBranches } from "../matching/jobTitles.js";
 import { loadMarketSnapshot } from "./market.js";
 
 const router = Router();
@@ -37,17 +41,17 @@ router.post("/:id/quickstart", async (req, res) => {
   }
 
   const created: string[] = [];
+  const toScore: QuestionAnswer[] = []; // câu tự do RIASEC — chấm điểm sau khi lưu self_report
   for (const { question_id, answer } of answers) {
     const question = QUICKSTART_QUESTIONS.find((q) => q.id === question_id);
     if (!question) continue;
     const values = Array.isArray(answer) ? answer : [answer];
+    const answerText = values.filter((v) => typeof v === "string" && v.trim()).join(", ").trim();
     const evidence: Evidence = {
       evidence_id: randomUUID(),
       source_type: "self_report",
       source_ref: question.id,
-      claims: values
-        .filter((v) => typeof v === "string" && v.trim())
-        .map((v) => ({ group: question.group, dimension: question.dimension, value: v.trim() })),
+      claims: answerText ? [{ group: question.group, dimension: question.dimension, value: answerText }] : [],
       confidence: "medium",
       collected_at: new Date().toISOString(),
       user_confirmed: true,
@@ -55,6 +59,53 @@ router.post("/:id/quickstart", async (req, res) => {
     if (evidence.claims.length === 0) continue;
     profile.evidence.push(evidence);
     created.push(evidence.evidence_id);
+    toScore.push({ id: question.id, dimension: question.dimension, question: question.text, answer: answerText });
+  }
+
+  // Chấm RIASEC cho các câu tự do vừa nộp: gpt-oss-120b qua NVIDIA NIM trước (key đã cấu hình sẵn
+  // cho chatbot La Bàn), Groq dự phòng nếu ai cấu hình GROQ_API_KEY, cuối cùng mới fallback từ khoá
+  // — KHÔNG chặn cứng luồng, self_report facts đã lưu ở trên dù chấm điểm có lỗi cả 3 lớp.
+  if (toScore.length > 0) {
+    let llmUsed = false;
+    let result: Awaited<ReturnType<typeof scoreRiasecWithGroq>> | null = null;
+    if (isNvidiaConfigured()) {
+      try {
+        result = await scoreRiasecWithNvidia(toScore);
+        llmUsed = true;
+      } catch (err) {
+        console.error("[riasec] NVIDIA NIM chấm điểm lỗi, thử Groq:", err);
+      }
+    }
+    if (!result && isGroqConfigured()) {
+      try {
+        result = await scoreRiasecWithGroq(toScore);
+        llmUsed = true;
+      } catch (err) {
+        console.error("[riasec] Groq chấm điểm lỗi, dùng fallback từ khoá:", err);
+      }
+    }
+    if (!result) result = scoreRiasecFallback(toScore);
+
+    for (const qa of toScore) {
+      const letters = result[qa.id] ?? [];
+      if (letters.length === 0) continue;
+      const summary = letters
+        .slice()
+        .sort((a, b) => b.score - a.score)
+        .map((l) => `${l.letter} ${l.score}/10`)
+        .join(", ");
+      const scoreEvidence: Evidence = {
+        evidence_id: randomUUID(),
+        source_type: "ai_inference",
+        source_ref: qa.id,
+        claims: [{ group: "activity_interest", dimension: `${qa.dimension} — chấm RIASEC`, value: summary }],
+        ai_riasec: letters,
+        confidence: llmUsed ? "high" : "low",
+        collected_at: new Date().toISOString(),
+        user_confirmed: true, // là kết quả trực tiếp của hành động nộp quickstart, không phải suy luận ẩn (ETH-11)
+      };
+      profile.evidence.push(scoreEvidence);
+    }
   }
 
   await saveProfile(profile);
@@ -132,6 +183,13 @@ router.post("/:id/evidence", async (req, res) => {
     });
   }
 
+  // supersedes: cho phép "sửa" một giá trị trước đó theo đúng nguyên tắc append-only (không xóa
+  // evidence cũ, chỉ đánh dấu bị thay thế — snapshot.ts tự loại evidence bị supersedes khỏi active).
+  const supersedes = typeof req.body?.supersedes === "string" ? req.body.supersedes.trim() : undefined;
+  if (supersedes && !profile.evidence.some((e) => e.evidence_id === supersedes)) {
+    return res.status(400).json({ error: "invalid_supersedes", message: "evidence_id cần supersedes không tồn tại trong hồ sơ này." });
+  }
+
   const evidence: Evidence = {
     evidence_id: randomUUID(),
     source_type: sourceType as Evidence["source_type"],
@@ -140,6 +198,7 @@ router.post("/:id/evidence", async (req, res) => {
     confidence: confidence as Evidence["confidence"],
     collected_at: new Date().toISOString(),
     user_confirmed: req.body?.user_confirmed !== false,
+    ...(supersedes ? { supersedes } : {}),
   };
 
   profile.evidence.push(evidence);
@@ -192,11 +251,100 @@ router.get("/:id/pathways", async (req, res) => {
   try {
     const market = await loadMarketSnapshot();
     const portfolio = matchPathways(buildSnapshot(profile), market);
+
+    // Sinh AI explanation cho top 3 candidates bằng NVIDIA NIM (Llama 3.1 70B)
+    const apiKey = process.env.NVIDIA_API_KEY;
+    if (apiKey && portfolio.candidates.length > 0) {
+      const top3 = portfolio.candidates.slice(0, 3);
+      const snap = buildSnapshot(profile);
+      const studentName = snap.groups?.goals_exploration?.find(d => d.dimension === "tên")?.values?.[0]?.value || "Học sinh";
+      const hollandCode = scoreRiasec(profile).holland_code || "chưa rõ";
+
+      const promises = top3.map(async (c: any) => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 4000); // 4 giây timeout
+        try {
+          const matchedDetails = c.matched_profile_evidence
+            .map((e: any) => `- ${e.dimension}: ${e.value} ${e.matched_tokens.length ? '(khớp: ' + e.matched_tokens.join(', ') + ')' : ''}`)
+            .join("\n");
+
+          const systemPrompt = `Bạn là trợ lý AI hướng nghiệp thông minh La Bàn. Nhiệm vụ của bạn là giải thích ngắn gọn, súc tích (1-2 câu) lý do vì sao một ngành nghề phù hợp với học sinh dựa trên Holland Code và bằng chứng của học sinh đó. Trả lời bằng Tiếng Việt tự nhiên, truyền cảm hứng và mang tính xây dựng.`;
+
+          const userPrompt = `Học sinh: ${studentName}
+Holland Code: ${hollandCode}
+Ngành đang xét: ${c.industry}
+Bằng chứng khớp nối:
+${matchedDetails}
+
+Hãy viết một lời giải thích ngắn gọn (tối đa 2 câu) giải thích trực tiếp cho học sinh lý do ngành này rất phù hợp với họ. Xưng hô là 'La Bàn' và 'bạn'.`;
+
+          const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model: "meta/llama-3.1-70b-instruct",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt }
+              ],
+              temperature: 0.5,
+              max_tokens: 256
+            }),
+            signal: controller.signal
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            c.ai_explanation = result.choices?.[0]?.message?.content?.trim() || "";
+          }
+        } catch (err) {
+          console.error(`Lỗi sinh giải thích AI cho ngành ${c.industry}:`, err);
+        } finally {
+          clearTimeout(timeout);
+        }
+      });
+
+      await Promise.all(promises);
+    }
+
     res.json(portfolio);
-  } catch {
+  } catch (err) {
+    console.error("Lỗi lấy pathways:", err);
     res.status(503).json({
       error: "market_signal_snapshot_unavailable",
       message: "Chưa có data/processed/market_signal_snapshot.json — chạy `npm run ingest` trước.",
+    });
+  }
+});
+
+/** Chặng 3 — nhánh chức danh cụ thể trong 1 ngành, tính 100% từ tin tuyển dụng thật
+ *  (xem backend/src/matching/jobTitles.ts) — không có "job title" hay Fit%/lương bịa. */
+router.get("/:id/jobs", async (req, res) => {
+  const profile = await loadProfile(req.params.id);
+  if (!profile) return res.status(404).json({ error: "profile_not_found" });
+
+  const industry = String(req.query.industry || "").trim();
+  if (!industry) {
+    return res.status(400).json({ error: "industry_required", message: "Cần query ?industry=<tên ngành>" });
+  }
+
+  try {
+    const result = await getJobTitleBranches(industry, buildSnapshot(profile));
+    if (!result) {
+      return res.status(404).json({
+        error: "industry_not_found",
+        message: `Không tìm thấy tin tuyển dụng nào cho ngành "${industry}" trong snapshot hiện tại.`,
+      });
+    }
+    res.json(result);
+  } catch (err) {
+    console.error("Lỗi lấy nhánh chức danh:", err);
+    res.status(503).json({
+      error: "jobs_normalized_unavailable",
+      message: "Chưa có data/processed/jobs_normalized.json — chạy `npm run ingest` trước.",
     });
   }
 });
@@ -223,6 +371,9 @@ router.post("/:id/interview", async (req, res) => {
     const riasecResult = scoreRiasec(profile);
     const market = await loadMarketSnapshot();
     const portfolio = matchPathways(buildSnapshot(profile), market);
+    const snap = buildSnapshot(profile);
+    const studentName = snap.groups?.goals_exploration?.find(d => d.dimension === "tên")?.values?.[0]?.value || "Học sinh";
+    const studentLocation = snap.groups?.context_preferences?.find(d => d.dimension === "vùng miền mong muốn làm việc")?.values?.[0]?.value || "Toàn quốc";
     const topCareers = portfolio.candidates.slice(0, 3).map(c => 
       `- Ngành: ${c.industry} (Khớp: ${c.relevance_score}%), Lương: ${c.market_evidence.salary ? c.market_evidence.salary.median_trieu + ' triệu/tháng' : 'Thỏa thuận'}, Số tin tuyển: ${c.market_evidence.posting_count}`
     ).join("\n");
@@ -231,8 +382,8 @@ router.post("/:id/interview", async (req, res) => {
 Nhiệm vụ của bạn là tư vấn hướng nghiệp sâu sắc, thực tế, thân thiện cho học sinh trung học Việt Nam dựa trên hồ sơ năng lực của họ.
 
 Thông tin học sinh hiện tại:
-- Tên: ${profile.snapshot?.name || "Học sinh"}
-- Vùng miền mong muốn làm việc: ${profile.snapshot?.preferred_location || "Toàn quốc"}
+- Tên: ${studentName}
+- Vùng miền mong muốn làm việc: ${studentLocation}
 - Holland Code (RIASEC): ${riasecResult.holland_code || "Chưa có đủ dữ liệu"}
 - Top 3 ngành nghề phù hợp nhất dựa trên phân tích dữ liệu thị trường thực tế:
 ${topCareers}

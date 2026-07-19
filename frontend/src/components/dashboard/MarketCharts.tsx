@@ -16,6 +16,8 @@ import {
 import { fmtInt, fmtMillionsShort, fmtSalaryFromMillions } from "@/lib/format";
 import { looseMatch } from "@/lib/text";
 import { IconX } from "@/components/ui/icons";
+import { BubbleChart, type BubblePoint } from "./BubbleChart";
+import { JobsBubbleRace } from "./JobsBubbleRace";
 
 const ALL_CLUSTERS = "Tất cả khối ngành";
 const ALL_REGIONS = "Toàn quốc";
@@ -132,6 +134,7 @@ function mapApiToMarketData(apiData: any): DynamicMarketData {
 type Props = {
   onStart: () => void;
   initialRegion?: string;
+  initialCluster?: string;
   showCta?: boolean;
 };
 
@@ -169,8 +172,8 @@ function Kpi({ label, value, delta, sub }: { label: string; value: string; delta
   );
 }
 
-export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) {
-  const [apiData, setApiData] = useState<any>(null);
+export function MarketCharts({ onStart, initialRegion, initialCluster, showCta = true }: Props) {
+  const [dbData, setDbData] = useState<DynamicMarketData | null>(null);
 
   useEffect(() => {
     fetch(`${API_BASE}/market/snapshot`)
@@ -178,218 +181,75 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
       })
-      .then((data) => {
-        setApiData(data);
+      .then((apiData) => {
+        const mapped = mapApiToMarketData(apiData);
+        setDbData(mapped);
       })
       .catch((err) => {
         console.error("Lỗi khi tải dữ liệu thị trường từ API:", err);
       });
   }, []);
 
-  const activeMeta = apiData
-    ? {
-        totalJobs: apiData.total_scraped || 3365,
-        careerGroups: apiData.industry_insights?.length || 30,
-        provinces: apiData.provinces?.length || 21,
-        avgMatch: 92,
-      }
-    : META;
+  const activeMeta = dbData ? dbData.meta : META;
+  const activeRegions = dbData ? dbData.regions : REGIONS;
+  const activeTopSkills = dbData ? dbData.topSkills : TOP_SKILLS;
+  const activeSalaryByCluster = dbData ? dbData.salaryByCluster : SALARY_BY_CLUSTER;
+  const activeHotLocal = dbData ? dbData.hotLocal : HOT_LOCAL;
+  const activeClusterDemand = dbData ? dbData.clusterDemand : CLUSTER_DEMAND;
+  const activeRegionDemand = dbData ? dbData.regionDemand : REGION_DEMAND;
 
-  const activeRegions = apiData?.provinces
-    ? [ALL_REGIONS, ...apiData.provinces.map((p: any) => p.name)]
-    : REGIONS;
-
-  const [region, setRegion] = useState(ALL_REGIONS);
-
+  const [region, setRegion] = useState(
+    initialRegion && activeRegions.includes(initialRegion) ? initialRegion : ALL_REGIONS
+  );
+  
   useEffect(() => {
     if (initialRegion && activeRegions.includes(initialRegion)) {
       setRegion(initialRegion);
     }
   }, [activeRegions, initialRegion]);
 
-  const [cluster, setCluster] = useState(ALL_CLUSTERS);
+  const [cluster, setCluster] = useState(
+    initialCluster && activeClusterDemand.some((c) => c.cluster === initialCluster) ? initialCluster : ALL_CLUSTERS
+  );
   const [ctaCluster, setCtaCluster] = useState<string | null>(null);
 
-  const isAllRegions = region === ALL_REGIONS;
-  const clusterFilterOn = cluster !== ALL_CLUSTERS;
-
-  // 1. Khối ngành đang tuyển nhiều nhất (lọc theo Region)
-  let activeClusterDemand = CLUSTER_DEMAND;
-  if (apiData?.industry_insights) {
-    activeClusterDemand = apiData.industry_insights.map((ind: any) => {
-      let jobsCount = ind.posting_count;
-      if (region !== ALL_REGIONS) {
-        const prov = ind.top_provinces?.find((p: any) => p.name === region);
-        jobsCount = prov ? prov.count : 0;
-      }
-      const entryPct = Math.round(ind.entry_level_ratio * 100);
-      return {
-        cluster: ind.industry,
-        jobs: jobsCount,
-        trend: `+${entryPct}% entry`
-      };
-    })
-    .filter((c: any) => c.jobs > 0)
-    .sort((a: any, b: any) => b.jobs - a.jobs);
-  }
-
-  // 2. Kỹ năng đang được săn đón (lọc theo Khối ngành)
-  let activeTopSkills = TOP_SKILLS;
-  if (apiData) {
-    if (cluster === ALL_CLUSTERS) {
-      const totalJobs = apiData.total_jobs || 1332;
-      activeTopSkills = (apiData.top_skills_required || []).slice(0, 8).map((s: any) => ({
-        name: s.name,
-        pct: Math.round((s.count / totalJobs) * 100),
-        cluster: "Mặt bằng chung",
-        salary: "Đang cập nhật"
-      }));
-    } else {
-      const ind = apiData.industry_insights?.find((i: any) => i.industry === cluster);
-      if (ind) {
-        activeTopSkills = (ind.top_skills || []).slice(0, 8).map((s: any) => ({
-          name: s.name,
-          pct: Math.round((s.count / ind.posting_count) * 100),
-          cluster: ind.industry,
-          salary: "Đang cập nhật"
-        }));
-      } else {
-        activeTopSkills = [];
-      }
+  useEffect(() => {
+    if (initialCluster && activeClusterDemand.some((c) => c.cluster === initialCluster)) {
+      setCluster(initialCluster);
     }
-  }
+  }, [activeClusterDemand, initialCluster]);
 
-  // 3. Lương trung vị theo nhóm ngành
-  let activeSalaryByCluster = SALARY_BY_CLUSTER;
-  if (apiData?.salary_by_industry) {
-    activeSalaryByCluster = apiData.salary_by_industry.map((s: any) => ({
-      cluster: s.industry,
-      salary: s.median_trieu
-    }))
-    .sort((a: any, b: any) => b.salary - a.salary)
-    .slice(0, 6);
-  }
+  const isAllRegions = region === ALL_REGIONS;
+  const regionInfo = activeRegionDemand.find((r) => r.region === region);
+  const hot = activeHotLocal.find((h) => h.region === region) ?? activeHotLocal[0] ?? { skill: "Đang tải...", growth: "0%", region: "" };
 
-  // 4. Nhu cầu theo vùng
-  let activeRegionDemand = REGION_DEMAND;
-  if (apiData?.provinces) {
-    activeRegionDemand = apiData.provinces.slice(0, 6).map((prov: any) => {
-      const topSkillsOfRegion: string[] = [];
-      if (apiData.industry_insights) {
-        const sortedInds = [...apiData.industry_insights]
-          .map((ind: any) => {
-            const p = ind.top_provinces?.find((x: any) => x.name === prov.name);
-            return { industry: ind.industry, count: p ? p.count : 0 };
-          })
-          .filter(x => x.count > 0)
-          .sort((a, b) => b.count - a.count);
-        
-        sortedInds.slice(0, 3).forEach(x => topSkillsOfRegion.push(x.industry));
-      }
-      if (topSkillsOfRegion.length === 0) {
-        topSkillsOfRegion.push("Kế toán", "Bán hàng", "CNTT");
-      }
-      return {
-        region: prov.name,
-        jobs: prov.count,
-        top: topSkillsOfRegion
-      };
-    });
-  }
-
-  // 5. Kỹ năng nóng cục bộ / Nghề hot nhất từng vùng
-  let activeHotLocal = HOT_LOCAL;
-  if (apiData?.provinces && apiData?.industry_insights) {
-    activeHotLocal = apiData.provinces.map((prov: any) => {
-      let bestInd = "Bán hàng";
-      let maxCount = 0;
-      let bestIndData: any = null;
-      apiData.industry_insights.forEach((ind: any) => {
-        const p = ind.top_provinces?.find((x: any) => x.name === prov.name);
-        if (p && p.count > maxCount) {
-          maxCount = p.count;
-          bestInd = ind.industry;
-          bestIndData = ind;
-        }
-      });
-      const sal = bestIndData?.salary ? `${bestIndData.salary.median_trieu} triệu` : "Thỏa thuận";
-      const entryPct = bestIndData ? Math.round(bestIndData.entry_level_ratio * 100) : 25;
-      return {
-        region: prov.name,
-        skill: bestInd,
-        growth: `+${entryPct}% entry`,
-        salary: sal
-      };
-    });
-  }
-
-  // Sắp xếp các giá trị Max cho chart
   const maxClusterJobs = Math.max(...activeClusterDemand.map((c) => c.jobs), 1);
   const maxSkillPct = Math.max(...activeTopSkills.map((s) => s.pct), 1);
   const maxSalary = Math.max(...activeSalaryByCluster.map((s) => s.salary), 1);
   const maxRegionJobs = Math.max(...activeRegionDemand.map((r) => r.jobs), 1);
 
+  const clusterFilterOn = cluster !== ALL_CLUSTERS;
   const skillMatches = (skillCluster: string) => !clusterFilterOn || looseMatch(skillCluster, cluster);
-  const anySkillMatch = activeTopSkills.length > 0;
+  const anySkillMatch = activeTopSkills.some((s) => skillMatches(s.cluster));
   const salaryOf = (clusterName: string) =>
     activeSalaryByCluster.find((s) => looseMatch(s.cluster, clusterName));
 
   const hotRows = isAllRegions ? activeHotLocal : activeHotLocal.filter((h) => h.region === region);
   const selectedCta = ctaCluster ? activeClusterDemand.find((c) => c.cluster === ctaCluster) : undefined;
 
-  // Widget KPI 1: Nghề đang tăng trưởng
-  let hotSkill = "Bán lẻ - FMCG";
-  let hotGrowth = "+35% entry";
-  let hotRegionName = "Toàn quốc";
-  if (apiData?.industry_insights) {
-    if (isAllRegions) {
-      const topInd = apiData.industry_insights[0];
-      if (topInd) {
-        hotSkill = topInd.industry;
-        hotGrowth = `+${Math.round(topInd.entry_level_ratio * 100)}% entry`;
-        hotRegionName = "Toàn quốc";
-      }
-    } else {
-      let maxCount = 0;
-      let bestInd: any = null;
-      apiData.industry_insights.forEach((ind: any) => {
-        const p = ind.top_provinces?.find((x: any) => x.name === region);
-        if (p && p.count > maxCount) {
-          maxCount = p.count;
-          bestInd = ind;
-        }
-      });
-      if (bestInd) {
-        hotSkill = bestInd.industry;
-        hotGrowth = `+${Math.round(bestInd.entry_level_ratio * 100)}% entry`;
-        hotRegionName = region;
-      }
-    }
-  }
-
-  // Widget KPI 2: Kỹ năng thiếu hụt nhất
-  const topSkillName = activeTopSkills[0]?.name || "Giao tiếp";
-  const topSkillPct = activeTopSkills[0]?.pct || 10;
-  const topSkillSub = cluster === ALL_CLUSTERS ? "Toàn quốc" : cluster;
-
-  // Widget KPI 3: Lương trung vị cao nhất
-  let maxSalaryName = "Điện toán đám mây";
-  let maxSalaryValueStr = "50.000.000đ";
-  if (apiData?.salary_by_industry && apiData.salary_by_industry.length > 0) {
-    const sortedSalaries = [...apiData.salary_by_industry].sort((a, b) => b.median_trieu - a.median_trieu);
-    const topSal = sortedSalaries[0];
-    if (topSal) {
-      maxSalaryName = topSal.industry.split(" / ")[0];
-      maxSalaryValueStr = `${topSal.median_trieu}.000.000đ`;
-    }
-  }
-
-  // Widget KPI 4: Số tin đã phân tích
-  let analyzedJobsCount = activeMeta.totalJobs;
-  if (!isAllRegions && apiData?.provinces) {
-    const prov = apiData.provinces.find((p: any) => p.name === region);
-    analyzedJobsCount = prov ? prov.count : 0;
-  }
+  // Bản đồ cơ hội: gộp nhu cầu (số tin + tăng trưởng) với lương trung vị theo khối ngành.
+  // Chỉ giữ khối ngành có đủ cả lương và tăng trưởng để bong bóng biểu diễn đúng 3 chiều.
+  const parseTrendPct = (trend: string): number => {
+    const match = trend.match(/-?\d+(\.\d+)?/);
+    return match ? parseFloat(match[0]) : 0;
+  };
+  const bubblePoints: BubblePoint[] = activeClusterDemand
+    .map((c) => {
+      const salary = salaryOf(c.cluster);
+      if (!salary) return null;
+      return { cluster: c.cluster, salary: salary.salary, growth: parseTrendPct(c.trend), jobs: c.jobs };
+    })
+    .filter((p): p is BubblePoint => p !== null);
 
   return (
     <div className="space-y-5">
@@ -427,24 +287,32 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
 
       {/* KPI */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="Nghề đang tăng trưởng" value={hotSkill} delta={hotGrowth} sub={hotRegionName} />
+        <Kpi label="Nghề đang tăng trưởng" value={hot.skill} delta={`↑ ${hot.growth}`} sub={hot.region} />
         <Kpi
           label="Kỹ năng thiếu hụt nhất"
-          value={topSkillName}
-          delta={`${topSkillPct}% tin`}
-          sub={topSkillSub}
+          value={activeTopSkills[0]?.name || "Đang tải..."}
+          delta={`${activeTopSkills[0]?.pct || 0}% tin`}
+          sub="Toàn quốc"
         />
         <Kpi
           label="Lương trung vị cao nhất"
-          value={maxSalaryName}
-          delta={maxSalaryValueStr}
+          value={activeSalaryByCluster[0]?.cluster.split(" / ")[0] || "Đang tải..."}
+          delta={activeSalaryByCluster[0] ? fmtSalaryFromMillions(activeSalaryByCluster[0].salary) : "0đ"}
         />
         <Kpi
           label="Số tin đã phân tích"
-          value={fmtInt(analyzedJobsCount)}
+          value={fmtInt(regionInfo ? regionInfo.jobs : activeMeta.totalJobs)}
           sub={`tại ${region}`}
         />
       </div>
+
+      {/* Bong bóng động — hành trình việc làm 2000–2025 (dữ liệu thật) */}
+      <ChartCard
+        title="Hành trình việc làm 2000–2025"
+        sub="Mỗi bong bóng là một nhóm ngành — bấm Chạy để xem quy mô lao động và tăng trưởng biến đổi qua từng năm"
+      >
+        <JobsBubbleRace />
+      </ChartCard>
 
       <div className="grid gap-5 lg:grid-cols-12">
         {/* Xu thế tuyển dụng theo khối ngành */}
@@ -558,6 +426,16 @@ export function MarketCharts({ onStart, initialRegion, showCta = true }: Props) 
           )}
         </ChartCard>
       </div>
+
+      {/* Bản đồ cơ hội — bubble chart 3 chiều */}
+      {bubblePoints.length >= 2 && (
+        <ChartCard
+          title="Bản đồ cơ hội nghề nghiệp"
+          sub="Lương trung vị × tốc độ tăng trưởng × số tin tuyển — bấm một bong bóng để xem bạn có hợp không"
+        >
+          <BubbleChart points={bubblePoints} activeCluster={cluster} onStart={onStart} />
+        </ChartCard>
+      )}
 
       <div className="grid gap-5 lg:grid-cols-12">
         {/* Nhu cầu theo vùng */}

@@ -2,6 +2,8 @@
 
 import { SectionHead } from "@/components/ui/SectionHead";
 import { IconCheck } from "@/components/ui/icons";
+import { m } from "framer-motion";
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/ui/motion";
 
 type Card = {
   title: string;
@@ -59,11 +61,18 @@ const CARDS: Card[] = [
 export function Audience({ onStart }: { onStart: () => void }) {
   return (
     <section aria-labelledby="audience-heading" className="bg-white px-6 py-20">
-      <SectionHead kicker="Đối tượng sử dụng" title="Phù hợp với mọi đối tượng" />
-      <div className="mx-auto mt-12 grid max-w-5xl items-start gap-6 md:grid-cols-3">
+      <Reveal>
+        <SectionHead kicker="Đối tượng sử dụng" title="Phù hợp với mọi đối tượng" />
+      </Reveal>
+      <StaggerGroup
+        className="mx-auto mt-12 grid max-w-5xl items-start gap-6 md:grid-cols-3"
+        stagger={0.14}
+      >
         {CARDS.map((c) => (
-          <article
+          <StaggerItem
             key={c.title}
+            as="article"
+            whileHover={{ y: -8 }}
             className={`flex flex-col rounded-2xl bg-white p-7 ${
               c.highlighted
                 ? "border-2 border-brand shadow-xl shadow-brand/10"
@@ -97,17 +106,19 @@ export function Audience({ onStart }: { onStart: () => void }) {
                 {c.cta.label}
               </a>
             ) : (
-              <button
+              <m.button
                 type="button"
                 onClick={onStart}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 className={`mt-7 rounded-xl px-5 py-3 text-sm font-semibold transition-colors ${c.cta.className}`}
               >
                 {c.cta.label}
-              </button>
+              </m.button>
             )}
-          </article>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }

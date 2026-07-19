@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LogoMark } from "@/components/ui/Compass";
 import { Loader2, ArrowLeft, ArrowRight, Check, AlertTriangle } from "lucide-react";
@@ -11,48 +11,48 @@ const HOLLAND_GROUPS = [
     key: "R",
     name: "Nhóm 1: Realistic — Kỹ thuật / Thực tế",
     questions: [
-      "Yêu thích vận động",
-      "Thẳng thắn",
-      "Thích làm việc với máy móc, dụng cụ",
-      "Thích sự cụ thể, rõ ràng",
-      "Khép kín",
-      "Thích làm việc ngoài trời",
-      "Sửa chữa các thiết bị điện/ ô tô, xe máy, xe đạp, …",
-      "Chơi 1 môn thể thao",
-      "Đọc bản vẽ/ bản thiết kế",
-      "Sử dụng/ vận hành/ bảo trì máy móc, thiết bị",
-      "Sử dụng công cụ để tạo kiểu tóc mới cho mình",
-      "Tự may áo/váy/đầm cho mình",
-      "Làm vườn/ trồng cây xanh, hoa kiểng",
-      "Xây dựng/ lắp ráp mô hình",
-      "Vận động tay chân và sử dụng tay chân để làm việc",
-      "Tự ráp đồ nội thất (bàn/ghế/tủ)/ tự đóng bàn, ghế, tủ,…",
-      "Nấu ăn/ làm bánh",
-      "Tham dự khoá học kỹ thuật (điện, sữa chữa máy móc…)"
+      "yêu thích vận động",
+      "thẳng thắn",
+      "thích làm việc với máy móc, dụng cụ",
+      "thích sự cụ thể, rõ ràng",
+      "khép kín",
+      "thích làm việc ngoài trời",
+      "sửa chữa các thiết bị điện/ ô tô, xe máy, xe đạp, …",
+      "chơi 1 môn thể thao",
+      "đọc bản vẽ/ bản thiết kế",
+      "sử dụng/ vận hành/ bảo trì máy móc, thiết bị",
+      "sử dụng công cụ để tạo kiểu tóc mới cho mình",
+      "tự may áo/váy/đầm cho mình",
+      "làm vườn/ trồng cây xanh, hoa kiểng",
+      "xây dựng/ lắp ráp mô hình",
+      "vận động tay chân và sử dụng tay chân để làm việc",
+      "tự ráp đồ nội thất (bàn/ghế/tủ)/ tự đóng bàn, ghế, tủ,…",
+      "nấu ăn/ làm bánh",
+      "tham dự khoá học kỹ thuật (điện, sữa chữa máy móc…)"
     ]
   },
   {
     key: "I",
     name: "Nhóm 2: Investigative — Nghiên cứu / Phân tích",
     questions: [
-      "Hiểu biết rộng",
-      "Thích làm việc một mình",
-      "Khả năng phân tích cao",
-      "Suy nghĩ logic",
-      "Thích khoa học",
-      "Có khả năng quan sát tốt",
-      "Suy nghĩ trừu tượng",
-      "Giải các bài toán khó, phức tạp",
-      "Tiếp thu nhanh các lý thuyết khoa học",
-      "Giải thích các công thức toán học",
-      "Phân tích dữ liệu",
-      "Tiến hành những thí nghiệm khoa học",
-      "Đặt câu hỏi",
-      "Tìm hiểu nhiều ý kiến khác nhau về 1 vấn đề cụ thể nào đó",
-      "Sử dụng máy vi tính",
-      "Đọc sách/ báo chuyên ngành/ kỹ thuật",
-      "Thiết lập đề tài nghiên cứu, làm khảo sát và kiểm tra kết quả",
-      "Tham quan bảo tàng khoa học, phòng thí nghiệm, cơ sở khoa học"
+      "hiểu biết rộng",
+      "thích làm việc một mình",
+      "khả năng phân tích cao",
+      "suy nghĩ logic",
+      "thích khoa học",
+      "có khả năng quan sát tốt",
+      "suy nghĩ trừu tượng",
+      "giải các bài toán khó, phức tạp",
+      "tiếp thu nhanh các lý thuyết khoa học",
+      "giải thích các công thức toán học",
+      "phân tích dữ liệu",
+      "tiến hành những thí nghiệm khoa học",
+      "đặt câu hỏi",
+      "tìm hiểu nhiều ý kiến khác nhau về 1 vấn đề cụ thể  nào đó",
+      "sử dụng máy vi tính",
+      "đọc sách/ báo chuyên ngành/ kỹ thuật",
+      "thiết lập đề tài nghiên cứu, làm khảo sát và kiểm tra kết quả",
+      "tham quan bảo tàng khoa học, phòng thí nghiệm, cơ sở khoa học"
     ]
   },
   {
@@ -65,95 +65,97 @@ const HOLLAND_GROUPS = [
       "Độc đáo, khác lạ",
       "Dễ xúc động",
       "Rất nhạy cảm",
-      "Phác thảo, vẽ, tô tranh",
-      "Chơi 1 nhạc cụ",
-      "Viết truyện/ thơ/ sáng tác nhạc",
-      "Hát/ diễn xuất/ nhảy/ khiêu vũ",
-      "Tự thiết kế quần áo cho mình, bạn bè và người thân/ thiết kế nội thất cho nhà mình",
-      "Chụp hình với những góc ảnh đẹp",
-      "Tham gia khóa học thiết kế",
-      "Học hát/ nhạc/ nhảy/ khiêu vũ/ diễn xuất",
-      "Làm đồ thủ công, tự làm quà cho bạn bè và người thân",
-      "Đọc truyện viễn tưởng/ kịch/ thơ ca",
-      "Thể hiện mình một cách sáng tạo/ mặc những thời trang lạ và thú vị",
-      "Xem hòa nhạc/ xem kịch/ triển lãm nghệ thuật"
+      "phác thảo, vẽ, tô tranh",
+      "chơi 1 nhac cụ",
+      "viết truyện/ thơ/ sáng tác nhạc",
+      "hát/ diễn xuất/ nhảy/ khiêu vũ",
+      "tự thiết kế quần áo cho mình, bạn bè và người thân/ thiết kế nội thất cho nhà mình",
+      "chụp hình với những góc ảnh đẹp",
+      "tham gia khóa học thiết kế",
+      "học hát/ nhạc/ nhảy/ khiêu vũ/ diễn xuất",
+      "làm đồ thủ công, tự làm quà cho bạn bè và người thân",
+      "đọc truyện viễn tưởng/ kịch/ thơ ca",
+      "thể hiện mình một cách sáng tạo/ mặc những thời trang lạ và thú vị",
+      "xem hòa nhạc/ xem kịch/ triển lãm nghệ thuật"
     ]
   },
   {
     key: "S",
     name: "Nhóm 4: Social — Con người / Xã hội",
     questions: [
-      "Rất thân thiện, hòa đồng",
-      "Dễ thấu hiểu người khác",
-      "Hào phóng",
-      "Hay giúp đỡ người khác",
-      "Có tinh thần đồng đội, tinh thần hợp tác",
-      "Dễ tha thứ",
-      "Chỉ dẫn hoặc dạy người khác",
-      "Điều hành các cuộc thảo luận",
-      "Hòa giải mâu thuẫn/ tranh chấp",
-      "Diễn đạt suy nghĩ và cảm xúc rất rõ ràng",
-      "Hợp tác tốt với những người khác",
-      "Chơi môn thể thao có tính đồng đội",
-      "Làm việc nhóm",
-      "Tham gia hoạt động tình nguyện với các nhóm hoạt động xã hội tại trường, cộng đồng",
-      "Gặp gỡ và làm quen bạn mới",
-      "Lắng nghe và tư vấn cho người khác",
-      "Đóng góp trong các cuộc thảo luận",
-      "Tham gia các hội thảo về phát triển cộng đồng và giải quyết các vấn đề xã hội"
+      "rất thân thiện, hòa đồng",
+      "dễ thấu hiểu người khác",
+      "hào phóng",
+      "hay giúp đỡ người khác",
+      "có tinh thần đồng đội, tinh thần hợp tác",
+      "dễ tha thứ",
+      "chỉ dẫn hoặc dạy người khác",
+      "điều hành các cuộc thảo luận",
+      "hòa giải mâu thuẫn/ tranh chấp",
+      "diễn đạt suy nghĩ và cảm xúc rất rõ ràng",
+      "hợp tác tốt với những người khác",
+      "chơi môn thể thao có tính đồng đội",
+      "làm việc nhóm",
+      "tham gia hoạt động tình nguyện với các nhóm hoạt động xã hội tại trường, nhà thờ, chùa, phường, xóm hay cộng đồng",
+      "gặp gỡ và làm quen bạn mới",
+      "lắng nghe và tư vấn cho người khác",
+      "đóng góp trong các cuộc thảo luận",
+      "tham gia các hội thảo về phát triển cộng đồng và giải quyết các vấn đề xã hội"
     ]
   },
   {
     key: "E",
     name: "Nhóm 5: Enterprising — Dẫn dắt / Quản lý",
     questions: [
-      "Thích phiêu lưu",
-      "Quyết đoán",
-      "Thuộc dạng nổi tiếng ở trường",
-      "Có sức thuyết phục",
-      "Có nhiều hoài bão/ tham vọng",
-      "Thích giao du, thích kết bạn",
-      "Khởi đầu/ đề xuất dự án mới",
-      "Thuyết phục người khác làm việc theo ý của tôi",
-      "Lãnh đạo một nhóm",
-      "Bán hàng hoặc quảng bá ý tưởng",
-      "Lên kế hoạch/ chiến lược để đạt được mục tiêu",
-      "Điều hành hoạt động kinh doanh của gia đình",
-      "Có quyền lực, địa vị/ được bầu cử vào những vị trí quan trọng",
-      "Đưa ra quyết định có ảnh hưởng đến những người khác",
-      "Giành chiến thắng một giải thưởng lãnh đạo hoặc bán hàng",
-      "Gặp gỡ những người quan trọng",
-      "Tham gia khóa học về kinh doanh/ marketing/ bán hàng",
-      "Đọc tạp chí kinh doanh"
+      "thích phiêu lưu",
+      "quyết đoán",
+      "thuộc dạng nổi tiếng ở trường",
+      "có sức thuyết phục",
+      "có nhiều hoài bão/ tham vọng",
+      "thích giao du, thích kết bạn",
+      "khởi đầu/ đề xuất dự án mới",
+      "thuyết phục người khác làm việc theo ý của tôi",
+      "lãnh đạo một nhóm",
+      "bán hàng hoặc quảng bá ý tưởng",
+      "lên kế hoạch/ chiến lược để đạt được mục tiêu",
+      "điều hành hoạt động kinh doanh của gia đình",
+      "có quyền lực, địa vị/ được bầu cử vào những vị trí quan trọng",
+      "đưa ra quyết định có ảnh hưởng đến những người khác",
+      "giành chiến thắng một giải thưởng lãnh đạo hoặc bán hàng",
+      "gặp gỡ những người quan trọng",
+      "tham gia khóa học về kinh doanh/ marketing/ bán hàng",
+      "đọc tạp chí kinh doanh"
     ]
   },
   {
     key: "C",
     name: "Nhóm 6: Conventional — Quy trình / Nghiệp vụ",
     questions: [
-      "Gọn gàng, ngăn nắp",
-      "Làm việc nguyên tắc, có trình tự, có kế hoạch",
-      "Chính xác",
-      "Làm việc tốt trong khuôn khổ hệ thống",
-      "Giải quyết công việc giấy tờ một cách nhanh chóng, hiệu quả và ngăn nắp",
-      "Sử dụng các thiết bị xử lý dữ liệu",
-      "Sưu tầm đồ kỉ niệm",
-      "Học, tìm hiểu các thủ tục, quy định, luật lệ (vd: luật thuế, luật kinh doanh …)",
-      "Sắp xếp nhà cửa hoặc nơi làm việc",
-      "Thích làm việc với dữ liệu, con số, văn bản",
-      "Tuân thủ nguyên tắc",
-      "Chu đáo, tỉ mỉ",
-      "Thực hiện các công việc đòi hỏi chú ý đến các chi tiết",
-      "Tổ chức, dàn dựng chương trình cho các hoạt động, sự kiện",
-      "Gõ nhanh hoặc viết tốc ký",
-      "Lưu trữ dữ liệu, hồ sơ chính xác",
-      "Chơi trò tìm sự khác biệt giữa hai hình ảnh",
-      "Làm việc dựa trên hướng dẫn cụ thể"
+      "gọn gàng, ngăn nắp",
+      "làm việc nguyên tắc, có trình tự, có kế hoạch",
+      "chính xác",
+      "làm việc tốt trong khuôn khổ hệ thống",
+      "giải quyết công việc giấy tờ một cách nhanh chóng, hiệu quả và ngăn nắp",
+      "sử dụng các thiết bị xử lý dữ liệu",
+      "sưu tầm đồ kỉ niệm",
+      "học, tìm hiểu các thủ tục, quy định, luật lệ (vd: luật thuế, luật kinh doanh …)",
+      "sắp xếp nhà cửa hoặc nơi làm việc",
+      "thích làm việc với dữ liệu, con số, văn bản",
+      "tuân thủ nguyên tắc",
+      "chu đáo, tỉ mỉ",
+      "thực hiện các công việc đòi hỏi chú ý đến các chi tiết (sửa lỗi các văn bản, sắp xếp, dàn dựng chương trình cho sự kiện, …)",
+      "tổ chức, dàn dựng chương trình cho các hoạt động, sự kiện như tổ chức đêm ca nhạc, tổ chức buổi dã ngoại cho cả lớp, câu lạc bộ",
+      "gõ nhanh hoặc viết tốc ký",
+      "lưu trữ dữ liệu, hồ sơ chính xác",
+      "chơi trò tìm sự khác biệt giữa hai hình ảnh",
+      "làm việc dựa trên hướng dẫn cụ thể"
     ]
   }
 ];
 
-export default function HollandTestPage() {
+const PROGRESS_KEY_PREFIX = "holland-test-progress-";
+
+function HollandTestContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [profileId, setProfileId] = useState<string>("");
@@ -162,14 +164,47 @@ export default function HollandTestPage() {
     R: [], I: [], A: [], S: [], E: [], C: []
   });
   const [submitting, setSubmitting] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
+  // Khôi phục tiến độ đã lưu (nếu có) khi vào trang.
   useEffect(() => {
     let id = searchParams.get("profileId");
     if (!id) {
       id = "u_" + Math.random().toString(36).substr(2, 9);
     }
     setProfileId(id);
+
+    try {
+      const saved = localStorage.getItem(PROGRESS_KEY_PREFIX + id);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const hasAnyAnswer = Object.values(parsed.selectedQuestions || {}).some(
+          (list) => Array.isArray(list) && list.length > 0
+        );
+        if (parsed.selectedQuestions) setSelectedQuestions(parsed.selectedQuestions);
+        if (typeof parsed.activeGroupIdx === "number") setActiveGroupIdx(parsed.activeGroupIdx);
+        if (hasAnyAnswer) setRestored(true);
+      }
+    } catch (err) {
+      console.error("Không đọc được tiến độ đã lưu:", err);
+    } finally {
+      setHydrated(true);
+    }
   }, [searchParams]);
+
+  // Tự động lưu tiến độ mỗi khi học sinh tích chọn / chuyển nhóm.
+  useEffect(() => {
+    if (!profileId || !hydrated) return;
+    try {
+      localStorage.setItem(
+        PROGRESS_KEY_PREFIX + profileId,
+        JSON.stringify({ selectedQuestions, activeGroupIdx })
+      );
+    } catch (err) {
+      console.error("Không lưu được tiến độ:", err);
+    }
+  }, [profileId, hydrated, selectedQuestions, activeGroupIdx]);
 
   const handleToggleQuestion = (groupKey: string, question: string) => {
     const prev = selectedQuestions[groupKey] || [];
@@ -239,6 +274,9 @@ export default function HollandTestPage() {
         completedAt: new Date().toISOString()
       });
 
+      // 4. Xoá tiến độ tạm đã lưu vì bài test đã hoàn thành
+      localStorage.removeItem(PROGRESS_KEY_PREFIX + profileId);
+
       router.push(`/profile/${profileId}`);
     } catch (err) {
       console.error("Lỗi khi gửi kết quả trắc nghiệm Holland:", err);
@@ -259,6 +297,14 @@ export default function HollandTestPage() {
           <LogoMark className="w-8 h-8 text-[#005c6d]" />
           <span className="font-bold text-lg text-[#005c6d]">CareerRadar</span>
         </div>
+        {profileId && !profileId.startsWith("u_") && (
+          <button
+            onClick={() => router.push(`/profile/${profileId}`)}
+            className="flex items-center gap-1.5 text-xs font-bold text-[#005c6d] hover:underline"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Quay lại Portal
+          </button>
+        )}
         <span className="text-xs font-semibold text-[#8a8981] bg-[#f4f2ec] px-3 py-1.5 rounded-full">
           Trắc nghiệm Holland đầy đủ
         </span>
@@ -275,6 +321,12 @@ export default function HollandTestPage() {
             Nhóm {activeGroupIdx + 1}/6
           </span>
         </div>
+
+        {restored && (
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-[#bfe3c4] bg-[#eefaf0] px-3.5 py-2.5 text-xs font-semibold text-[#1f6b3a]">
+            <Check className="w-4 h-4 shrink-0" /> Đã khôi phục tiến độ làm bài trước đó — bạn có thể tiếp tục từ chỗ đã dừng.
+          </div>
+        )}
 
         {/* Progress Bar */}
         <div className="w-full bg-white rounded-full h-2 mb-6 border border-[#e3e1d8] overflow-hidden">
@@ -351,5 +403,20 @@ export default function HollandTestPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function HollandTestPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfa]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#005c6d]" />
+          <p className="text-sm text-[#6b6a64] font-medium">Đang tải...</p>
+        </div>
+      </div>
+    }>
+      <HollandTestContent />
+    </Suspense>
   );
 }
